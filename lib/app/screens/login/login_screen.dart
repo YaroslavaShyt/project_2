@@ -12,7 +12,10 @@ class LoginScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 40.0),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue, Colors.green],
+            colors: [
+              Color.fromARGB(255, 214, 101, 192),
+              Color.fromARGB(255, 148, 243, 241)
+            ],
           ),
         ),
         child: Column(
@@ -25,10 +28,24 @@ class LoginScreen extends StatelessWidget {
                   fontSize: 50,
                   fontWeight: FontWeight.bold),
             ),
-            LoginTextField(
-                label: 'Phone number',
-                onChanged: (value) => {},
-                obscureText: true),
+            SizedBox(
+              child: Column(
+                children: [
+                  LoginTextField(
+                      label: 'Name',
+                      onChanged: (value) => {},
+                      obscureText: true),
+                  LoginTextField(
+                      label: 'Surname',
+                      onChanged: (value) => {},
+                      obscureText: true),
+                  LoginTextField(
+                      label: 'Phone number',
+                      onChanged: (value) => {},
+                      obscureText: true),
+                ],
+              ),
+            ),
             MainElevatedButton(onButtonPressed: () {}, title: 'Submit')
           ],
         ),

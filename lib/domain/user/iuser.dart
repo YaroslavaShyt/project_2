@@ -1,5 +1,7 @@
-abstract interface class IUser{
-  final String password;
+abstract interface class IUser {
+  final String name;
+  final String surname;
+  final String phoneNumber;
 
-  IUser({required this.password});
+  IUser({required this.name, required this.surname, required this.phoneNumber});
 }
