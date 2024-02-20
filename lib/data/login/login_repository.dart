@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginRepository implements ILoginRepository {
-  late FirebaseAuth _firebaseAuth;
+  final FirebaseAuth _firebaseAuth;
+
+  LoginRepository({required FirebaseAuth firebaseAuth})
+      : _firebaseAuth = firebaseAuth;
 
   @override
   Future sendOtp({required String phoneNumber}) async {
@@ -37,12 +40,12 @@ class LoginRepository implements ILoginRepository {
   }
 
   @override
-  Future logout() async{
+  Future logout() async {
     await _firebaseAuth.signOut();
   }
 
   @override
-  Future<bool> isLoggedIn() async{
+  Future<bool> isLoggedIn() async {
     var user = _firebaseAuth.currentUser;
     return user != null;
   }

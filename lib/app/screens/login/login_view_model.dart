@@ -68,7 +68,7 @@ class LoginViewModel extends BaseChangeNotifier {
     //_loginRepository.loginOtp(otp: otp, verifyID: verifyID)
     final bool isValid = isValidated();
     if (isValid) {
-      _navigationUtil.navigateTo(routeHome);
+      //_navigationUtil.navigateTo(routeHome);
     }
   }
 }
