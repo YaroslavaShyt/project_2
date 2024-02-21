@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
+import 'package:project_2/app/screens/login/login_view_model.dart';
 import 'package:project_2/app/screens/login/widgets/login_text_field.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final LoginViewModel loginViewModel;
+  const LoginScreen({super.key, required this.loginViewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +35,44 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   LoginTextField(
                       label: 'Name',
-                      onChanged: (value) => {},
-                      obscureText: true),
+                      onChanged: (value) => loginViewModel.name = value,
+                      obscureText: false),
                   LoginTextField(
                       label: 'Surname',
-                      onChanged: (value) => {},
-                      obscureText: true),
+                      onChanged: (value) => loginViewModel.surname = value,
+                      obscureText: false),
                   LoginTextField(
                       label: 'Phone number',
-                      onChanged: (value) => {},
-                      obscureText: true),
+                      onChanged: (value) => loginViewModel.phoneNumber = value,
+                      obscureText: false),
                 ],
               ),
             ),
-            MainElevatedButton(onButtonPressed: () {}, title: 'Submit')
+            MainElevatedButton(
+                onButtonPressed: () {
+                  loginViewModel.onSendOtpButtonPressed();
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        final TextEditingController controller =
+                            TextEditingController();
+                        return AlertDialog(
+                          title: const Text('Your code'),
+                          content: TextField(
+                            controller: controller,
+                          ),
+                          actions: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  loginViewModel
+                                      .onLoginButtonPressed(controller.text);
+                                },
+                                child: const Text('Submit'))
+                          ],
+                        );
+                      });
+                },
+                title: 'Send code')
           ],
         ),
       ),

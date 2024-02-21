@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 abstract interface class ILoginRepository {
   Future sendOtp({required String phoneNumber});
-  Future loginOtp({required String otp, required String verifyID});
+  Future loginOtp({required String otp});
   Future logout();
-  Future <bool> isLoggedIn();
+  Stream<User?> get userStream;
 }
