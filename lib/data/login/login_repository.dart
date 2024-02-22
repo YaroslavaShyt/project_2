@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
@@ -8,8 +10,25 @@ class LoginRepository implements ILoginRepository {
   LoginRepository({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth;
 
+
+  final StreamController<AuthState> _streamController =
+      StreamController.broadcast();
+
   @override
-  Stream<User?> get userStream => _firebaseAuth.authStateChanges();
+  Stream<AuthState> authState() {
+    Stream<AuthState> stream =
+        _firebaseAuth.authStateChanges().map((firebaseUser) {
+      if (firebaseUser == null) {
+        return AuthState.notAuthenticated;
+      } else {
+        return AuthState.authenticated;
+      }
+    });
+    stream.listen((authState) {
+      _streamController.add(authState);
+    });
+    return _streamController.stream;
+  }
 
   @override
   Future sendOtp({required String phoneNumber}) async {
@@ -26,7 +45,7 @@ class LoginRepository implements ILoginRepository {
   }
 
   @override
-  Future loginOtp({required String otp}) async {
+  Future<void> loginOtp({required String otp}) async {
     if (verifId.isNotEmpty) {
       final cred =
           PhoneAuthProvider.credential(verificationId: verifId, smsCode: otp);
@@ -35,7 +54,7 @@ class LoginRepository implements ILoginRepository {
   }
 
   @override
-  Future logout() async {
+  Future<void> logout() async {
     await _firebaseAuth.signOut();
   }
 }

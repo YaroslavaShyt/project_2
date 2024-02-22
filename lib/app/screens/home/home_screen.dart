@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/widgets/main_elevated_button.dart';
 import 'package:project_2/app/screens/home/home_view_model.dart';
-import 'package:project_2/app/services/user_service.dart';
+import 'package:project_2/app/screens/login/login_factory.dart';
+import 'package:project_2/app/screens/plants_home/plants_home_factory.dart';
+import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class HomeScreen extends StatelessWidget {
   final HomeViewModel homeViewModel;
-  final UserService userService;
-  const HomeScreen(
-      {super.key, required this.homeViewModel, required this.userService});
+  const HomeScreen({super.key, required this.homeViewModel});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(userService.user?.name ?? ''),
-        actions: [Text(userService.user?.phoneNumber ?? '')],
-      ),
-      body: Center(
-        child: MainElevatedButton(
-            onButtonPressed: homeViewModel.onLogoutButtonPressed,
-            title: 'Log out'),
-      ),
+    return StreamBuilder<AuthState>(
+      stream: homeViewModel.authStateStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          if (snapshot.hasError) {
+            return Scaffold(
+                body: Center(child: Text('Error: ${snapshot.error}')));
+          }
+          switch (snapshot.data) {
+            case AuthState.authenticated:
+              return PlantsHomeFactory.build([]);
+            case AuthState.notAuthenticated:
+              return LoginFactory.build();
+            default:
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+          }
+        }
+      },
     );
   }
 }

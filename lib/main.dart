@@ -5,6 +5,9 @@ import 'package:project_2/app/app.dart';
 import 'package:project_2/app/routing/app_router.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
+import 'package:project_2/app/services/auth_service.dart';
+import 'package:project_2/app/services/iauth_service.dart';
+import 'package:project_2/app/services/iuser_service.dart';
 import 'package:project_2/app/services/user_service.dart';
 import 'package:project_2/data/login/login_repository.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
@@ -20,15 +23,18 @@ void main() async {
 
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();
-  final UserService userService = UserService();
+
   final ILoginRepository loginRepository =
       LoginRepository(firebaseAuth: FirebaseAuth.instance);
+  final IAuthService authService = AuthService(loginRepository: loginRepository);
+  
+  final IUserService userService = UserService();
 
   runApp(MultiProvider(
       providers: [
         Provider.value(value: navigationUtil),
-        Provider.value(value: loginRepository),
-        ChangeNotifierProvider.value(value: userService)
+        ChangeNotifierProvider.value(value: userService),
+        ChangeNotifierProvider.value(value: authService)
       ],
       child: App(
         router: appRouter,

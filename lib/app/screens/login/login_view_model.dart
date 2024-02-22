@@ -1,24 +1,28 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
-import 'package:project_2/app/services/user_service.dart';
+import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/services/iuser_service.dart';
 import 'package:project_2/data/user/user.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
-  final UserService _userService;
+  final IUserService _userService;
+  final INavigationUtil _navigationUtil;
 
   String _name = '';
   String _surname = '';
   String _phoneNumber = '';
- 
+
   String? _nameError;
   String? _surnameError;
   String? _phoneNumberError;
 
   LoginViewModel(
       {required ILoginRepository loginRepository,
-      required UserService userService})
+      required INavigationUtil navigationUtil,
+      required IUserService userService})
       : _loginRepository = loginRepository,
+        _navigationUtil = navigationUtil,
         _userService = userService;
 
   String get name => _name;
@@ -66,7 +70,9 @@ class LoginViewModel extends BaseChangeNotifier {
 
   void onLoginButtonPressed(String otp) {
     _loginRepository.loginOtp(otp: otp);
-    _userService.setUser(User(name: name, surname: surname, phoneNumber: phoneNumber));
+    _userService
+        .setUser(User(name: name, surname: surname, phoneNumber: phoneNumber));
+    _navigationUtil.navigateBack();
   }
 
   void onSendOtpButtonPressed() {

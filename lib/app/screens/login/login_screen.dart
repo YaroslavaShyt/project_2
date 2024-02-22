@@ -66,6 +66,7 @@ class LoginScreen extends StatelessWidget {
                                 onPressed: () {
                                   loginViewModel
                                       .onLoginButtonPressed(controller.text);
+                                  
                                 },
                                 child: const Text('Submit'))
                           ],
