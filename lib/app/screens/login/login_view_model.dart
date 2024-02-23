@@ -8,6 +8,7 @@ class LoginViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
   final IUserService _userService;
   final INavigationUtil _navigationUtil;
+  bool isFormDataValid = true;
 
   String _name = '';
   String _surname = '';
@@ -28,20 +29,23 @@ class LoginViewModel extends BaseChangeNotifier {
   String get name => _name;
   String get surname => _surname;
   String get phoneNumber => _phoneNumber;
+  String? get nameError => _nameError;
+  String? get surnameError => _surnameError;
+  String? get phoneNumberError => _phoneNumberError;
 
   set name(String newName) {
     _name = newName;
-    _nameError == null;
+    _nameError = null;
   }
 
   set surname(String newSurname) {
     _surname = newSurname;
-    _surnameError == null;
+    _surnameError = null;
   }
 
   set phoneNumber(String newPhoneNumber) {
     _phoneNumber = newPhoneNumber;
-    _phoneNumberError == null;
+    _phoneNumberError = null;
   }
 
   bool isValidated() {
@@ -76,8 +80,9 @@ class LoginViewModel extends BaseChangeNotifier {
   }
 
   void onSendOtpButtonPressed() {
-    final bool isValid = isValidated();
-    if (isValid) {
+    isFormDataValid = isValidated();
+    notifyListeners();
+    if (isFormDataValid) {
       _loginRepository.sendOtp(phoneNumber: phoneNumber);
     }
   }
