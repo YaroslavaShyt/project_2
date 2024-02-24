@@ -1,5 +1,5 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
-import 'package:project_2/app/services/iuser_service.dart';
+import 'package:project_2/app/services/user/iuser_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 

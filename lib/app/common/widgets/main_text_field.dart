@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class LoginTextField extends StatelessWidget {
+class MainTextField extends StatelessWidget {
   final String label;
   final ValueChanged<String> onChanged;
   final bool obscureText;
   final String? errorText;
-  const LoginTextField(
+  const MainTextField(
       {super.key,
       required this.label,
       required this.onChanged,

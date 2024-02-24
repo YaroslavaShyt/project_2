@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/screens/login/login_screen.dart';
 import 'package:project_2/app/screens/login/login_view_model.dart';
-import 'package:project_2/app/services/iuser_service.dart';
+import 'package:project_2/app/services/user/iuser_service.dart';
 import 'package:project_2/data/login/login_repository.dart';
 import 'package:provider/provider.dart';
 

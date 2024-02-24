@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_screen.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
-import 'package:project_2/app/services/iuser_service.dart';
-import 'package:project_2/app/services/network_storage/collections.dart';
-import 'package:project_2/app/services/network_storage/network_storage.dart';
+import 'package:project_2/app/services/user/iuser_service.dart';
+import 'package:project_2/app/services/networking/collections.dart';
+import 'package:project_2/app/services/networking/firebase_storage.dart';
 import 'package:project_2/data/login/login_repository.dart';
 import 'package:project_2/data/plants/plants_repository.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ class PlantsHomeFactory {
     return ChangeNotifierProvider(
       create: (context) => PlantsHomeViewModel(
           plantsRepository: PlantsRepository(
-              networkStorage: NetworkStorage(
+              networkService: FirebaseStorage(
                   collection: plantsCollection,
                   firestore: FirebaseFirestore.instance)),
           userService: context.read<IUserService>(),

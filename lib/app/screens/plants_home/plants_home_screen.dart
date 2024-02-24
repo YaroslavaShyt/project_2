@@ -1,15 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/widgets/main_elevated_button.dart';
+import 'package:project_2/app/common/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
+import 'package:project_2/app/common/modals/modals_service.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/list_header.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
-import 'package:project_2/app/services/network_storage/collections.dart';
+import 'package:project_2/app/services/networking/collections.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
-class PlantsHomeScreen extends StatelessWidget {
+class PlantsHomeScreen extends StatefulWidget {
   final PlantsHomeViewModel plantsHomeViewModel;
   const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
+
+  @override
+  State<PlantsHomeScreen> createState() => _PlantsHomeScreenState();
+}
+
+class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController quantityController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    quantityController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +35,24 @@ class PlantsHomeScreen extends StatelessWidget {
         title: const Text("Plant App"),
         actions: [
           IconButton(
-              onPressed: () => openAddPlantModal(context),
+              onPressed: () => ModalsService.showBottomModal(
+                  context: context,
+                  data: ModalBottomSheetContentData(
+                      title: 'Нова рослина',
+                      firstLabel: 'Назва',
+                      secondLabel: 'Кількість',
+                      buttonTitle: 'Додати',
+                      firstController: nameController,
+                      onFirstTextFieldChanged: (value) =>
+                          widget.plantsHomeViewModel.newPlantName = value,
+                      onSecondTextFieldChanged: (value) =>
+                          widget.plantsHomeViewModel.newPlantQuantity = value,
+                      onButtonPressed:
+                          widget.plantsHomeViewModel.onAddPlantButtonPressed,
+                      secondController: quantityController)),
               icon: const Icon(Icons.add)),
           IconButton(
-              onPressed: plantsHomeViewModel.onLogoutButtonPressed,
+              onPressed: widget.plantsHomeViewModel.onLogoutButtonPressed,
               icon: const Icon(Icons.logout_rounded))
         ],
       ),
@@ -49,7 +79,8 @@ class PlantsHomeScreen extends StatelessWidget {
                               title: data?.data()["name"] ?? 'custom name',
                               quantity: data?.data()["quantity"] ?? '0',
                               onEditButtonPressed: () {},
-                              onDeleteButtonPressed: () => plantsHomeViewModel
+                              onDeleteButtonPressed: () => widget
+                                  .plantsHomeViewModel
                                   .onDeletePlantButtonPressed(
                                       id: data?.id ?? ''),
                             ),
@@ -65,44 +96,6 @@ class PlantsHomeScreen extends StatelessWidget {
               ),
             );
           }),
-    );
-  }
-
-  void openAddPlantModal(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController quantityController = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const Text('Нова рослина'),
-              TextField(
-                controller: nameController,
-                onChanged: (value) => plantsHomeViewModel.newPlantName = value,
-                decoration: InputDecoration(
-                    label: const Text('Назва'),
-                    errorText: plantsHomeViewModel.newPlantNameError),
-              ),
-              TextField(
-                controller: quantityController,
-                onChanged: (value) =>
-                    plantsHomeViewModel.newPlantQuantity = value,
-                decoration: InputDecoration(
-                    label: const Text('Кількість'),
-                    errorText: plantsHomeViewModel.newPlantQuantityError),
-              ),
-              MainElevatedButton(
-                  onButtonPressed: () =>
-                      plantsHomeViewModel.onAddPlantButtonPressed(),
-                  title: 'Додати')
-            ],
-          ),
-        );
-      },
     );
   }
 }

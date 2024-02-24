@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/services/iauth_service.dart';
+import 'package:project_2/app/services/auth/iauth_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class HomeViewModel extends ChangeNotifier {

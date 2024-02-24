@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_2/app/screens/home/home_screen.dart';
 import 'package:project_2/app/screens/home/home_view_model.dart';
-import 'package:project_2/app/services/iauth_service.dart';
+import 'package:project_2/app/services/auth/iauth_service.dart';
 import 'package:provider/provider.dart';
 
 class HomeFactory {
