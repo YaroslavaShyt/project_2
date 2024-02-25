@@ -5,4 +5,5 @@ abstract interface class ILoginRepository {
   Future<void> loginOtp({required String otp});
   Future<void> logout();
   Stream<AuthState> authState();
+  Future<void> loginGoogle();
 }

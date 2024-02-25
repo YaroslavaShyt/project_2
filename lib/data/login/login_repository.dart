@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginRepository implements ILoginRepository {
@@ -12,6 +13,18 @@ class LoginRepository implements ILoginRepository {
 
   final StreamController<AuthState> _streamController =
       StreamController.broadcast();
+
+  @override
+  Future<void> loginGoogle()async{
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+    final OAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken
+    );
+    await _firebaseAuth.signInWithCredential(googleAuthCredential);
+  }
 
   @override
   Stream<AuthState> authState() {

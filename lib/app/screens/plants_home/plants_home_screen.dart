@@ -38,18 +38,19 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
               onPressed: () => ModalsService.showBottomModal(
                   context: context,
                   data: ModalBottomSheetContentData(
-                      title: 'Нова рослина',
-                      firstLabel: 'Назва',
-                      secondLabel: 'Кількість',
-                      buttonTitle: 'Додати',
-                      firstController: nameController,
-                      onFirstTextFieldChanged: (value) =>
-                          widget.plantsHomeViewModel.newPlantName = value,
-                      onSecondTextFieldChanged: (value) =>
-                          widget.plantsHomeViewModel.newPlantQuantity = value,
-                      onButtonPressed:
-                          widget.plantsHomeViewModel.onAddPlantButtonPressed,
-                      secondController: quantityController)),
+                    title: 'Нова рослина',
+                    firstLabel: 'Назва',
+                    secondLabel: 'Кількість',
+                    buttonTitle: 'Додати',
+                    //  firstController: nameController,
+                    onFirstTextFieldChanged: (value) =>
+                        widget.plantsHomeViewModel.newPlantName = value,
+                    onSecondTextFieldChanged: (value) =>
+                        widget.plantsHomeViewModel.newPlantQuantity = value,
+                    onButtonPressed:
+                        widget.plantsHomeViewModel.onAddPlantButtonPressed,
+                    //secondController: quantityController
+                  )),
               icon: const Icon(Icons.add)),
           IconButton(
               onPressed: widget.plantsHomeViewModel.onLogoutButtonPressed,

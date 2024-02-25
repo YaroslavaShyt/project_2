@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/theming/app_colors.dart';
 
 class MainTextField extends StatelessWidget {
   final String label;
@@ -15,6 +16,7 @@ class MainTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      style: const TextStyle(color: AppColors.lightMentolGreenColor),
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
@@ -22,7 +24,10 @@ class MainTextField extends StatelessWidget {
         labelStyle: const TextStyle(color: Colors.white),
         enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white)),
+        focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.whiteColor)),
       ),
+      cursorColor: AppColors.whiteColor,
       obscureText: obscureText,
     );
   }

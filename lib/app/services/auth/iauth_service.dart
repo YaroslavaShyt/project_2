@@ -8,5 +8,7 @@ abstract interface class IAuthService implements ChangeNotifier{
 
   Future<void> loginOtp({required String otp});
 
+  Future<void> loginGoogle();
+
   Future<void> logout();
 }

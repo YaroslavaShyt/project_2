@@ -11,11 +11,10 @@ class LoginViewModel extends BaseChangeNotifier {
   bool isFormDataValid = true;
 
   String _name = '';
-  String _surname = '';
   String _phoneNumber = '';
+  String _otp = '';
 
   String? _nameError;
-  String? _surnameError;
   String? _phoneNumberError;
 
   LoginViewModel(
@@ -27,10 +26,10 @@ class LoginViewModel extends BaseChangeNotifier {
         _userService = userService;
 
   String get name => _name;
-  String get surname => _surname;
+
   String get phoneNumber => _phoneNumber;
   String? get nameError => _nameError;
-  String? get surnameError => _surnameError;
+
   String? get phoneNumberError => _phoneNumberError;
 
   set name(String newName) {
@@ -38,23 +37,18 @@ class LoginViewModel extends BaseChangeNotifier {
     _nameError = null;
   }
 
-  set surname(String newSurname) {
-    _surname = newSurname;
-    _surnameError = null;
-  }
-
   set phoneNumber(String newPhoneNumber) {
     _phoneNumber = newPhoneNumber;
     _phoneNumberError = null;
   }
 
+  set otp(String newOtp) {
+    _otp = newOtp;
+  }
+
   bool isValidated() {
     if (_name.isEmpty) {
       _nameError = "Provide name, please!";
-    }
-
-    if (_surname.isEmpty) {
-      _surnameError = "Provide surname, please!";
     }
 
     if (_phoneNumber.isEmpty) {
@@ -63,19 +57,17 @@ class LoginViewModel extends BaseChangeNotifier {
       _phoneNumberError = "Not enough numbers!";
     }
 
-    if (_nameError != null ||
-        _surnameError != null ||
-        _phoneNumberError != null) {
+    if (_nameError != null || _phoneNumberError != null) {
       notifyListeners();
       return false;
     }
     return true;
   }
 
-  void onLoginButtonPressed(String otp) {
-    _loginRepository.loginOtp(otp: otp);
+  void onLoginOtpButtonPressed() {
+    _loginRepository.loginOtp(otp: _otp);
     _userService
-        .setUser(User(name: name, surname: surname, phoneNumber: phoneNumber));
+        .setUser(User(name: name, surname: '', phoneNumber: phoneNumber));
     _navigationUtil.navigateBack();
   }
 
@@ -85,5 +77,11 @@ class LoginViewModel extends BaseChangeNotifier {
     if (isFormDataValid) {
       _loginRepository.sendOtp(phoneNumber: phoneNumber);
     }
+    _navigationUtil.navigateBack();
+  }
+
+  void onLoginGoogleButtonPressed() {
+    print('pressed');
+    _loginRepository.loginGoogle();
   }
 }

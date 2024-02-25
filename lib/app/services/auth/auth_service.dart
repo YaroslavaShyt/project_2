@@ -25,4 +25,9 @@ class AuthService extends ChangeNotifier implements IAuthService {
   Future<void> logout() async {
     _loginRepository.logout();
   }
+
+  @override
+  Future<void> loginGoogle() async {
+    _loginRepository.loginGoogle();
+  }
 }
