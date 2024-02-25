@@ -81,7 +81,6 @@ class LoginViewModel extends BaseChangeNotifier {
   }
 
   void onLoginGoogleButtonPressed() {
-    print('pressed');
     _loginRepository.loginGoogle();
   }
 }

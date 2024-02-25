@@ -8,24 +8,9 @@ import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/services/networking/collections.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
-class PlantsHomeScreen extends StatefulWidget {
+class PlantsHomeScreen extends StatelessWidget {
   final PlantsHomeViewModel plantsHomeViewModel;
   const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
-
-  @override
-  State<PlantsHomeScreen> createState() => _PlantsHomeScreenState();
-}
-
-class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController quantityController = TextEditingController();
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    quantityController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +27,16 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                     firstLabel: 'Назва',
                     secondLabel: 'Кількість',
                     buttonTitle: 'Додати',
-                    //  firstController: nameController,
                     onFirstTextFieldChanged: (value) =>
-                        widget.plantsHomeViewModel.newPlantName = value,
+                        plantsHomeViewModel.newPlantName = value,
                     onSecondTextFieldChanged: (value) =>
-                        widget.plantsHomeViewModel.newPlantQuantity = value,
+                        plantsHomeViewModel.newPlantQuantity = value,
                     onButtonPressed:
-                        widget.plantsHomeViewModel.onAddPlantButtonPressed,
-                    //secondController: quantityController
+                        plantsHomeViewModel.onAddPlantButtonPressed,
                   )),
               icon: const Icon(Icons.add)),
           IconButton(
-              onPressed: widget.plantsHomeViewModel.onLogoutButtonPressed,
+              onPressed: plantsHomeViewModel.onLogoutButtonPressed,
               icon: const Icon(Icons.logout_rounded))
         ],
       ),
@@ -79,9 +62,34 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                             child: PlantListItem(
                               title: data?.data()["name"] ?? 'custom name',
                               quantity: data?.data()["quantity"] ?? '0',
-                              onEditButtonPressed: () {},
-                              onDeleteButtonPressed: () => widget
-                                  .plantsHomeViewModel
+                              onEditButtonPressed: () {
+                                plantsHomeViewModel.newPlantName =
+                                    data?.data()["name"] ?? 'custom name';
+                                plantsHomeViewModel.newPlantQuantity =
+                                    data?.data()["quantity"] ?? '0';
+                                ModalsService.showBottomModal(
+                                    context: context,
+                                    data: ModalBottomSheetContentData(
+                                        title: 'Редагувати',
+                                        firstLabel: 'Нова назва',
+                                        secondLabel: 'Нова кількість',
+                                        buttonTitle: 'Зберегти',
+                                        firstFieldValue: data?.data()["name"] ??
+                                            '',
+                                        secondFieldValue:
+                                            data?.data()["quantity"] ?? '',
+                                        onFirstTextFieldChanged: (value) =>
+                                            plantsHomeViewModel.newPlantName =
+                                                value,
+                                        onSecondTextFieldChanged: (value) =>
+                                            plantsHomeViewModel
+                                                .newPlantQuantity = value,
+                                        onButtonPressed: () =>
+                                            plantsHomeViewModel
+                                                .onUpdatePlantButtonPressed(
+                                                    id: data?.id ?? '')));
+                              },
+                              onDeleteButtonPressed: () => plantsHomeViewModel
                                   .onDeletePlantButtonPressed(
                                       id: data?.id ?? ''),
                             ),
@@ -93,7 +101,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
             }
             return const Center(
               child: CircularProgressIndicator(
-                color: AppColors.oliveGreenColor,
+                color: AppColors.darkWoodGeenColor,
               ),
             );
           }),

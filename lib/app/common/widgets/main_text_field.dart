@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
-class MainTextField extends StatelessWidget {
+class MainTextField extends StatefulWidget {
   final String label;
+  final String? value;
   final ValueChanged<String> onChanged;
   final bool obscureText;
   final String? errorText;
@@ -11,16 +12,37 @@ class MainTextField extends StatelessWidget {
       required this.label,
       required this.onChanged,
       required this.obscureText,
+      this.value,
       this.errorText});
+
+  @override
+  State<MainTextField> createState() => _MainTextFieldState();
+}
+
+class _MainTextFieldState extends State<MainTextField> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.value);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       style: const TextStyle(color: AppColors.lightMentolGreenColor),
-      onChanged: onChanged,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
-        labelText: label,
-        errorText: errorText,
+        labelText: widget.label,
+        errorText: widget.errorText,
         labelStyle: const TextStyle(color: Colors.white),
         enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white)),
@@ -28,7 +50,7 @@ class MainTextField extends StatelessWidget {
             borderSide: BorderSide(color: AppColors.whiteColor)),
       ),
       cursorColor: AppColors.whiteColor,
-      obscureText: obscureText,
+      obscureText: widget.obscureText,
     );
   }
 }

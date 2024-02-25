@@ -1,4 +1,5 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
+import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/services/user/iuser_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
@@ -7,6 +8,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
   final IUserService _userService;
   final IPlantsRepository _plantsRepository;
+  final INavigationUtil _navigationUtil;
 
   String _newPlantName = '';
   String _newPlantQuantity = '';
@@ -57,9 +59,11 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   PlantsHomeViewModel(
       {required IUserService userService,
+      required INavigationUtil navigationUtil,
       required IPlantsRepository plantsRepository,
       required ILoginRepository loginRepository})
       : _userService = userService,
+        _navigationUtil = navigationUtil,
         _plantsRepository = plantsRepository,
         _loginRepository = loginRepository;
 
@@ -77,15 +81,19 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
       _plantsRepository.createPlant(
           data: {"name": newPlantName, "quantity": newPlantQuantity});
     }
+    newPlantName = '';
+    newPlantQuantity = '';
+    _navigationUtil.navigateBack();
   }
 
   void onReadPlantButtonPressed({required String id}) {
     _plantsRepository.readPlant(id: id);
   }
 
-  void onUpdatePlantButtonPressed(
-      {required String id, required Map<String, dynamic> data}) {
-    _plantsRepository.updatePlant(id: id, data: data);
+  void onUpdatePlantButtonPressed({required String id}) {
+    _plantsRepository.updatePlant(
+        id: id, data: {"name": newPlantName, "quantity": newPlantQuantity});
+    _navigationUtil.navigateBack();
   }
 
   void onDeletePlantButtonPressed({required String id}) {

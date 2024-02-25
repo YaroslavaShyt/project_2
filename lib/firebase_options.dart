@@ -50,6 +50,7 @@ class DefaultFirebaseOptions {
     projectId: 'project2-42954',
     authDomain: 'project2-42954.firebaseapp.com',
     storageBucket: 'project2-42954.appspot.com',
+    measurementId: 'G-X0HKDGQ51C',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -66,6 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '501879961310',
     projectId: 'project2-42954',
     storageBucket: 'project2-42954.appspot.com',
+    androidClientId: '501879961310-pflefps5egsaontbgpcps94hil8mebrr.apps.googleusercontent.com',
+    iosClientId: '501879961310-7bgra3sqpcvk1phjd37plse6jgqt94i5.apps.googleusercontent.com',
     iosBundleId: 'com.example.project2',
   );
 
@@ -75,6 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '501879961310',
     projectId: 'project2-42954',
     storageBucket: 'project2-42954.appspot.com',
+    androidClientId: '501879961310-pflefps5egsaontbgpcps94hil8mebrr.apps.googleusercontent.com',
+    iosClientId: '501879961310-duvqcbe67puo9r3meebkj2m99qe1sgki.apps.googleusercontent.com',
     iosBundleId: 'com.example.project2.RunnerTests',
   );
 }

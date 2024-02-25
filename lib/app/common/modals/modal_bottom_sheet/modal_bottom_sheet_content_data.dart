@@ -5,6 +5,8 @@ class ModalBottomSheetContentData {
   final String firstLabel;
   final String secondLabel;
   final String buttonTitle;
+  final String? firstFieldValue;
+  final String? secondFieldValue;
   final void Function(String) onFirstTextFieldChanged;
   final void Function(String) onSecondTextFieldChanged;
   final void Function() onButtonPressed;
@@ -17,5 +19,7 @@ class ModalBottomSheetContentData {
       required this.onFirstTextFieldChanged,
       required this.onSecondTextFieldChanged,
       required this.onButtonPressed,
+      this.firstFieldValue, 
+      this.secondFieldValue
      });
 }

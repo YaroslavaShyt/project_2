@@ -30,6 +30,7 @@ class ModalBottomSheetContent extends StatelessWidget {
                     fontSize: 25),
               ),
               MainTextField(
+                  value: data.firstFieldValue,
                   label: data.firstLabel,
                   onChanged: data.onFirstTextFieldChanged,
                   obscureText: false),
@@ -37,6 +38,7 @@ class ModalBottomSheetContent extends StatelessWidget {
                 height: 20.0,
               ),
               MainTextField(
+                  value: data.secondFieldValue,
                   label: data.secondLabel,
                   onChanged: data.onSecondTextFieldChanged,
                   obscureText: false),
