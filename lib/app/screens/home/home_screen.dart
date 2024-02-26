@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/screens/home/home_view_model.dart';
 import 'package:project_2/app/screens/login/login_factory.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_factory.dart';
-import 'package:project_2/domain/login/ilogin_repository.dart';
+import 'package:project_2/app/services/auth/iauth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   final HomeViewModel homeViewModel;
@@ -10,8 +10,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<AuthState>(
-      stream: homeViewModel.authStateStream,
+    return StreamBuilder<UserState>(
+      stream: homeViewModel.userStateStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -23,9 +23,9 @@ class HomeScreen extends StatelessWidget {
                 body: Center(child: Text('Error: ${snapshot.error}')));
           }
           switch (snapshot.data) {
-            case AuthState.authenticated:
+            case UserState.ready:
               return PlantsHomeFactory.build([]);
-            case AuthState.notAuthenticated:
+            case UserState.notReady:
               return LoginFactory.build();
             default:
               return const Scaffold(

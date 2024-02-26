@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/domain/login/ilogin_repository.dart';
+
+enum UserState {ready, notReady} 
 
 abstract interface class IAuthService implements ChangeNotifier{
-  Stream<AuthState> get authStateStream;
+  Stream<UserState> userStateStream();
 
   Future sendOtp({required String phoneNumber});
 

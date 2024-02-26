@@ -49,7 +49,7 @@ class ModalBottomSheetContent extends StatelessWidget {
                 height: 60,
                 width: 300,
                 child: MainElevatedButton(
-                    onButtonPressed: () => data.onButtonPressed(),
+                    onButtonPressed: data.onButtonPressed,
                     title: data.buttonTitle),
               )
             ],

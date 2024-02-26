@@ -12,8 +12,8 @@ class Plant implements IPlant {
 
   Plant({required this.id, required this.name, required this.quantity});
 
-  factory Plant.fromMap({required Map<String, dynamic> data}) {
+  factory Plant.fromJSON({required Map<String, dynamic> data}) {
     return Plant(
-        id: data["id"], name: data["name"], quantity: data["quantity"]);
+        id: data["id"], name: data["data"]["name"], quantity: data["data"]["quantity"]);
   }
 }

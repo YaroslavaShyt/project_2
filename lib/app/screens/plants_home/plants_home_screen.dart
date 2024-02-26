@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
 import 'package:project_2/app/common/modals/modals_service.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/list_header.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
-import 'package:project_2/app/services/networking/collections.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class PlantsHomeScreen extends StatelessWidget {
@@ -41,9 +39,7 @@ class PlantsHomeScreen extends StatelessWidget {
         ],
       ),
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection(plantsCollection)
-              .snapshots(),
+          stream: plantsHomeViewModel.getPlantsStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Column(
@@ -53,20 +49,17 @@ class PlantsHomeScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height - 400.0,
                     child: ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        itemCount: snapshot.data?.docs.length ?? 0,
+                        itemCount: snapshot.data?.data.length ?? 0,
                         itemBuilder: (context, index) {
-                          QueryDocumentSnapshot<Map<String, dynamic>>? data =
-                              snapshot.data?.docs[index];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: PlantListItem(
-                              title: data?.data()["name"] ?? 'custom name',
-                              quantity: data?.data()["quantity"] ?? '0',
+                              plant: snapshot.data!.data[index],
                               onEditButtonPressed: () {
                                 plantsHomeViewModel.newPlantName =
-                                    data?.data()["name"] ?? 'custom name';
+                                    snapshot.data!.data[index].name;
                                 plantsHomeViewModel.newPlantQuantity =
-                                    data?.data()["quantity"] ?? '0';
+                                    snapshot.data!.data[index].quantity;
                                 ModalsService.showBottomModal(
                                     context: context,
                                     data: ModalBottomSheetContentData(
@@ -74,24 +67,25 @@ class PlantsHomeScreen extends StatelessWidget {
                                         firstLabel: 'Нова назва',
                                         secondLabel: 'Нова кількість',
                                         buttonTitle: 'Зберегти',
-                                        firstFieldValue: data?.data()["name"] ??
-                                            '',
+                                        firstFieldValue:
+                                            snapshot.data!.data[index].name,
                                         secondFieldValue:
-                                            data?.data()["quantity"] ?? '',
+                                            snapshot.data!.data[index].quantity,
                                         onFirstTextFieldChanged: (value) =>
                                             plantsHomeViewModel.newPlantName =
                                                 value,
                                         onSecondTextFieldChanged: (value) =>
-                                            plantsHomeViewModel
-                                                .newPlantQuantity = value,
+                                            plantsHomeViewModel.newPlantQuantity =
+                                                value,
                                         onButtonPressed: () =>
                                             plantsHomeViewModel
                                                 .onUpdatePlantButtonPressed(
-                                                    id: data?.id ?? '')));
+                                                    id: snapshot.data!
+                                                        .data[index].id)));
                               },
                               onDeleteButtonPressed: () => plantsHomeViewModel
                                   .onDeletePlantButtonPressed(
-                                      id: data?.id ?? ''),
+                                      id: snapshot.data!.data[index].id),
                             ),
                           );
                         }),

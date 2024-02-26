@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/domain/plants/iplant.dart';
 
 class PlantListItem extends StatelessWidget {
-  final String title;
-  final String quantity;
+  final IPlant plant;
   final void Function() onDeleteButtonPressed;
   final void Function() onEditButtonPressed;
   const PlantListItem(
       {super.key,
-      required this.title,
-      required this.quantity,
+      required this.plant,
       required this.onDeleteButtonPressed,
       required this.onEditButtonPressed});
 
@@ -18,11 +17,11 @@ class PlantListItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          title,
+          plant.name,
           style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
         ),
         Text(
-          quantity,
+          plant.quantity,
           style: const TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),
         ),
         Row(

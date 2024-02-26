@@ -1,6 +1,7 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/services/user/iuser_service.dart';
+import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 
@@ -12,12 +13,16 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   String _newPlantName = '';
   String _newPlantQuantity = '';
-
+  String? _updatedPlantName;
+  String? _updatedPlantQuantity;
   String? _newPlantNameError;
   String? _newPlantQuantityError;
 
   String get newPlantName => _newPlantName;
   String get newPlantQuantity => _newPlantQuantity;
+  String? get updatedPlantName => _updatedPlantName;
+  String? get updatedPlantQuantity => _updatedPlantQuantity;
+
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
 
@@ -70,6 +75,8 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   void onLogoutButtonPressed() {
     _loginRepository.logout();
   }
+
+  Stream<PlantsData> get getPlantsStream => _plantsRepository.plantsState();
 
   String get userName => _userService.user?.name ?? '';
   String get userSurname => _userService.user?.surname ?? '';

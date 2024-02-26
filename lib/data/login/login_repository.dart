@@ -14,6 +14,7 @@ class LoginRepository implements ILoginRepository {
   final StreamController<AuthState> _streamController =
       StreamController.broadcast();
 
+
   @override
   Future<void> loginGoogle()async{
     final GoogleSignIn googleSignIn = GoogleSignIn();
