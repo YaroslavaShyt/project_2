@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class ModalBottomSheetContentData {
   final String title;
   final String firstLabel;

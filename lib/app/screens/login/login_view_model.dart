@@ -26,10 +26,9 @@ class LoginViewModel extends BaseChangeNotifier {
         _userService = userService;
 
   String get name => _name;
-
   String get phoneNumber => _phoneNumber;
+  
   String? get nameError => _nameError;
-
   String? get phoneNumberError => _phoneNumberError;
 
   set name(String newName) {
@@ -67,7 +66,7 @@ class LoginViewModel extends BaseChangeNotifier {
   void onLoginOtpButtonPressed() {
     _loginRepository.loginOtp(otp: _otp);
     _userService
-        .setUser(User(name: name, surname: '', phoneNumber: phoneNumber));
+        .setUser(User(name: name, phoneNumber: phoneNumber));
     _navigationUtil.navigateBack();
   }
 

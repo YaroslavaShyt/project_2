@@ -5,11 +5,8 @@ class User implements IUser {
   final String name;
 
   @override
-  final String surname;
-
-  @override
   final String phoneNumber;
 
 
-  User({required this.name, required this.surname, required this.phoneNumber});
+  User({required this.name, required this.phoneNumber});
 }

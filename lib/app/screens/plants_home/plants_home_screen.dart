@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
-import 'package:project_2/app/common/modals/modals_service.dart';
+import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
+import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/list_header.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';

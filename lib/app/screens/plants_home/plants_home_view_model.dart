@@ -13,15 +13,11 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   String _newPlantName = '';
   String _newPlantQuantity = '';
-  String? _updatedPlantName;
-  String? _updatedPlantQuantity;
   String? _newPlantNameError;
   String? _newPlantQuantityError;
 
   String get newPlantName => _newPlantName;
   String get newPlantQuantity => _newPlantQuantity;
-  String? get updatedPlantName => _updatedPlantName;
-  String? get updatedPlantQuantity => _updatedPlantQuantity;
 
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
@@ -79,7 +75,6 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   Stream<PlantsData> get getPlantsStream => _plantsRepository.plantsState();
 
   String get userName => _userService.user?.name ?? '';
-  String get userSurname => _userService.user?.surname ?? '';
   String get userPhoneNumber => _userService.user?.phoneNumber ?? '';
 
   void onAddPlantButtonPressed() {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/modals/pop_up_dialog/pop_up_dialog_data.dart';
+import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class PopUpDialog extends StatelessWidget {

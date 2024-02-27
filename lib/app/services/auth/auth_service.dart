@@ -28,11 +28,6 @@ class AuthService extends ChangeNotifier implements IAuthService {
     return _userStateStreamController.stream;
   }
 
-  @override
-  void dispose() {
-    _userStateStreamController.close();
-    super.dispose();
-  }
 
   @override
   Future sendOtp({required String phoneNumber}) async {

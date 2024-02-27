@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
-import 'package:project_2/app/common/modals/modals_service.dart';
-import 'package:project_2/app/common/modals/pop_up_dialog/pop_up_dialog_data.dart';
+import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
+import 'package:project_2/app/common/widgets/modals/modals_service.dart';
+import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
 import 'package:project_2/app/screens/login/login_view_model.dart';
 import 'package:project_2/app/common/widgets/main_text_field.dart';
@@ -85,8 +85,7 @@ class LoginScreen extends StatelessWidget {
                               loginViewModel.phoneNumber = value,
                           onButtonPressed: () => {
                             loginViewModel.onSendOtpButtonPressed(),
-                            if (loginViewModel.isFormDataValid)
-                              {
+                            if (loginViewModel.isFormDataValid){
                                 ModalsService.showPopUpModal(
                                     context: context,
                                     data: PopUpDialogData(
