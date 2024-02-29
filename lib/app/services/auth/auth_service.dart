@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
-import 'package:project_2/app/services/auth/iauth_service.dart';
+import 'package:project_2/domain/services/iauth_service.dart';
 
 class AuthService extends ChangeNotifier implements IAuthService {
   final ILoginRepository _loginRepository;

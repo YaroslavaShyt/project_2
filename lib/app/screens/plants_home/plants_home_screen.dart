@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
+import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/list_header.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
+import 'package:project_2/domain/plants/iplant.dart';
 
 class PlantsHomeScreen extends StatelessWidget {
   final PlantsHomeViewModel plantsHomeViewModel;
@@ -18,20 +20,13 @@ class PlantsHomeScreen extends StatelessWidget {
         title: const Text("Plant App"),
         actions: [
           IconButton(
-              onPressed: () => ModalsService.showBottomModal(
-                  context: context,
-                  data: ModalBottomSheetContentData(
-                    title: 'Нова рослина',
-                    firstLabel: 'Назва',
-                    secondLabel: 'Кількість',
-                    buttonTitle: 'Додати',
-                    onFirstTextFieldChanged: (value) =>
-                        plantsHomeViewModel.newPlantName = value,
-                    onSecondTextFieldChanged: (value) =>
-                        plantsHomeViewModel.newPlantQuantity = value,
-                    onButtonPressed:
-                        plantsHomeViewModel.onAddPlantButtonPressed,
-                  )),
+              onPressed: () => _changeTitles(context, true),
+              icon: const Icon(Icons.text_increase)),
+          IconButton(
+              onPressed: () => _changeTitles(context, false),
+              icon: const Icon(Icons.text_decrease)),
+          IconButton(
+              onPressed: () => _showAddPlantModal(context),
               icon: const Icon(Icons.add)),
           IconButton(
               onPressed: plantsHomeViewModel.onLogoutButtonPressed,
@@ -55,34 +50,8 @@ class PlantsHomeScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: PlantListItem(
                               plant: snapshot.data!.data[index],
-                              onEditButtonPressed: () {
-                                plantsHomeViewModel.newPlantName =
-                                    snapshot.data!.data[index].name;
-                                plantsHomeViewModel.newPlantQuantity =
-                                    snapshot.data!.data[index].quantity;
-                                ModalsService.showBottomModal(
-                                    context: context,
-                                    data: ModalBottomSheetContentData(
-                                        title: 'Редагувати',
-                                        firstLabel: 'Нова назва',
-                                        secondLabel: 'Нова кількість',
-                                        buttonTitle: 'Зберегти',
-                                        firstFieldValue:
-                                            snapshot.data!.data[index].name,
-                                        secondFieldValue:
-                                            snapshot.data!.data[index].quantity,
-                                        onFirstTextFieldChanged: (value) =>
-                                            plantsHomeViewModel.newPlantName =
-                                                value,
-                                        onSecondTextFieldChanged: (value) =>
-                                            plantsHomeViewModel.newPlantQuantity =
-                                                value,
-                                        onButtonPressed: () =>
-                                            plantsHomeViewModel
-                                                .onUpdatePlantButtonPressed(
-                                                    id: snapshot.data!
-                                                        .data[index].id)));
-                              },
+                              onEditButtonPressed: () => _showEditPlantModal(
+                                  context, snapshot.data!.data[index]),
                               onDeleteButtonPressed: () => plantsHomeViewModel
                                   .onDeletePlantButtonPressed(
                                       id: snapshot.data!.data[index].id),
@@ -99,6 +68,75 @@ class PlantsHomeScreen extends StatelessWidget {
               ),
             );
           }),
+    );
+  }
+
+  void _changeTitles(BuildContext context, bool toUpperCase) {
+    final future = plantsHomeViewModel.changeCaseTitles(upper: toUpperCase);
+
+    future.then((value) {
+      if (value["success"] == false) {
+        _showErrorDialog(context, value["message"] ?? "Виникла помилка");
+      }
+    });
+  }
+
+  void _showAddPlantModal(BuildContext context) {
+    ModalsService.showBottomModal(
+      context: context,
+      data: ModalBottomSheetContentData(
+        title: 'Нова рослина',
+        firstLabel: 'Назва',
+        secondLabel: 'Кількість',
+        buttonTitle: 'Додати',
+        firstErrorText: plantsHomeViewModel.newPlantNameError,
+        secondErrorText: plantsHomeViewModel.newPlantQuantityError,
+        onFirstTextFieldChanged: (value) =>
+            plantsHomeViewModel.newPlantName = value,
+        onSecondTextFieldChanged: (value) =>
+            plantsHomeViewModel.newPlantQuantity = value,
+        onButtonPressed: plantsHomeViewModel.onAddPlantButtonPressed,
+      ),
+    );
+  }
+
+  void _showEditPlantModal(BuildContext context, IPlant plant) {
+    plantsHomeViewModel.newPlantName = plant.name;
+    plantsHomeViewModel.newPlantQuantity = plant.quantity;
+
+    ModalsService.showBottomModal(
+      context: context,
+      data: ModalBottomSheetContentData(
+        title: 'Редагувати',
+        firstLabel: 'Нова назва',
+        secondLabel: 'Нова кількість',
+        buttonTitle: 'Зберегти',
+        firstFieldValue: plant.name,
+        secondFieldValue: plant.quantity,
+        firstErrorText: plantsHomeViewModel.newPlantNameError,
+        secondErrorText: plantsHomeViewModel.newPlantQuantityError,
+        onFirstTextFieldChanged: (value) =>
+            plantsHomeViewModel.newPlantName = value,
+        onSecondTextFieldChanged: (value) =>
+            plantsHomeViewModel.newPlantQuantity = value,
+        onButtonPressed: () => plantsHomeViewModel.onUpdatePlantButtonPressed(
+          id: plant.id,
+        ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    ModalsService.showPopUpModal(
+      context: context,
+      data: PopUpDialogData(
+        title: 'Помилка',
+        content: Text(
+          message,
+          style: const TextStyle(color: AppColors.whiteColor),
+        ),
+        actions: [],
+      ),
     );
   }
 }

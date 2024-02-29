@@ -32,6 +32,7 @@ class ModalBottomSheetContent extends StatelessWidget {
               MainTextField(
                   value: data.firstFieldValue,
                   label: data.firstLabel,
+                  errorText: data.firstErrorText,
                   onChanged: data.onFirstTextFieldChanged,
                   obscureText: false),
               const SizedBox(
@@ -39,6 +40,7 @@ class ModalBottomSheetContent extends StatelessWidget {
               ),
               MainTextField(
                   value: data.secondFieldValue,
+                  errorText: data.secondErrorText,
                   label: data.secondLabel,
                   onChanged: data.onSecondTextFieldChanged,
                   obscureText: false),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/screens/home/home_view_model.dart';
 import 'package:project_2/app/screens/login/login_factory.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_factory.dart';
-import 'package:project_2/app/services/auth/iauth_service.dart';
+import 'package:project_2/domain/services/iauth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   final HomeViewModel homeViewModel;

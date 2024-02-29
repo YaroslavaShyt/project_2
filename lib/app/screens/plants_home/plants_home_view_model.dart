@@ -1,15 +1,25 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
-import 'package:project_2/app/services/user/iuser_service.dart';
+import 'package:project_2/domain/services/imodification_service.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
-  final IUserService _userService;
   final IPlantsRepository _plantsRepository;
   final INavigationUtil _navigationUtil;
+  final IModificationService _modificationService;
+
+  PlantsHomeViewModel(
+      {required INavigationUtil navigationUtil,
+      required IPlantsRepository plantsRepository,
+      required IModificationService modificationService,
+      required ILoginRepository loginRepository})
+      : _modificationService = modificationService,
+        _navigationUtil = navigationUtil,
+        _plantsRepository = plantsRepository,
+        _loginRepository = loginRepository;
 
   String _newPlantName = '';
   String _newPlantQuantity = '';
@@ -22,7 +32,18 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
 
-  set newPlantName(name) {
+  Future<Map<String, dynamic>> changeCaseTitles({required bool upper}) async {
+    try {
+      Map<String, dynamic> data = upper
+          ? await _modificationService.toUpperCaseData()
+          : await _modificationService.toLowerCaseData();
+      return data;
+    } catch (e) {
+      return {"success": false, "message": e.toString()};
+    }
+  }
+
+  set newPlantName(String name) {
     if (name.isEmpty) {
       _newPlantNameError = "Назва є обов'язковою!";
       notifyListeners();
@@ -31,7 +52,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
     }
   }
 
-  set newPlantQuantity(quantity) {
+  set newPlantQuantity(String quantity) {
     if (quantity.isEmpty) {
       _newPlantQuantityError = "Кількість є обов'язковою!";
       notifyListeners();
@@ -43,62 +64,47 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   bool isNewPlantValidated() {
     if (_newPlantName.isEmpty) {
       _newPlantNameError = "Назва є обов'язковою!";
+    } else {
+      _newPlantNameError = null;
     }
     if (_newPlantQuantity.isEmpty) {
       _newPlantQuantityError = "Кількість є обов'язковою!";
-    }
-    if (_newPlantNameError != null || _newPlantQuantityError != null) {
-      notifyListeners();
-      return false;
     } else {
-      _newPlantNameError = null;
       _newPlantQuantityError = null;
-      notifyListeners();
     }
-    return true;
-  }
-
-  PlantsHomeViewModel(
-      {required IUserService userService,
-      required INavigationUtil navigationUtil,
-      required IPlantsRepository plantsRepository,
-      required ILoginRepository loginRepository})
-      : _userService = userService,
-        _navigationUtil = navigationUtil,
-        _plantsRepository = plantsRepository,
-        _loginRepository = loginRepository;
-
-  void onLogoutButtonPressed() {
-    _loginRepository.logout();
+    notifyListeners();
+    return _newPlantNameError == null && _newPlantQuantityError == null;
   }
 
   Stream<PlantsData> get getPlantsStream => _plantsRepository.plantsState();
 
-  String get userName => _userService.user?.name ?? '';
-  String get userPhoneNumber => _userService.user?.phoneNumber ?? '';
+  void onLogoutButtonPressed() => _loginRepository.logout();
 
   void onAddPlantButtonPressed() {
     final bool isValid = isNewPlantValidated();
     if (isValid) {
       _plantsRepository.createPlant(
           data: {"name": newPlantName, "quantity": newPlantQuantity});
-    }
-    newPlantName = '';
-    newPlantQuantity = '';
-    _navigationUtil.navigateBack();
+      newPlantName = '';
+      newPlantQuantity = '';
+      _navigationUtil.navigateBack();
+    } 
   }
 
-  void onReadPlantButtonPressed({required String id}) {
-    _plantsRepository.readPlant(id: id);
-  }
+  void onReadPlantButtonPressed({required String id}) =>
+      _plantsRepository.readPlant(id: id);
 
   void onUpdatePlantButtonPressed({required String id}) {
-    _plantsRepository.updatePlant(
-        id: id, data: {"name": newPlantName, "quantity": newPlantQuantity});
-    _navigationUtil.navigateBack();
+    final bool isValid = isNewPlantValidated();
+    if (isValid) {
+      _plantsRepository.updatePlant(
+          id: id, data: {"name": newPlantName, "quantity": newPlantQuantity});
+      newPlantName = '';
+      newPlantQuantity = '';
+      _navigationUtil.navigateBack();
+    }
   }
 
-  void onDeletePlantButtonPressed({required String id}) {
-    _plantsRepository.deletePlant(id: id);
-  }
+  void onDeletePlantButtonPressed({required String id}) =>
+      _plantsRepository.deletePlant(id: id);
 }

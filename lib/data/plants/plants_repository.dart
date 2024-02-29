@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_2/app/services/networking/collections.dart';
-import 'package:project_2/app/services/networking/inetwork_service.dart';
+import 'package:project_2/app/services/networking/storage/collections.dart';
+import 'package:project_2/domain/services/inetwork_service.dart';
 import 'package:project_2/data/plants/plant.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/plants/iplant.dart';
@@ -16,7 +16,7 @@ class PlantsRepository implements IPlantsRepository {
   final StreamController<PlantsData> _streamController =
       StreamController.broadcast();
 
-@override
+  @override
   Stream<PlantsData> plantsState() {
     FirebaseFirestore.instance
         .collection(plantsCollection)
@@ -31,7 +31,6 @@ class PlantsRepository implements IPlantsRepository {
 
     return _streamController.stream;
   }
-
 
   @override
   Future<void> createPlant({required Map<String, dynamic> data}) async {

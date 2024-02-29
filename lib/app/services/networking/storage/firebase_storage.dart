@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_2/app/services/networking/inetwork_service.dart';
+import 'package:project_2/domain/services/inetwork_service.dart';
 
 class FirebaseStorage implements INetworkService {
   final String _collectionName;
