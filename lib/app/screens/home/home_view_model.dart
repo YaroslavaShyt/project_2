@@ -8,4 +8,6 @@ class HomeViewModel extends ChangeNotifier {
       : _authService = authService;
 
   Stream<UserState> get userStateStream => _authService.userStateStream();
+
+  void closeStream() => _authService.closeStream();
 }

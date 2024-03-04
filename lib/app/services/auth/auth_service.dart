@@ -12,6 +12,12 @@ class AuthService extends ChangeNotifier implements IAuthService {
       : _loginRepository = loginRepository;
 
   @override
+  void closeStream(){
+    _userStateStreamController.close();
+    _loginRepository.closeAuthStream();
+  }
+
+  @override
   Stream<UserState> userStateStream() {
     Stream<UserState> stream = _loginRepository.authState().map((event) {
       switch (event) {
@@ -24,6 +30,7 @@ class AuthService extends ChangeNotifier implements IAuthService {
     stream.listen((event) {
       _userStateStreamController.add(event);
     });
+    
     
     return _userStateStreamController.stream;
   }

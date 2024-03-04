@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
+import 'package:project_2/app/services/networking/functions/functions.dart';
 import 'package:project_2/app/services/networking/storage/collections.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
 import 'package:project_2/data/plants/plant.dart';
@@ -9,12 +12,21 @@ import 'package:project_2/domain/plants/iplants_repository.dart';
 
 class PlantsRepository implements IPlantsRepository {
   final INetworkService _networkService;
+  final FirebaseFunctionsService _firebaseFunctionsService;
 
-  PlantsRepository({required INetworkService networkService})
-      : _networkService = networkService;
+  PlantsRepository(
+      {required INetworkService networkService,
+      required FirebaseFunctionsService firebaseFunctionsService})
+      : _networkService = networkService,
+        _firebaseFunctionsService = firebaseFunctionsService;
 
   final StreamController<PlantsData> _streamController =
       StreamController.broadcast();
+
+  @override
+  void closePlantsStream() {
+    _streamController.close();
+  }
 
   @override
   Stream<PlantsData> plantsState() {
@@ -34,23 +46,39 @@ class PlantsRepository implements IPlantsRepository {
 
   @override
   Future<void> createPlant({required Map<String, dynamic> data}) async {
-    await _networkService.create(data: data);
+    await _networkService.create(endpoint: plantsCollection, data: data);
   }
 
   @override
   Future<void> deletePlant({required String id}) async {
-    await _networkService.delete(id: id);
+    await _networkService.delete(endpoint: plantsCollection, id: id);
   }
 
   @override
   Future<IPlant> readPlant({required String id}) async {
-    Map<String, dynamic> data = await _networkService.read(id: id);
+    Map<String, dynamic> data =
+        await _networkService.read(endpoint: plantsCollection, id: id);
     return Plant.fromJSON(data: data);
   }
 
   @override
   Future<void> updatePlant(
       {required String id, required Map<String, dynamic> data}) async {
-    await _networkService.update(id: id, data: data);
+    await _networkService.update(
+        endpoint: plantsCollection, id: id, data: data);
+  }
+
+   @override
+  Future<Map<String, dynamic>> toLowerCaseData() async {
+    HttpsCallableResult data = await _firebaseFunctionsService.call(
+        functionName: toLowerCaseFunction, arguments: plantsCollection);
+    return data.data;
+  }
+
+  @override
+  Future toUpperCaseData() async {
+    HttpsCallableResult data = await _firebaseFunctionsService.call(
+        functionName: toUpperCaseFunction, arguments: plantsCollection);
+    return data.data;
   }
 }

@@ -5,8 +5,6 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_screen.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
-import 'package:project_2/app/services/plants/plants_modification_service.dart';
-import 'package:project_2/app/services/networking/storage/collections.dart';
 import 'package:project_2/app/services/networking/storage/firebase_storage.dart';
 import 'package:project_2/data/login/login_repository.dart';
 import 'package:project_2/data/plants/plants_repository.dart';
@@ -16,12 +14,10 @@ class PlantsHomeFactory {
   static Widget build(routeArguments) {
     return ChangeNotifierProvider(
       create: (context) => PlantsHomeViewModel(
-          modificationService: PlantsModificationService(
-              functionsService: FirebaseFunctionsService()),
           navigationUtil: context.read<INavigationUtil>(),
           plantsRepository: PlantsRepository(
+            firebaseFunctionsService: FirebaseFunctionsService(),
               networkService: FirebaseStorage(
-                  collection: plantsCollection,
                   firestore: FirebaseFirestore.instance)),
           loginRepository:
               LoginRepository(firebaseAuth: FirebaseAuth.instance)),

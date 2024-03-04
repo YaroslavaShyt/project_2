@@ -5,6 +5,8 @@ enum UserState {ready, notReady}
 abstract interface class IAuthService implements ChangeNotifier{
   Stream<UserState> userStateStream();
 
+  void closeStream();
+
   Future sendOtp({required String phoneNumber});
 
   Future<void> loginOtp({required String otp});

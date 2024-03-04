@@ -8,9 +8,35 @@ import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
-class PlantsHomeScreen extends StatelessWidget {
+class PlantsHomeScreen extends StatefulWidget {
   final PlantsHomeViewModel plantsHomeViewModel;
   const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
+
+  @override
+  State<PlantsHomeScreen> createState() => _PlantsHomeScreenState();
+}
+
+class _PlantsHomeScreenState extends State<PlantsHomeScreen>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      //widget.plantsHomeViewModel.closePlantsStream();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +55,12 @@ class PlantsHomeScreen extends StatelessWidget {
               onPressed: () => _showAddPlantModal(context),
               icon: const Icon(Icons.add)),
           IconButton(
-              onPressed: plantsHomeViewModel.onLogoutButtonPressed,
+              onPressed: widget.plantsHomeViewModel.onLogoutButtonPressed,
               icon: const Icon(Icons.logout_rounded))
         ],
       ),
       body: StreamBuilder(
-          stream: plantsHomeViewModel.getPlantsStream,
+          stream: widget.plantsHomeViewModel.getPlantsStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Column(
@@ -52,7 +78,8 @@ class PlantsHomeScreen extends StatelessWidget {
                               plant: snapshot.data!.data[index],
                               onEditButtonPressed: () => _showEditPlantModal(
                                   context, snapshot.data!.data[index]),
-                              onDeleteButtonPressed: () => plantsHomeViewModel
+                              onDeleteButtonPressed: () => widget
+                                  .plantsHomeViewModel
                                   .onDeletePlantButtonPressed(
                                       id: snapshot.data!.data[index].id),
                             ),
@@ -72,7 +99,8 @@ class PlantsHomeScreen extends StatelessWidget {
   }
 
   void _changeTitles(BuildContext context, bool toUpperCase) {
-    final future = plantsHomeViewModel.changeCaseTitles(upper: toUpperCase);
+    final future =
+        widget.plantsHomeViewModel.changeCaseTitles(upper: toUpperCase);
 
     future.then((value) {
       if (value["success"] == false) {
@@ -89,20 +117,20 @@ class PlantsHomeScreen extends StatelessWidget {
         firstLabel: 'Назва',
         secondLabel: 'Кількість',
         buttonTitle: 'Додати',
-        firstErrorText: plantsHomeViewModel.newPlantNameError,
-        secondErrorText: plantsHomeViewModel.newPlantQuantityError,
+        firstErrorText: widget.plantsHomeViewModel.newPlantNameError,
+        secondErrorText: widget.plantsHomeViewModel.newPlantQuantityError,
         onFirstTextFieldChanged: (value) =>
-            plantsHomeViewModel.newPlantName = value,
+            widget.plantsHomeViewModel.newPlantName = value,
         onSecondTextFieldChanged: (value) =>
-            plantsHomeViewModel.newPlantQuantity = value,
-        onButtonPressed: plantsHomeViewModel.onAddPlantButtonPressed,
+            widget.plantsHomeViewModel.newPlantQuantity = value,
+        onButtonPressed: widget.plantsHomeViewModel.onAddPlantButtonPressed,
       ),
     );
   }
 
   void _showEditPlantModal(BuildContext context, IPlant plant) {
-    plantsHomeViewModel.newPlantName = plant.name;
-    plantsHomeViewModel.newPlantQuantity = plant.quantity;
+    widget.plantsHomeViewModel.newPlantName = plant.name;
+    widget.plantsHomeViewModel.newPlantQuantity = plant.quantity;
 
     ModalsService.showBottomModal(
       context: context,
@@ -113,13 +141,14 @@ class PlantsHomeScreen extends StatelessWidget {
         buttonTitle: 'Зберегти',
         firstFieldValue: plant.name,
         secondFieldValue: plant.quantity,
-        firstErrorText: plantsHomeViewModel.newPlantNameError,
-        secondErrorText: plantsHomeViewModel.newPlantQuantityError,
+        firstErrorText: widget.plantsHomeViewModel.newPlantNameError,
+        secondErrorText: widget.plantsHomeViewModel.newPlantQuantityError,
         onFirstTextFieldChanged: (value) =>
-            plantsHomeViewModel.newPlantName = value,
+            widget.plantsHomeViewModel.newPlantName = value,
         onSecondTextFieldChanged: (value) =>
-            plantsHomeViewModel.newPlantQuantity = value,
-        onButtonPressed: () => plantsHomeViewModel.onUpdatePlantButtonPressed(
+            widget.plantsHomeViewModel.newPlantQuantity = value,
+        onButtonPressed: () =>
+            widget.plantsHomeViewModel.onUpdatePlantButtonPressed(
           id: plant.id,
         ),
       ),

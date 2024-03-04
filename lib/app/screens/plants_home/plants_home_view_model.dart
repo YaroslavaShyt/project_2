@@ -1,6 +1,5 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
-import 'package:project_2/domain/services/imodification_service.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
@@ -9,14 +8,12 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
   final IPlantsRepository _plantsRepository;
   final INavigationUtil _navigationUtil;
-  final IModificationService _modificationService;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
       required IPlantsRepository plantsRepository,
-      required IModificationService modificationService,
       required ILoginRepository loginRepository})
-      : _modificationService = modificationService,
+      : 
         _navigationUtil = navigationUtil,
         _plantsRepository = plantsRepository,
         _loginRepository = loginRepository;
@@ -32,11 +29,13 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
 
+  void closePlantsStream() => _plantsRepository.closePlantsStream();
+
   Future<Map<String, dynamic>> changeCaseTitles({required bool upper}) async {
     try {
       Map<String, dynamic> data = upper
-          ? await _modificationService.toUpperCaseData()
-          : await _modificationService.toLowerCaseData();
+          ? await _plantsRepository.toUpperCaseData()
+          : await _plantsRepository.toLowerCaseData();
       return data;
     } catch (e) {
       return {"success": false, "message": e.toString()};
