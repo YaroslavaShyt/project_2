@@ -64,7 +64,7 @@ exports.onUpdatePlant = functions.firestore
       const newData = change.after.data();
       const newName = newData["name"];
 
-      if (!newName.includes("(ред)")) {
+      if (!newName.includes("(ред)") && !newName.includes("(РЕД)")) {
         const updatedName = newName + " (ред)";
         return change.after.ref.update({ name: updatedName }); 
       } else {
@@ -89,18 +89,18 @@ exports.onDeletePlant = functions.firestore
     }
   });
 
-exports.printPlantCount = functions.pubsub
-  .schedule("every 24 hours")
-  .onRun(async (context) => {
-    try {
-      const snapshot = await admin.firestore().collection("plants").get();
-      const plantCount = snapshot.size;
-      console.log(`Кількість рослин у колекції: ${plantCount}`);
-      return null;
-    } catch (error) {
-      console.error("Помилка при отриманні кількості рослин:", error);
-      return null;
-    }
-  });
+// exports.printPlantCount = functions.pubsub
+//   .schedule("every 2 minutes")
+//   .onRun(async (context) => {
+//     try {
+//       const snapshot = await admin.firestore().collection("plants").get();
+//       const plantCount = snapshot.size;
+//       console.log(`Кількість рослин у колекції: ${plantCount}`);
+//       return null;
+//     } catch (error) {
+//       console.error("Помилка при отриманні кількості рослин:", error);
+//       return null;
+//     }
+//   });
 
 
