@@ -10,25 +10,19 @@ class LoginRepository implements ILoginRepository {
   LoginRepository({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth;
 
-
   final StreamController<AuthState> _streamController =
       StreamController.broadcast();
 
   @override
-  void closeAuthStream(){
-    _streamController.close();
-  }
-
-
-  @override
-  Future<void> loginGoogle()async{
+  Future<void> loginGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
-    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount!.authentication;
     final OAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken
-    );
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken);
     await _firebaseAuth.signInWithCredential(googleAuthCredential);
   }
 
@@ -49,7 +43,7 @@ class LoginRepository implements ILoginRepository {
   }
 
   @override
-  Future sendOtp({required String phoneNumber}) async {
+  Future<void> sendOtp({required String phoneNumber}) async {
     await _firebaseAuth.verifyPhoneNumber(
         timeout: const Duration(seconds: 30),
         phoneNumber: phoneNumber,

@@ -1,3 +1,3 @@
-const String routeHome = '/landing';
+const String routeHome = '/home';
 const String routeLogin = '/login';
-const String routePlantsHome = '/home';
+const String routePlantsHome = '/plantsHome';

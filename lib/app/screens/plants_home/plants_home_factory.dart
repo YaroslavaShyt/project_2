@@ -12,9 +12,8 @@ class PlantsHomeFactory {
     return ChangeNotifierProvider(
       create: (context) => PlantsHomeViewModel(
           navigationUtil: context.read<INavigationUtil>(),
-          plantsRepository: getItInst<IPlantsRepository>(),
-          loginRepository: getItInst<ILoginRepository>()
-              ),
+          plantsRepository: getItInst.get<IPlantsRepository>(),
+          loginRepository: getItInst.get<ILoginRepository>()),
       child: Consumer<PlantsHomeViewModel>(builder: (context, model, child) {
         return PlantsHomeScreen(
           plantsHomeViewModel: model,

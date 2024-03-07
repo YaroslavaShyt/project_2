@@ -20,13 +20,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  init();
+  initCloudFunctions();
+  initNetworkService();
+  initRepos();
 
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();
 
   final IAuthService authService =
-      AuthService(loginRepository: getItInst<ILoginRepository>());
+      AuthService(loginRepository: getItInst.get<ILoginRepository>());
   final IUserService userService = UserService();
 
   runApp(MultiProvider(

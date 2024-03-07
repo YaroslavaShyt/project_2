@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
+import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
@@ -8,35 +8,9 @@ import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
-class PlantsHomeScreen extends StatefulWidget {
+class PlantsHomeScreen extends StatelessWidget {
   final PlantsHomeViewModel plantsHomeViewModel;
   const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
-
-  @override
-  State<PlantsHomeScreen> createState() => _PlantsHomeScreenState();
-}
-
-class _PlantsHomeScreenState extends State<PlantsHomeScreen>
-    with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      //widget.plantsHomeViewModel.closePlantsStream();
-    }
-    super.didChangeAppLifecycleState(state);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +29,19 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen>
               onPressed: () => _showAddPlantModal(context),
               icon: const Icon(Icons.add)),
           IconButton(
-              onPressed: widget.plantsHomeViewModel.onLogoutButtonPressed,
+              onPressed: plantsHomeViewModel.onLogoutButtonPressed,
               icon: const Icon(Icons.logout_rounded))
         ],
       ),
       body: StreamBuilder(
-          stream: widget.plantsHomeViewModel.getPlantsStream,
+          stream: plantsHomeViewModel.getPlantsStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Column(
                 children: [
                   const ListHeader(),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height - 400.0,
+                    height: MediaQuery.of(context).size.height * 0.8,
                     child: ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         itemCount: snapshot.data?.data.length ?? 0,
@@ -78,8 +52,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen>
                               plant: snapshot.data!.data[index],
                               onEditButtonPressed: () => _showEditPlantModal(
                                   context, snapshot.data!.data[index]),
-                              onDeleteButtonPressed: () => widget
-                                  .plantsHomeViewModel
+                              onDeleteButtonPressed: () => plantsHomeViewModel
                                   .onDeletePlantButtonPressed(
                                       id: snapshot.data!.data[index].id),
                             ),
@@ -98,12 +71,9 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen>
     );
   }
 
-  void _changeTitles(BuildContext context, bool toUpperCase) {
-    final future =
-        widget.plantsHomeViewModel.changeCaseTitles(upper: toUpperCase);
-
-    future.then((value) {
-      if (value["success"] == false) {
+  void _changeTitles(BuildContext context, bool isUpperCase) {
+    plantsHomeViewModel.changeCaseTitles(isUpper: isUpperCase).then((value) {
+      if (!value["success"]) {
         _showErrorDialog(context, value["message"] ?? "Виникла помилка");
       }
     });
@@ -112,43 +82,44 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen>
   void _showAddPlantModal(BuildContext context) {
     ModalsService.showBottomModal(
       context: context,
-      data: ModalBottomSheetContentData(
+      data: ModalBottomDialogData(
         title: 'Нова рослина',
         firstLabel: 'Назва',
         secondLabel: 'Кількість',
         buttonTitle: 'Додати',
-        firstErrorText: widget.plantsHomeViewModel.newPlantNameError,
-        secondErrorText: widget.plantsHomeViewModel.newPlantQuantityError,
+        firstErrorText: plantsHomeViewModel.newPlantNameError,
+        secondErrorText: plantsHomeViewModel.newPlantQuantityError,
         onFirstTextFieldChanged: (value) =>
-            widget.plantsHomeViewModel.newPlantName = value,
+            plantsHomeViewModel.newPlantName = value,
         onSecondTextFieldChanged: (value) =>
-            widget.plantsHomeViewModel.newPlantQuantity = value,
-        onButtonPressed: widget.plantsHomeViewModel.onAddPlantButtonPressed,
+            plantsHomeViewModel.newPlantQuantity = value,
+        onButtonPressed: () {
+          plantsHomeViewModel.onAddPlantButtonPressed();
+        },
       ),
     );
   }
 
   void _showEditPlantModal(BuildContext context, IPlant plant) {
-    widget.plantsHomeViewModel.newPlantName = plant.name;
-    widget.plantsHomeViewModel.newPlantQuantity = plant.quantity;
+    plantsHomeViewModel.newPlantName = plant.name;
+    plantsHomeViewModel.newPlantQuantity = plant.quantity;
 
     ModalsService.showBottomModal(
       context: context,
-      data: ModalBottomSheetContentData(
+      data: ModalBottomDialogData(
         title: 'Редагувати',
         firstLabel: 'Нова назва',
         secondLabel: 'Нова кількість',
         buttonTitle: 'Зберегти',
         firstFieldValue: plant.name,
         secondFieldValue: plant.quantity,
-        firstErrorText: widget.plantsHomeViewModel.newPlantNameError,
-        secondErrorText: widget.plantsHomeViewModel.newPlantQuantityError,
+        firstErrorText: plantsHomeViewModel.newPlantNameError,
+        secondErrorText: plantsHomeViewModel.newPlantQuantityError,
         onFirstTextFieldChanged: (value) =>
-            widget.plantsHomeViewModel.newPlantName = value,
+            plantsHomeViewModel.newPlantName = value,
         onSecondTextFieldChanged: (value) =>
-            widget.plantsHomeViewModel.newPlantQuantity = value,
-        onButtonPressed: () =>
-            widget.plantsHomeViewModel.onUpdatePlantButtonPressed(
+            plantsHomeViewModel.newPlantQuantity = value,
+        onButtonPressed: () => plantsHomeViewModel.onUpdatePlantButtonPressed(
           id: plant.id,
         ),
       ),

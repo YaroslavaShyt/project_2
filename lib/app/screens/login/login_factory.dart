@@ -13,7 +13,7 @@ class LoginFactory {
       create: (context) => LoginViewModel(
           navigationUtil: context.read<INavigationUtil>(),
           userService: context.read<IUserService>(),
-          loginRepository: getItInst<ILoginRepository>()),
+          loginRepository: getItInst.get<ILoginRepository>()),
       child: Consumer<LoginViewModel>(builder: (context, model, child) {
         return LoginScreen(loginViewModel: model);
       }),

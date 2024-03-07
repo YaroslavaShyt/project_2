@@ -13,8 +13,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
       {required INavigationUtil navigationUtil,
       required IPlantsRepository plantsRepository,
       required ILoginRepository loginRepository})
-      : 
-        _navigationUtil = navigationUtil,
+      : _navigationUtil = navigationUtil,
         _plantsRepository = plantsRepository,
         _loginRepository = loginRepository;
 
@@ -29,11 +28,10 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
 
-  void closePlantsStream() => _plantsRepository.closePlantsStream();
 
-  Future<Map<String, dynamic>> changeCaseTitles({required bool upper}) async {
+  Future<Map<String, dynamic>> changeCaseTitles({required bool isUpper}) async {
     try {
-      Map<String, dynamic> data = upper
+      Map<String, dynamic> data = isUpper
           ? await _plantsRepository.toUpperCaseData()
           : await _plantsRepository.toLowerCaseData();
       return data;
@@ -79,15 +77,15 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   void onLogoutButtonPressed() => _loginRepository.logout();
 
-  void onAddPlantButtonPressed() {
+  Future<void> onAddPlantButtonPressed() async {
     final bool isValid = isNewPlantValidated();
     if (isValid) {
-      _plantsRepository.createPlant(
-          data: {"name": newPlantName, "quantity": newPlantQuantity});
+      await _plantsRepository.createPlant(
+         data: {"name": newPlantName, "quantity": newPlantQuantity});
       newPlantName = '';
       newPlantQuantity = '';
       _navigationUtil.navigateBack();
-    } 
+    }
   }
 
   void onReadPlantButtonPressed({required String id}) =>

@@ -1,4 +1,4 @@
-class ModalBottomSheetContentData {
+class ModalBottomDialogData {
   final String title;
   final String firstLabel;
   final String secondLabel;
@@ -11,7 +11,7 @@ class ModalBottomSheetContentData {
   final void Function(String) onSecondTextFieldChanged;
   final void Function() onButtonPressed;
 
-  ModalBottomSheetContentData(
+  ModalBottomDialogData(
       {required this.title,
       required this.firstLabel,
       required this.secondLabel,

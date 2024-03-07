@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
 
-class FirebaseStorage implements INetworkService {
+class FirestoreService implements INetworkService {
   final FirebaseFirestore _firestore;
 
-  FirebaseStorage({required FirebaseFirestore firestore})
+  FirestoreService({required FirebaseFirestore firestore})
       : _firestore = firestore;
 
   @override

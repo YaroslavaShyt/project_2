@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
 import 'package:project_2/app/services/networking/functions/functions.dart';
-import 'package:project_2/app/services/networking/storage/collections.dart';
+import 'package:project_2/app/services/networking/firestore/collections.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
 import 'package:project_2/data/plants/plant.dart';
 import 'package:project_2/data/plants/plants_data.dart';
@@ -23,10 +23,6 @@ class PlantsRepository implements IPlantsRepository {
   final StreamController<PlantsData> _streamController =
       StreamController.broadcast();
 
-  @override
-  void closePlantsStream() {
-    _streamController.close();
-  }
 
   @override
   Stream<PlantsData> plantsState() {
@@ -45,7 +41,8 @@ class PlantsRepository implements IPlantsRepository {
   }
 
   @override
-  Future<void> createPlant({required Map<String, dynamic> data}) async {
+  Future<void> createPlant(
+      {required Map<String, dynamic> data}) async {
     await _networkService.create(endpoint: plantsCollection, data: data);
   }
 
@@ -68,7 +65,7 @@ class PlantsRepository implements IPlantsRepository {
         endpoint: plantsCollection, id: id, data: data);
   }
 
-   @override
+  @override
   Future<Map<String, dynamic>> toLowerCaseData() async {
     HttpsCallableResult data = await _firebaseFunctionsService.call(
         functionName: toLowerCaseFunction, arguments: plantsCollection);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
+import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
@@ -22,10 +22,10 @@ class LoginScreen extends StatelessWidget {
         decoration: const BoxDecoration(color: AppColors.darkWoodGeenColor),
         child: Stack(
           children: [
-            const Positioned(
-              top: 100,
-              left: 20,
-              child: Text(
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.1,
+              left: MediaQuery.of(context).size.width * 0.1,
+              child: const Text(
                 'Plant app',
                 style: TextStyle(
                     color: AppColors.lightMentolGreenColor,
@@ -33,10 +33,10 @@ class LoginScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            const Positioned(
-              top: 300,
-              left: 20,
-              child: Text(
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.25,
+              left: MediaQuery.of(context).size.width * 0.1,
+              child: const Text(
                 'Авторизуватись через',
                 style: TextStyle(
                     color: AppColors.lightMentolGreenColor,
@@ -48,24 +48,24 @@ class LoginScreen extends StatelessWidget {
               bottom: 0,
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - 200,
+                height: MediaQuery.of(context).size.height * 0.8,
                 child: CustomPaint(
                   painter: CustomContainer(),
                 ),
               ),
             ),
             Positioned(
-                left: 200,
-                bottom: -30,
+                left: MediaQuery.of(context).size.height * 0.2,
+                bottom: MediaQuery.of(context).size.height * -0.05,
                 child: Image.asset(
                   'assets/images/plant_transp.png',
-                  height: MediaQuery.of(context).size.height - 300,
+                  height: MediaQuery.of(context).size.height * 0.7,
                 )),
             Positioned(
-              bottom: MediaQuery.of(context).size.height - 400,
-              left: 20,
+              bottom: MediaQuery.of(context).size.height * 0.6,
+              left: MediaQuery.of(context).size.width * 0.1,
               height: 50,
-              width: MediaQuery.of(context).size.width - 200,
+              width: 200,
               child: MainElevatedButton(
                   icon: const Icon(
                     Icons.sms,
@@ -74,7 +74,7 @@ class LoginScreen extends StatelessWidget {
                   onButtonPressed: () {
                     ModalsService.showBottomModal(
                         context: context,
-                        data: ModalBottomSheetContentData(
+                        data: ModalBottomDialogData(
                           title: 'Авторизація за SMS',
                           firstLabel: "Ім'я",
                           secondLabel: "Номер телефону",
@@ -85,7 +85,8 @@ class LoginScreen extends StatelessWidget {
                               loginViewModel.phoneNumber = value,
                           onButtonPressed: () => {
                             loginViewModel.onSendOtpButtonPressed(),
-                            if (loginViewModel.isFormDataValid){
+                            if (loginViewModel.isFormDataValid)
+                              {
                                 ModalsService.showPopUpModal(
                                     context: context,
                                     data: PopUpDialogData(
@@ -108,10 +109,10 @@ class LoginScreen extends StatelessWidget {
                   title: 'SMS'),
             ),
             Positioned(
-              bottom: MediaQuery.of(context).size.height - 480,
-              left: 20,
+              bottom: MediaQuery.of(context).size.height * 0.52,
+              left: MediaQuery.of(context).size.width * 0.1,
               height: 50,
-              width: MediaQuery.of(context).size.width - 200,
+              width: 200,
               child: MainElevatedButton(
                   icon: const Icon(
                     Icons.g_mobiledata_outlined,

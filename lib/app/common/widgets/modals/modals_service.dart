@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content.dart';
-import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_sheet_content_data.dart';
+import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog.dart';
+import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class ModalsService {
-  static Future showBottomModal(
-      {required BuildContext context,
-      required ModalBottomSheetContentData data}) {
+  static Future<void> showBottomModal(
+      {required BuildContext context, required ModalBottomDialogData data}) {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: AppColors.darkWoodGeenColor,
       context: context,
       builder: (BuildContext context) {
-        return ModalBottomSheetContent(data: data);
+        return ModalBottomDialog(data: data);
       },
     );
   }
 
-  static Future showPopUpModal(
+  static Future<void> showPopUpModal(
       {required BuildContext context, required PopUpDialogData data}) {
     return showDialog(
         context: context,

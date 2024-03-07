@@ -9,5 +9,4 @@ abstract interface class IPlantsRepository {
   Future toUpperCaseData();
   Future toLowerCaseData();
   Stream<PlantsData> plantsState();
-  void closePlantsStream();
 }

@@ -16,7 +16,8 @@ class ListHeader extends StatelessWidget {
             style: TextStyle(color: AppColors.whiteColor, fontSize: 15.0),
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width / 3 - 20,
+            width: MediaQuery.of(context).size.width / 3 -
+                (MediaQuery.of(context).size.width * 0.2),
           ),
           const Text(
             'Кількість',

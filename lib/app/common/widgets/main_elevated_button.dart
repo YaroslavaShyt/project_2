@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class MainElevatedButton extends StatelessWidget {
-  final Function() onButtonPressed;
+  final void Function() onButtonPressed;
   final Widget? icon;
   final String title;
   const MainElevatedButton(
