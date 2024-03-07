@@ -3,6 +3,7 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
+import 'package:project_2/domain/services/ibase_response.dart';
 
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
@@ -28,15 +29,18 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
 
-
-  Future<Map<String, dynamic>> changeCaseTitles({required bool isUpper}) async {
+  Future<void> changeCaseTitles(
+      {required bool isNeedToUpperCase,
+      required Function(String) showAlertDialog}) async {
     try {
-      Map<String, dynamic> data = isUpper
+      IBaseResponse data = isNeedToUpperCase
           ? await _plantsRepository.toUpperCaseData()
           : await _plantsRepository.toLowerCaseData();
-      return data;
+      if (!data.success!) {
+        showAlertDialog(data.error ?? 'Виникла помилка');
+      }
     } catch (e) {
-      return {"success": false, "message": e.toString()};
+      showAlertDialog(e.toString());
     }
   }
 
@@ -81,7 +85,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
     final bool isValid = isNewPlantValidated();
     if (isValid) {
       await _plantsRepository.createPlant(
-         data: {"name": newPlantName, "quantity": newPlantQuantity});
+          data: {"name": newPlantName, "quantity": newPlantQuantity});
       newPlantName = '';
       newPlantQuantity = '';
       _navigationUtil.navigateBack();

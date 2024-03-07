@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
-import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/list_header.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
-class PlantsHomeScreen extends StatelessWidget {
+class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
   final PlantsHomeViewModel plantsHomeViewModel;
   const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
 
@@ -71,12 +71,10 @@ class PlantsHomeScreen extends StatelessWidget {
     );
   }
 
-  void _changeTitles(BuildContext context, bool isUpperCase) {
-    plantsHomeViewModel.changeCaseTitles(isUpper: isUpperCase).then((value) {
-      if (!value["success"]) {
-        _showErrorDialog(context, value["message"] ?? "Виникла помилка");
-      }
-    });
+  void _changeTitles(BuildContext context, bool isNeedToUpperCase) {
+    plantsHomeViewModel.changeCaseTitles(
+        isNeedToUpperCase: isNeedToUpperCase,
+        showAlertDialog: (String message) => showErrorDialog(context, message));
   }
 
   void _showAddPlantModal(BuildContext context) {
@@ -122,20 +120,6 @@ class PlantsHomeScreen extends StatelessWidget {
         onButtonPressed: () => plantsHomeViewModel.onUpdatePlantButtonPressed(
           id: plant.id,
         ),
-      ),
-    );
-  }
-
-  void _showErrorDialog(BuildContext context, String message) {
-    ModalsService.showPopUpModal(
-      context: context,
-      data: PopUpDialogData(
-        title: 'Помилка',
-        content: Text(
-          message,
-          style: const TextStyle(color: AppColors.whiteColor),
-        ),
-        actions: [],
       ),
     );
   }

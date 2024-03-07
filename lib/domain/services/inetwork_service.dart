@@ -1,7 +1,9 @@
+import 'package:project_2/domain/services/ibase_response.dart';
+
 abstract interface class INetworkService {
   Future<void> create(
       {required String endpoint, required Map<String, dynamic> data});
-  Future<Map<String, dynamic>> read(
+  Future<IBaseResponse> read(
       {required String endpoint, required String id});
   Future<void> update(
       {required String endpoint,

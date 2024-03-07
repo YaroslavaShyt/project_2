@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:project_2/app/services/networking/base_response.dart';
 import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
 import 'package:project_2/app/services/networking/functions/functions.dart';
 import 'package:project_2/app/services/networking/firestore/collections.dart';
+import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
 import 'package:project_2/data/plants/plant.dart';
 import 'package:project_2/data/plants/plants_data.dart';
-import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 
 class PlantsRepository implements IPlantsRepository {
@@ -22,7 +23,6 @@ class PlantsRepository implements IPlantsRepository {
 
   final StreamController<PlantsData> _streamController =
       StreamController.broadcast();
-
 
   @override
   Stream<PlantsData> plantsState() {
@@ -41,8 +41,7 @@ class PlantsRepository implements IPlantsRepository {
   }
 
   @override
-  Future<void> createPlant(
-      {required Map<String, dynamic> data}) async {
+  Future<void> createPlant({required Map<String, dynamic> data}) async {
     await _networkService.create(endpoint: plantsCollection, data: data);
   }
 
@@ -52,10 +51,14 @@ class PlantsRepository implements IPlantsRepository {
   }
 
   @override
-  Future<IPlant> readPlant({required String id}) async {
-    Map<String, dynamic> data =
+  Future<dynamic> readPlant({required String id}) async {
+    IBaseResponse data =
         await _networkService.read(endpoint: plantsCollection, id: id);
-    return Plant.fromJSON(data: data);
+    if (data.data != null) {
+      return Plant.fromJSON(data: data.data!);
+    } else {
+      return data;
+    }
   }
 
   @override
@@ -66,16 +69,18 @@ class PlantsRepository implements IPlantsRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> toLowerCaseData() async {
+  Future<IBaseResponse> toLowerCaseData() async {
     HttpsCallableResult data = await _firebaseFunctionsService.call(
         functionName: toLowerCaseFunction, arguments: plantsCollection);
-    return data.data;
+    return BaseResponse(
+        success: data.data["success"], error: data.data["success"] ? null : data.data["message"]);
   }
 
   @override
-  Future toUpperCaseData() async {
+  Future<IBaseResponse> toUpperCaseData() async {
     HttpsCallableResult data = await _firebaseFunctionsService.call(
         functionName: toUpperCaseFunction, arguments: plantsCollection);
-    return data.data;
+    return BaseResponse(
+        success: data.data["success"], error: data.data["success"] ? null : data.data["message"]);
   }
 }

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_2/app/services/networking/base_response.dart';
+import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
 
 class FirestoreService implements INetworkService {
@@ -14,14 +16,15 @@ class FirestoreService implements INetworkService {
   }
 
   @override
-  Future<Map<String, dynamic>> read(
+  Future<IBaseResponse> read(
       {required String endpoint, required String id}) async {
     DocumentSnapshot documentSnapshot =
         await _firestore.collection(endpoint).doc(id).get();
     if (documentSnapshot.exists) {
-      return documentSnapshot.data() as Map<String, dynamic>;
+      return BaseResponse(
+          code: 200, success: true, data: documentSnapshot.data() as Map<String, dynamic>);
     } else {
-      return {};
+      return BaseResponse(code: 404, success: false, data: {});
     }
   }
 
