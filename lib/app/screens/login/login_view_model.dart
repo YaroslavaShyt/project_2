@@ -3,9 +3,11 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/data/user/user.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
+import 'package:project_2/domain/user/iuser_repository.dart';
 
 class LoginViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
+  final IUserRepository _userRepository;
   final IUserService _userService;
   final INavigationUtil _navigationUtil;
   bool isFormDataValid = true;
@@ -18,10 +20,12 @@ class LoginViewModel extends BaseChangeNotifier {
   String? _phoneNumberError;
 
   LoginViewModel(
-      {required ILoginRepository loginRepository,
+      {required IUserRepository userRepository,
+      required ILoginRepository loginRepository,
       required INavigationUtil navigationUtil,
       required IUserService userService})
-      : _loginRepository = loginRepository,
+      : _userRepository = userRepository,
+        _loginRepository = loginRepository,
         _navigationUtil = navigationUtil,
         _userService = userService;
 
@@ -65,7 +69,7 @@ class LoginViewModel extends BaseChangeNotifier {
 
   void onLoginOtpButtonPressed() {
     _loginRepository.loginOtp(otp: _otp);
-    _userService.setUser(User(name: name, phoneNumber: phoneNumber));
+    _userService.user = User(name: name, phoneNumber: phoneNumber);
     _navigationUtil.navigateBack();
   }
 
@@ -79,6 +83,19 @@ class LoginViewModel extends BaseChangeNotifier {
   }
 
   void onLoginGoogleButtonPressed() {
-    _loginRepository.loginGoogle();
+    _loginRepository.loginGoogle().then((value) {
+      if (value != null) {
+        _userService.user = User(
+            name: value.displayName!,
+            phoneNumber: value.phoneNumber,
+            photo: value.photoURL);
+        String userID = value.uid;
+        _userRepository.readUser(id: userID).then((value) {
+          if (value == null) {
+            _userRepository.createUser(id: userID, data: _userService.userJSON);
+          }
+        });
+      }
+    });
   }
 }

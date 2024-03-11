@@ -10,6 +10,7 @@ import 'package:project_2/domain/services/iauth_service.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/app/services/user/user_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
+import 'package:project_2/domain/user/iuser_repository.dart';
 import 'package:project_2/firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -29,8 +30,11 @@ void main() async {
 
   final IAuthService authService =
       AuthService(loginRepository: getItInst.get<ILoginRepository>());
-  final IUserService userService = UserService();
+  final IUserService userService = UserService(
+      userRepository: getItInst.get<IUserRepository>(),
+      loginRepository: getItInst.get<ILoginRepository>());
 
+  await userService.initUser();
   runApp(MultiProvider(
       providers: [
         Provider.value(value: navigationUtil),

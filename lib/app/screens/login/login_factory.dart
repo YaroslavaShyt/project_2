@@ -5,12 +5,14 @@ import 'package:project_2/app/screens/login/login_view_model.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
+import 'package:project_2/domain/user/iuser_repository.dart';
 import 'package:provider/provider.dart';
 
 class LoginFactory {
   static Widget build() {
     return ChangeNotifierProvider(
       create: (context) => LoginViewModel(
+          userRepository: getItInst.get<IUserRepository>(),
           navigationUtil: context.read<INavigationUtil>(),
           userService: context.read<IUserService>(),
           loginRepository: getItInst.get<ILoginRepository>()),

@@ -8,6 +8,7 @@ import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
+
 class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
   final PlantsHomeViewModel plantsHomeViewModel;
   const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
@@ -20,17 +21,20 @@ class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
         title: const Text("Plant App"),
         actions: [
           IconButton(
-              onPressed: () => _changeTitles(context, true),
-              icon: const Icon(Icons.text_increase)),
-          IconButton(
-              onPressed: () => _changeTitles(context, false),
-              icon: const Icon(Icons.text_decrease)),
-          IconButton(
               onPressed: () => _showAddPlantModal(context),
               icon: const Icon(Icons.add)),
           IconButton(
               onPressed: plantsHomeViewModel.onLogoutButtonPressed,
-              icon: const Icon(Icons.logout_rounded))
+              icon: const Icon(Icons.logout_rounded)),
+          CircleAvatar(
+            radius: 30.0,
+            backgroundImage: plantsHomeViewModel.user == null
+                ? null
+                : NetworkImage(plantsHomeViewModel.user!.photo!),
+            child: plantsHomeViewModel.user?.photo == null
+                ? const Placeholder()
+                : null,
+          )
         ],
       ),
       body: StreamBuilder(
@@ -71,12 +75,7 @@ class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
     );
   }
 
-  void _changeTitles(BuildContext context, bool isNeedToUpperCase) {
-    plantsHomeViewModel.changeCaseTitles(
-        isNeedToUpperCase: isNeedToUpperCase,
-        showAlertDialog: (String message) => showErrorDialog(context, message));
-  }
-
+  // void _changeTitles(BuildContext context, bool isNeedToUpperCase) {
   void _showAddPlantModal(BuildContext context) {
     ModalsService.showBottomModal(
       context: context,
@@ -117,7 +116,8 @@ class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
             plantsHomeViewModel.newPlantName = value,
         onSecondTextFieldChanged: (value) =>
             plantsHomeViewModel.newPlantQuantity = value,
-        onButtonPressed: () => plantsHomeViewModel.onUpdatePlantButtonPressed(
+        onButtonPressed: () =>
+            plantsHomeViewModel.onUpdatePlantButtonPressed(
           id: plant.id,
         ),
       ),

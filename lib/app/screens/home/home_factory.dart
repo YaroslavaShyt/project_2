@@ -8,7 +8,8 @@ class HomeFactory {
   static Widget build() {
     return ChangeNotifierProvider(
       create: (context) =>
-          HomeViewModel(authService: context.read<IAuthService>()),
+          HomeViewModel(
+            authService: context.read<IAuthService>()),
       child: Consumer<HomeViewModel>(builder: (context, model, child) {
         return HomeScreen(
           homeViewModel: model,

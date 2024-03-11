@@ -5,8 +5,14 @@ class User implements IUser {
   final String name;
 
   @override
-  final String phoneNumber;
+  final String? phoneNumber;
 
+  @override
+  final String? photo;
 
-  User({required this.name, required this.phoneNumber});
+  User({required this.name, this.phoneNumber, this.photo});
+
+  factory User.fromJSON({required Map<String, dynamic> data}){
+    return User(name: data["name"], photo: data["photo"]);
+  }
 }

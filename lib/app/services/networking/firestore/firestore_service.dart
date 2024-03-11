@@ -11,8 +11,12 @@ class FirestoreService implements INetworkService {
 
   @override
   Future<void> create(
-      {required String endpoint, required Map<String, dynamic> data}) async {
-    await _firestore.collection(endpoint).add(data);
+      {String? id,
+      required String endpoint,
+      required Map<String, dynamic> data}) async {
+    id == null
+        ? await _firestore.collection(endpoint).add(data)
+        : await _firestore.collection(endpoint).doc(id).set(data);
   }
 
   @override
@@ -22,7 +26,9 @@ class FirestoreService implements INetworkService {
         await _firestore.collection(endpoint).doc(id).get();
     if (documentSnapshot.exists) {
       return BaseResponse(
-          code: 200, success: true, data: documentSnapshot.data() as Map<String, dynamic>);
+          code: 200,
+          success: true,
+          data: documentSnapshot.data() as Map<String, dynamic>);
     } else {
       return BaseResponse(code: 404, success: false, data: {});
     }
