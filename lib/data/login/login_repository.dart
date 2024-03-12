@@ -5,7 +5,9 @@ import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginRepository implements ILoginRepository {
   final FirebaseAuth _firebaseAuth;
-  String verifId = '';
+
+  @override
+  String verifID = '';
 
   LoginRepository({
     required FirebaseAuth firebaseAuth,
@@ -56,17 +58,17 @@ class LoginRepository implements ILoginRepository {
         verificationCompleted: (phoneAuthCredential) async => {},
         verificationFailed: (error) {},
         codeSent: (verificationId, forceResendingToken) async => {
-              print(verificationId),
-              verifId = verificationId,
+              verifID = verificationId,
+              print(verifID),
             },
         codeAutoRetrievalTimeout: (verificationId) async {});
   }
 
   @override
   Future<void> loginOtp({required String otp}) async {
-    if (verifId.isNotEmpty) {
+    if (verifID.isNotEmpty) {
       final cred =
-          PhoneAuthProvider.credential(verificationId: verifId, smsCode: otp);
+          PhoneAuthProvider.credential(verificationId: verifID, smsCode: otp);
       await _firebaseAuth.signInWithCredential(cred);
     }
   }

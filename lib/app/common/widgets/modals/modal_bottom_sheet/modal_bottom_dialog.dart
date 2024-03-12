@@ -38,12 +38,14 @@ class ModalBottomDialog extends StatelessWidget {
               const SizedBox(
                 height: 20.0,
               ),
-              MainTextField(
-                  value: data.secondFieldValue,
-                  errorText: data.secondErrorText,
-                  label: data.secondLabel,
-                  onChanged: data.onSecondTextFieldChanged,
-                  obscureText: false),
+              if (data.secondLabel != null) ...[
+                MainTextField(
+                    value: data.secondFieldValue,
+                    errorText: data.secondErrorText,
+                    label: data.secondLabel!,
+                    onChanged: data.onSecondTextFieldChanged!,
+                    obscureText: false)
+              ],
               const SizedBox(
                 height: 20.0,
               ),

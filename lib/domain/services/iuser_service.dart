@@ -9,5 +9,5 @@ abstract interface class IUserService extends ChangeNotifier {
 
   set user(IUser? user);
 
-  Future initUser();
+  Future<void> initUser();
 }

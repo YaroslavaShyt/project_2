@@ -9,4 +9,5 @@ abstract interface class ILoginRepository {
   Stream<AuthState> authState();
   Future<User?> loginGoogle();
   User? get googleUser;
+  String get verifID;
 }

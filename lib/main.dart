@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:project_2/app/app.dart';
 import 'package:project_2/app/routing/app_router.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
@@ -20,10 +21,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await dotenv.load(
+    fileName: "lib/.env",
+  );
 
   initCloudFunctions();
   initNetworkService();
   initRepos();
+  initEncodingService(dotenv.get("ENCRYPTION_KEY"));
 
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();

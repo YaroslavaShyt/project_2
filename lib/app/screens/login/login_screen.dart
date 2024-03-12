@@ -71,41 +71,7 @@ class LoginScreen extends StatelessWidget {
                     Icons.sms,
                     color: AppColors.whiteColor,
                   ),
-                  onButtonPressed: () {
-                    ModalsService.showBottomModal(
-                        context: context,
-                        data: ModalBottomDialogData(
-                          title: 'Авторизація за SMS',
-                          firstLabel: "Ім'я",
-                          secondLabel: "Номер телефону",
-                          buttonTitle: "Надіслати код",
-                          onFirstTextFieldChanged: (value) =>
-                              loginViewModel.name = value,
-                          onSecondTextFieldChanged: (value) =>
-                              loginViewModel.phoneNumber = value,
-                          onButtonPressed: () => {
-                            loginViewModel.onSendOtpButtonPressed(),
-                            if (loginViewModel.isFormDataValid)
-                              {
-                                ModalsService.showPopUpModal(
-                                    context: context,
-                                    data: PopUpDialogData(
-                                        title: 'Введіть код',
-                                        content: MainTextField(
-                                            label: 'Код',
-                                            onChanged: (value) =>
-                                                loginViewModel.otp = value,
-                                            obscureText: false),
-                                        actions: [
-                                          MainElevatedButton(
-                                              onButtonPressed: loginViewModel
-                                                  .onLoginOtpButtonPressed,
-                                              title: 'Підтвердити')
-                                        ]))
-                              }
-                          },
-                        ));
-                  },
+                  onButtonPressed: () => _showLoginModal(context),
                   title: 'SMS'),
             ),
             Positioned(
@@ -126,5 +92,37 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showLoginModal(BuildContext context) {
+    ModalsService.showBottomModal(
+        context: context,
+        data: ModalBottomDialogData(
+          title: 'Авторизація за SMS',
+          firstLabel: "Номер телефону",
+          buttonTitle: "Надіслати код",
+          onFirstTextFieldChanged: (value) =>
+              loginViewModel.phoneNumber = value,
+          onButtonPressed: () => {
+            loginViewModel.onSendOtpButtonPressed(),
+            if (loginViewModel.isFormDataValid)
+              {
+                ModalsService.showPopUpModal(
+                    context: context,
+                    data: PopUpDialogData(
+                        title: 'Введіть код',
+                        content: MainTextField(
+                            label: 'Код',
+                            onChanged: (value) => loginViewModel.otp = value,
+                            obscureText: false),
+                        actions: [
+                          MainElevatedButton(
+                              onButtonPressed:
+                                  loginViewModel.navigateToSMSLogin,
+                              title: 'Далі')
+                        ]))
+              }
+          },
+        ));
   }
 }
