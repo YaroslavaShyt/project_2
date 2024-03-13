@@ -1,4 +1,7 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:project_2/app/services/networking/firestore/collections.dart';
+import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
+import 'package:project_2/app/services/networking/functions/functions.dart';
 import 'package:project_2/data/user/user.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
@@ -7,13 +10,18 @@ import 'package:project_2/domain/user/iuser_repository.dart';
 
 class UserRepository implements IUserRepository {
   final INetworkService _networkService;
+  final FirebaseFunctionsService _firebaseFunctionsService;
 
-  UserRepository({required INetworkService networkService})
-      : _networkService = networkService;
+  UserRepository(
+      {required INetworkService networkService,
+      required FirebaseFunctionsService firebaseFunctionsService})
+      : _networkService = networkService,
+        _firebaseFunctionsService = firebaseFunctionsService;
 
   @override
-  Future<void> createUser({String? id, required Map<String, dynamic> data}) async {
-    await _networkService.create(id: id,  endpoint: usersCollection, data: data);
+  Future<void> createUser(
+      {String? id, required Map<String, dynamic> data}) async {
+    await _networkService.create(id: id, endpoint: usersCollection, data: data);
   }
 
   @override
@@ -35,5 +43,12 @@ class UserRepository implements IUserRepository {
   Future<void> updateUser(
       {required String id, required Map<String, dynamic> data}) async {
     await _networkService.update(endpoint: usersCollection, id: id, data: data);
+  }
+
+  @override
+  Future<void> saveUserOnSignIn() async {
+    await _firebaseFunctionsService.call(
+      functionName: saveUserDataOnSignIn,
+    );
   }
 }

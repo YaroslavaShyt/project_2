@@ -47,7 +47,6 @@ class LoginViewModel extends BaseChangeNotifier {
 
   String get otp => _otp;
 
- 
   bool isValidatedPhone() {
     if (_phoneNumber.isEmpty) {
       _phoneNumberError = "Provide phone number, please!";
@@ -77,18 +76,20 @@ class LoginViewModel extends BaseChangeNotifier {
             name: value.displayName!,
             phoneNumber: value.phoneNumber,
             photo: value.photoURL);
-        String userID = value.uid;
-        _userRepository.readUser(id: userID).then((value) {
-          if (value == null) {
-            _userRepository.createUser(id: userID, data: _userService.userJSON);
-          }
-        });
+        // _userRepository
+        //     .saveUserOnSignIn()
+        //     .onError((error, stackTrace) => print(error.toString()));
+        // String userID = value.uid;
+        // _userRepository.readUser(id: userID).then((value) {
+        //   if (value == null) {
+        //     _userRepository.createUser(id: userID, data: _userService.userJSON);
+        //   }
+        // });
       }
     });
   }
 
   void navigateToSMSLogin() {
-    _navigationUtil.navigateTo(routeSMSLogin,
-        data: {"otp": otp});
+    _navigationUtil.navigateTo(routeSMSLogin, data: {"otp": otp});
   }
 }

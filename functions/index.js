@@ -1,6 +1,6 @@
 const { onCall } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
-const { plantCollection } = require("./collections");
+const { plantCollection, userCollection } = require("./collections");
 const functions = require("firebase-functions");
 admin.initializeApp();
 
@@ -44,50 +44,63 @@ exports.toLowerCase = onCall(async (request) => {
   }
 });
 
-exports.onCreatePlant = functions.firestore
-  .document(`${plantCollection}/{plantId}`)
-  .onCreate((snapshot, context) => {
-    try {
-      const newPlant = snapshot.data();
-      const newName =
-        newPlant["name"].charAt(0).toUpperCase() + newPlant["name"].slice(1);
-      return snapshot.ref.update({ name: newName });
-    } catch (e) {
-      console.log(e.message);
-    }
-  });
+exports.saveUserDataOnSignIn = functions.auth.user().onCreate((user) => {
+  const userData = {
+    name: user.displayName || "Анонім",
+    image: user.photoURL || null,
+    email: user.email || null,
+  };
 
-exports.onUpdatePlant = functions.firestore
-  .document(`${plantCollection}/{plantId}`)
-  .onUpdate((change, context) => {
-    try {
-      const newData = change.after.data();
-      const newName = newData["name"];
+  return admin
+    .firestore()
+    .collection(userCollection)
+    .doc(user.uid)
+    .set(userData);
+});
 
-      if (!newName.includes("(ред)") && !newName.includes("(РЕД)")) {
-        const updatedName = newName + " (ред)";
-        return change.after.ref.update({ name: updatedName }); 
-      } else {
-        return null; 
-      }
-    } catch (e) {
-      console.log(e.message);
-      return null; 
-    }
-  });
+// exports.onCreatePlant = functions.firestore
+//   .document(`${plantCollection}/{plantId}`)
+//   .onCreate((snapshot, context) => {
+//     try {
+//       const newPlant = snapshot.data();
+//       const newName =
+//         newPlant["name"].charAt(0).toUpperCase() + newPlant["name"].slice(1);
+//       return snapshot.ref.update({ name: newName });
+//     } catch (e) {
+//       console.log(e.message);
+//     }
+//   });
 
+// exports.onUpdatePlant = functions.firestore
+//   .document(`${plantCollection}/{plantId}`)
+//   .onUpdate((change, context) => {
+//     try {
+//       const newData = change.after.data();
+//       const newName = newData["name"];
 
-exports.onDeletePlant = functions.firestore
-  .document(`${plantCollection}/{plantId}`)
-  .onDelete((snapshot, context) => {
-    try {
-      console.log("Document Deleted:", snapshot.data());
-      return null;
-    } catch (e) {
-      console.log(e.message);
-      return null;
-    }
-  });
+//       if (!newName.includes("(ред)") && !newName.includes("(РЕД)")) {
+//         const updatedName = newName + " (ред)";
+//         return change.after.ref.update({ name: updatedName });
+//       } else {
+//         return null;
+//       }
+//     } catch (e) {
+//       console.log(e.message);
+//       return null;
+//     }
+//   });
+
+// exports.onDeletePlant = functions.firestore
+//   .document(`${plantCollection}/{plantId}`)
+//   .onDelete((snapshot, context) => {
+//     try {
+//       console.log("Document Deleted:", snapshot.data());
+//       return null;
+//     } catch (e) {
+//       console.log(e.message);
+//       return null;
+//     }
+//   });
 
 // exports.printPlantCount = functions.pubsub
 //   .schedule("every 2 minutes")
@@ -102,5 +115,3 @@ exports.onDeletePlant = functions.firestore
 //       return null;
 //     }
 //   });
-
-

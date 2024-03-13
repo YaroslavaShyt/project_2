@@ -41,6 +41,7 @@ void initRepos() {
   getItInst.registerSingleton<ILoginRepository>(
       LoginRepository(firebaseAuth: FirebaseAuth.instance));
 
-  getItInst.registerFactory<IUserRepository>(
-      () => UserRepository(networkService: getItInst.get<INetworkService>()));
+  getItInst.registerFactory<IUserRepository>(() => UserRepository(
+      networkService: getItInst.get<INetworkService>(),
+      firebaseFunctionsService: getItInst.get<FirebaseFunctionsService>()));
 }

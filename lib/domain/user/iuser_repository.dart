@@ -6,4 +6,5 @@ abstract interface class IUserRepository {
   Future<void> updateUser(
       {required String id, required Map<String, dynamic> data});
   Future<void> deleteUser({required String id});
+  Future<void> saveUserOnSignIn();
 }
