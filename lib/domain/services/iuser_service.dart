@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_2/domain/user/iuser.dart';
 
 abstract interface class IUserService extends ChangeNotifier{
-  IUser? get user;
+  IMyUser? get user;
 
-  void setUser(IUser user);
+  void setUser(IMyUser user);
 }

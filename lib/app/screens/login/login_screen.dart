@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
@@ -8,7 +9,7 @@ import 'package:project_2/app/common/widgets/main_text_field.dart';
 import 'package:project_2/app/screens/login/widgets/custom_container.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
   final LoginViewModel loginViewModel;
   const LoginScreen({super.key, required this.loginViewModel});
 
@@ -71,41 +72,7 @@ class LoginScreen extends StatelessWidget {
                     Icons.sms,
                     color: AppColors.whiteColor,
                   ),
-                  onButtonPressed: () {
-                    ModalsService.showBottomModal(
-                        context: context,
-                        data: ModalBottomDialogData(
-                          title: 'Авторизація за SMS',
-                          firstLabel: "Ім'я",
-                          secondLabel: "Номер телефону",
-                          buttonTitle: "Надіслати код",
-                          onFirstTextFieldChanged: (value) =>
-                              loginViewModel.name = value,
-                          onSecondTextFieldChanged: (value) =>
-                              loginViewModel.phoneNumber = value,
-                          onButtonPressed: () => {
-                            loginViewModel.onSendOtpButtonPressed(),
-                            if (loginViewModel.isFormDataValid)
-                              {
-                                ModalsService.showPopUpModal(
-                                    context: context,
-                                    data: PopUpDialogData(
-                                        title: 'Введіть код',
-                                        content: MainTextField(
-                                            label: 'Код',
-                                            onChanged: (value) =>
-                                                loginViewModel.otp = value,
-                                            obscureText: false),
-                                        actions: [
-                                          MainElevatedButton(
-                                              onButtonPressed: loginViewModel
-                                                  .onLoginOtpButtonPressed,
-                                              title: 'Підтвердити')
-                                        ]))
-                              }
-                          },
-                        ));
-                  },
+                  onButtonPressed: () => _showLoginModal(context),
                   title: 'SMS'),
             ),
             Positioned(
@@ -119,12 +86,48 @@ class LoginScreen extends StatelessWidget {
                     size: 40,
                     color: AppColors.whiteColor,
                   ),
-                  onButtonPressed: loginViewModel.onLoginGoogleButtonPressed,
+                  onButtonPressed: () =>
+                      loginViewModel.onLoginGoogleButtonPressed(
+                          onError: (error) => showErrorDialog(context, error)),
                   title: 'Google'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _showLoginModal(BuildContext context) {
+    ModalsService.showBottomModal(
+        context: context,
+        data: ModalBottomDialogData(
+          title: 'Авторизація за SMS',
+          firstLabel: "Номер телефону",
+          buttonTitle: "Надіслати код",
+          onFirstTextFieldChanged: (value) =>
+              loginViewModel.phoneNumber = value,
+          onButtonPressed: () => {
+            loginViewModel.onSendOtpButtonPressed(),
+            if (loginViewModel.isFormDataValid)
+              {
+                ModalsService.showPopUpModal(
+                    context: context,
+                    data: PopUpDialogData(
+                        title: 'Введіть код',
+                        content: MainTextField(
+                            label: 'Код',
+                            onChanged: (value) => loginViewModel.otp = value,
+                            obscureText: false),
+                        actions: [
+                          MainElevatedButton(
+                              onButtonPressed: () =>
+                                  loginViewModel.onLoginOtpButtonPressed(
+                                      onError: (error) =>
+                                          showErrorDialog(context, error)),
+                              title: 'Увійти')
+                        ]))
+              }
+          },
+        ));
   }
 }

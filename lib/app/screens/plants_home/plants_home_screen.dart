@@ -20,17 +20,23 @@ class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
         title: const Text("Plant App"),
         actions: [
           IconButton(
-              onPressed: () => _changeTitles(context, true),
-              icon: const Icon(Icons.text_increase)),
-          IconButton(
-              onPressed: () => _changeTitles(context, false),
-              icon: const Icon(Icons.text_decrease)),
-          IconButton(
               onPressed: () => _showAddPlantModal(context),
               icon: const Icon(Icons.add)),
           IconButton(
               onPressed: plantsHomeViewModel.onLogoutButtonPressed,
-              icon: const Icon(Icons.logout_rounded))
+              icon: const Icon(Icons.logout_rounded)),
+          Text(plantsHomeViewModel.user?.name ?? 'no id'),
+          CircleAvatar(
+              radius: 30.0,
+              backgroundImage: plantsHomeViewModel.user == null
+                  ? null
+                  : plantsHomeViewModel.user!.profilePhoto == null
+                      ? null
+                      : NetworkImage(plantsHomeViewModel.user!.profilePhoto!),
+              child: plantsHomeViewModel.user == null ||
+                      plantsHomeViewModel.user!.profilePhoto == null
+                  ? const Icon(Icons.person)
+                  : null),
         ],
       ),
       body: StreamBuilder(
@@ -71,11 +77,11 @@ class PlantsHomeScreen extends StatelessWidget with ErrorHandlingMixin {
     );
   }
 
-  void _changeTitles(BuildContext context, bool isNeedToUpperCase) {
-    plantsHomeViewModel.changeCaseTitles(
-        isNeedToUpperCase: isNeedToUpperCase,
-        showAlertDialog: (String message) => showErrorDialog(context, message));
-  }
+  // void _changeTitles(BuildContext context, bool isNeedToUpperCase) {
+  //   plantsHomeViewModel.changeCaseTitles(
+  //       isNeedToUpperCase: isNeedToUpperCase,
+  //       showAlertDialog: (String message) => showErrorDialog(context, message));
+  // }
 
   void _showAddPlantModal(BuildContext context) {
     ModalsService.showBottomModal(

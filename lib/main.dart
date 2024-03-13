@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/app.dart';
@@ -29,7 +30,8 @@ void main() async {
 
   final IAuthService authService =
       AuthService(loginRepository: getItInst.get<ILoginRepository>());
-  final IUserService userService = UserService();
+  final IUserService userService =
+      UserService(firebaseAuth: FirebaseAuth.instance);
 
   runApp(MultiProvider(
       providers: [

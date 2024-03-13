@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project_2/data/user/user.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginRepository implements ILoginRepository {
@@ -14,7 +15,7 @@ class LoginRepository implements ILoginRepository {
       StreamController.broadcast();
 
   @override
-  Future<void> loginGoogle() async {
+  Future<MyUser> loginGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
@@ -24,6 +25,11 @@ class LoginRepository implements ILoginRepository {
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken);
     await _firebaseAuth.signInWithCredential(googleAuthCredential);
+    return MyUser(
+        id: _firebaseAuth.currentUser!.uid,
+        name: _firebaseAuth.currentUser!.displayName!,
+        email: _firebaseAuth.currentUser!.email,
+        profilePhoto: _firebaseAuth.currentUser!.photoURL);
   }
 
   @override
@@ -57,12 +63,13 @@ class LoginRepository implements ILoginRepository {
   }
 
   @override
-  Future<void> loginOtp({required String otp}) async {
+  Future<String?> loginOtp({required String otp}) async {
     if (verifId.isNotEmpty) {
       final cred =
           PhoneAuthProvider.credential(verificationId: verifId, smsCode: otp);
       await _firebaseAuth.signInWithCredential(cred);
     }
+    return _firebaseAuth.currentUser?.uid;
   }
 
   @override

@@ -4,17 +4,22 @@ import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
+import 'package:project_2/domain/services/iuser_service.dart';
+import 'package:project_2/domain/user/iuser.dart';
 
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
   final IPlantsRepository _plantsRepository;
   final INavigationUtil _navigationUtil;
+  final IUserService _userService;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
+      required IUserService userService,
       required IPlantsRepository plantsRepository,
       required ILoginRepository loginRepository})
       : _navigationUtil = navigationUtil,
+        _userService = userService,
         _plantsRepository = plantsRepository,
         _loginRepository = loginRepository;
 
@@ -29,20 +34,22 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
 
-  Future<void> changeCaseTitles(
-      {required bool isNeedToUpperCase,
-      required Function(String) showAlertDialog}) async {
-    try {
-      IBaseResponse data = isNeedToUpperCase
-          ? await _plantsRepository.toUpperCaseData()
-          : await _plantsRepository.toLowerCaseData();
-      if (!data.success!) {
-        showAlertDialog(data.error ?? 'Виникла помилка');
-      }
-    } catch (e) {
-      showAlertDialog(e.toString());
-    }
-  }
+  IMyUser? get user => _userService.user;
+
+  // Future<void> changeCaseTitles(
+  //     {required bool isNeedToUpperCase,
+  //     required Function(String) showAlertDialog}) async {
+  //   try {
+  //     IBaseResponse data = isNeedToUpperCase
+  //         ? await _plantsRepository.toUpperCaseData()
+  //         : await _plantsRepository.toLowerCaseData();
+  //     if (!data.success!) {
+  //       showAlertDialog(data.error ?? 'Виникла помилка');
+  //     }
+  //   } catch (e) {
+  //     showAlertDialog(e.toString());
+  //   }
+  // }
 
   set newPlantName(String name) {
     if (name.isEmpty) {
