@@ -1,6 +1,6 @@
 const { onCall } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
-const { plantCollection } = require("./collections");
+const { plantCollection, userCollection } = require("./collections");
 const functions = require("firebase-functions");
 admin.initializeApp();
 
@@ -66,16 +66,15 @@ exports.onUpdatePlant = functions.firestore
 
       if (!newName.includes("(ред)") && !newName.includes("(РЕД)")) {
         const updatedName = newName + " (ред)";
-        return change.after.ref.update({ name: updatedName }); 
+        return change.after.ref.update({ name: updatedName });
       } else {
-        return null; 
+        return null;
       }
     } catch (e) {
       console.log(e.message);
-      return null; 
+      return null;
     }
   });
-
 
 exports.onDeletePlant = functions.firestore
   .document(`${plantCollection}/{plantId}`)
@@ -88,6 +87,25 @@ exports.onDeletePlant = functions.firestore
       return null;
     }
   });
+
+exports.saveUserDataOnSignIn = functions.auth.user().onCreate(async (user) => {
+  try {
+    const userData = {
+      name: user.displayName || "Анонім",
+      image: user.photoURL || null,
+      email: user.email || null,
+    };
+
+    return await admin
+      .firestore()
+      .collection(userCollection)
+      .doc(user.uid)
+      .set(userData);
+  } catch (e) {
+    const error = e.message;
+    return { error: error };
+  }
+});
 
 // exports.printPlantCount = functions.pubsub
 //   .schedule("every 2 minutes")
@@ -102,5 +120,3 @@ exports.onDeletePlant = functions.firestore
 //       return null;
 //     }
 //   });
-
-

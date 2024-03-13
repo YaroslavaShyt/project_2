@@ -1,3 +1,4 @@
 const plantCollection = "plants";
+const userCollection = "users";
 
-module.exports = { plantCollection };
+module.exports = { plantCollection, userCollection };
