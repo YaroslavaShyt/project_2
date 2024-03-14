@@ -1,0 +1,1 @@
+const userProfileImagesPath = "Users/";

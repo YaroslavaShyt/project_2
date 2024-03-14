@@ -1,5 +1,11 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/services/networking/firebase_storage/firebase_storage_service.dart';
+import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
+import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
@@ -12,21 +18,30 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final IPlantsRepository _plantsRepository;
   final INavigationUtil _navigationUtil;
   final IUserService _userService;
+  final FirebaseStorageService _firebaseStorageService;
+  final PermissionHandler _permissionHandler;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
+      required FirebaseStorageService firebaseStorageService,
       required IUserService userService,
       required IPlantsRepository plantsRepository,
+      required PermissionHandler permissionHandler,
       required ILoginRepository loginRepository})
       : _navigationUtil = navigationUtil,
         _userService = userService,
+        _permissionHandler = permissionHandler,
         _plantsRepository = plantsRepository,
-        _loginRepository = loginRepository;
+        _firebaseStorageService = firebaseStorageService,
+        _loginRepository = loginRepository {
+    loadUserData();
+  }
 
   String _newPlantName = '';
   String _newPlantQuantity = '';
   String? _newPlantNameError;
   String? _newPlantQuantityError;
+  File? _photo;
 
   String get newPlantName => _newPlantName;
   String get newPlantQuantity => _newPlantQuantity;
@@ -35,21 +50,6 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantQuantityError => _newPlantQuantityError;
 
   IMyUser? get user => _userService.user;
-
-  // Future<void> changeCaseTitles(
-  //     {required bool isNeedToUpperCase,
-  //     required Function(String) showAlertDialog}) async {
-  //   try {
-  //     IBaseResponse data = isNeedToUpperCase
-  //         ? await _plantsRepository.toUpperCaseData()
-  //         : await _plantsRepository.toLowerCaseData();
-  //     if (!data.success!) {
-  //       showAlertDialog(data.error ?? 'Виникла помилка');
-  //     }
-  //   } catch (e) {
-  //     showAlertDialog(e.toString());
-  //   }
-  // }
 
   set newPlantName(String name) {
     if (name.isEmpty) {
@@ -86,6 +86,15 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   Stream<PlantsData> get getPlantsStream => _plantsRepository.plantsState();
 
+  void loadUserData() async {
+    _userService.loadUserData().then((value) {
+      if (value != null) {
+        _userService.setUser(value);
+      }
+      notifyListeners();
+    });
+  }
+
   void onLogoutButtonPressed() => _loginRepository.logout();
 
   Future<void> onAddPlantButtonPressed() async {
@@ -115,4 +124,48 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   void onDeletePlantButtonPressed({required String id}) =>
       _plantsRepository.deletePlant(id: id);
+
+  Future<void> onAddProfileImage(
+      {required Function onError, String type = 'Galery'}) async {
+    bool isGranted;
+    if (type == 'Galery') {
+      isGranted = await _permissionHandler.isGalleryPermissionGranted();
+    } else {
+      isGranted = await _permissionHandler.isCameraPermissionGranted();
+    }
+    if (isGranted) {
+      loadImage(type: type).then((value) {
+        if (value != null) {
+          _photo = File(value.path);
+          addImageToStorage().then((response) {
+            if (response.error != null) {
+              onError(response.error!);
+            } else {
+              _userService.user!.profilePhoto = response.data!["imageURL"];
+              notifyListeners();
+              _navigationUtil.navigateBack();
+            }
+          }).onError((error, stackTrace) => onError(error.toString()));
+        }
+      }).onError((error, stackTrace) => onError(error.toString()));
+    } else {
+      onError("Не надано доступу!");
+    }
+  }
+
+  Future<XFile?> loadImage({String type = 'Galery'}) async {
+    final ImagePicker picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+        source: type == 'Galery' ? ImageSource.gallery : ImageSource.camera);
+    return pickedFile;
+  }
+
+  Future<IBaseResponse> addImageToStorage() async {
+    final fileName = basename(_photo!.path);
+    IBaseResponse response = await _firebaseStorageService.uploadImage(
+        filePath: "$userProfileImagesPath/${_userService.user!.id}",
+        imageName: fileName,
+        image: _photo!);
+    return response;
+  }
 }

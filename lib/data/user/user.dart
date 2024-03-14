@@ -2,19 +2,19 @@ import 'package:project_2/domain/user/iuser.dart';
 
 class MyUser implements IMyUser {
   @override
-  final String name;
+  String name;
 
   @override
-  final String? phoneNumber;
+  String? phoneNumber;
 
   @override
-  final String? email;
+  String? email;
 
   @override
   final String id;
 
   @override
-  final String? profilePhoto;
+  String? profilePhoto;
 
   MyUser(
       {this.name = 'Анонім',
@@ -25,11 +25,11 @@ class MyUser implements IMyUser {
 
   factory MyUser.fromJson({required Map<String, dynamic> data}) {
     return MyUser(
-        name: data["name"],
-        phoneNumber: data["phoneNumber"],
+        name: data["data"]["name"],
+        phoneNumber: data["data"]["phoneNumber"],
         id: data["id"],
-        email: data["email"],
-        profilePhoto: data["profilePhoto"]);
+        email: data["data"]["email"],
+        profilePhoto: data["data"]["image"]);
   }
 
   Map<String, dynamic> toJson() {

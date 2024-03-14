@@ -22,7 +22,9 @@ class FirestoreService implements INetworkService {
         await _firestore.collection(endpoint).doc(id).get();
     if (documentSnapshot.exists) {
       return BaseResponse(
-          code: 200, success: true, data: documentSnapshot.data() as Map<String, dynamic>);
+          code: 200,
+          success: true,
+          data: {"id": documentSnapshot.id, "data": documentSnapshot.data()});
     } else {
       return BaseResponse(code: 404, success: false, data: {});
     }

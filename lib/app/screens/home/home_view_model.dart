@@ -8,4 +8,12 @@ class HomeViewModel extends ChangeNotifier {
       : _authService = authService;
 
   Stream<UserState> get userStateStream => _authService.userStateStream();
+
+  //   void loadUserData() async {
+  //   _userService.loadUserData().then((value) {
+  //     if (value != null) {
+  //       _userService.setUser(value);
+  //     }
+  //   });
+  // }
 }
