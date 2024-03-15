@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
+import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
@@ -7,6 +8,7 @@ import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
+import 'package:project_2/app/common/caching/caching_manager.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
 class PlantsHomeScreen extends StatefulWidget with ErrorHandlingMixin {
@@ -47,7 +49,8 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
           widget.plantsHomeViewModel.user == null ||
                   widget.plantsHomeViewModel.user!.profilePhoto == null
               ? const Icon(Icons.person)
-              : Image.network(widget.plantsHomeViewModel.user!.profilePhoto!),
+              : CachedImageWidget(
+                  imageUrl: widget.plantsHomeViewModel.user!.profilePhoto!),
           const SizedBox(
             width: 30.0,
           ),
@@ -101,8 +104,9 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                           icon: const Icon(Icons.add_a_photo_outlined))
                       : SizedBox(
                           height: 100,
-                          child: Image.network(
-                              widget.plantsHomeViewModel.user!.profilePhoto!),
+                          child: CachedImageWidget(
+                              imageUrl: widget
+                                  .plantsHomeViewModel.user!.profilePhoto!),
                         ),
                   Text(widget.plantsHomeViewModel.user?.name ?? 'Анонім')
                 ],
@@ -116,10 +120,17 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
             ),
             ListTile(
               leading: IconButton(
+                onPressed: widget.plantsHomeViewModel.clear,
+                icon: Icon(Icons.cleaning_services_outlined),
+              ),
+              title: Text("Очистити кеш"),
+            ),
+            ListTile(
+              leading: IconButton(
                   onPressed: widget.plantsHomeViewModel.onLogoutButtonPressed,
                   icon: const Icon(Icons.logout_rounded)),
               title: const Text("Вихід"),
-            )
+            ),
           ],
         ),
       ),

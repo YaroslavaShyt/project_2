@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
+import 'package:project_2/app/common/caching/caching_manager.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/services/networking/firebase_storage/firebase_storage_service.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
@@ -167,5 +168,10 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
         imageName: fileName,
         image: _photo!);
     return response;
+  }
+
+  Future<void> clear() async {
+    await CachingManager.clearCache();
+    notifyListeners();
   }
 }
