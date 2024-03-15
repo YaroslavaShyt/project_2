@@ -2,7 +2,7 @@ import 'package:project_2/app/services/networking/firestore/collections.dart';
 import 'package:project_2/data/user/user.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
-import 'package:project_2/domain/user/iuser.dart';
+import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/domain/user/iuser_repository.dart';
 
 class UserRepository implements IUserRepository {

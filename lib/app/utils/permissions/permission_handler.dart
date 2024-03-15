@@ -28,9 +28,4 @@ class PermissionHandler {
       return true;
     }
   }
-
-  Future<void> askCorePermissions() async {
-    await isCameraPermissionGranted();
-    await isGalleryPermissionGranted();
-  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
 class PlantListItem extends StatelessWidget {
@@ -18,19 +19,26 @@ class PlantListItem extends StatelessWidget {
       children: [
         Text(
           plant.name,
-          style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: AppColors.whiteColor),
         ),
         Text(
           plant.quantity,
-          style: const TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),
+          style: const TextStyle(
+              fontSize: 20.0,
+              fontStyle: FontStyle.italic,
+              color: AppColors.whiteColor),
         ),
         Row(
           children: [
             IconButton(
-                onPressed: onEditButtonPressed, icon: const Icon(Icons.edit)),
+                onPressed: onEditButtonPressed,
+                icon: const Icon(Icons.edit, color: AppColors.whiteColor)),
             IconButton(
                 onPressed: onDeleteButtonPressed,
-                icon: const Icon(Icons.delete))
+                icon: const Icon(Icons.delete, color: AppColors.whiteColor))
           ],
         ),
       ],

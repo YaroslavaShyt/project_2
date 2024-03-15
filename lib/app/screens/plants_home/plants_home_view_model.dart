@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
-import 'package:project_2/app/common/caching/caching_manager.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/services/networking/firebase_storage/firebase_storage_service.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
@@ -12,7 +11,7 @@ import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
-import 'package:project_2/domain/user/iuser.dart';
+import 'package:project_2/domain/user/imy_user.dart';
 
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
@@ -142,7 +141,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
             if (response.error != null) {
               onError(response.error!);
             } else {
-              _userService.user!.profilePhoto = response.data!["imageURL"];
+              _userService.user!.profilePhoto = response.data!['imageURL'];
               notifyListeners();
               _navigationUtil.navigateBack();
             }
@@ -168,10 +167,5 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
         imageName: fileName,
         image: _photo!);
     return response;
-  }
-
-  Future<void> clear() async {
-    await CachingManager.clearCache();
-    notifyListeners();
   }
 }

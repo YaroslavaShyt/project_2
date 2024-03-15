@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/theming/app_colors.dart';
 
 class PickerContent extends StatelessWidget {
   final Function() onGalleryTap;
@@ -13,12 +14,20 @@ class PickerContent extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('З галереї'),
+              leading:
+                  const Icon(Icons.photo_library, color: AppColors.whiteColor),
+              title: const Text(
+                'З галереї',
+                style: TextStyle(color: AppColors.whiteColor),
+              ),
               onTap: onGalleryTap),
           ListTile(
-              leading: const Icon(Icons.photo_camera),
-              title: const Text('З камери'),
+              leading:
+                  const Icon(Icons.photo_camera, color: AppColors.whiteColor),
+              title: const Text(
+                'З камери',
+                style: TextStyle(color: AppColors.whiteColor),
+              ),
               onTap: onCameraTap),
         ],
       ),

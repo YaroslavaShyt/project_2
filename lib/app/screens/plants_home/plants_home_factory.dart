@@ -14,7 +14,7 @@ class PlantsHomeFactory {
   static Widget build(routeArguments) {
     return ChangeNotifierProvider(
       create: (context) => PlantsHomeViewModel(
-        permissionHandler: getItInst.get<PermissionHandler>(),
+          permissionHandler: getItInst.get<PermissionHandler>(),
           firebaseStorageService: getItInst.get<FirebaseStorageService>(),
           userService: context.read<IUserService>(),
           navigationUtil: context.read<INavigationUtil>(),

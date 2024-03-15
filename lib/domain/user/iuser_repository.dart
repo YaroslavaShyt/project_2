@@ -1,4 +1,4 @@
-import 'package:project_2/domain/user/iuser.dart';
+import 'package:project_2/domain/user/imy_user.dart';
 
 abstract interface class IUserRepository {
   Future<IMyUser?> readUser({required String id});

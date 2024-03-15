@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
-import 'package:project_2/domain/user/iuser.dart';
+import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/domain/user/iuser_repository.dart';
 
 class UserService extends ChangeNotifier implements IUserService {
