@@ -1,4 +1,4 @@
-import 'package:project_2/data/user/user.dart';
+import 'package:project_2/data/user/my_user.dart';
 
 enum AuthState { authenticated, notAuthenticated }
 

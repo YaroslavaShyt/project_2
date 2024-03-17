@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:project_2/data/user/user.dart';
+import 'package:project_2/data/user/my_user.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginRepository implements ILoginRepository {

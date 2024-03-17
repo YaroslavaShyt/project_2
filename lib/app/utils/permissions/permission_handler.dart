@@ -28,4 +28,18 @@ class PermissionHandler {
       return true;
     }
   }
+
+  Future<bool> isNotificationPermissionGranted() async {
+    PermissionStatus status = await Permission.notification.status;
+    if (!status.isGranted) {
+      status = await Permission.notification.request();
+      if (status.isGranted) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
 }

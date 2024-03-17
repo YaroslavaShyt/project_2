@@ -27,6 +27,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_cache_manager: ^3.3.1
   path: ^1.8.3
+  firebase_messaging: ^14.7.19
 
 dev_dependencies:
   flutter_test:

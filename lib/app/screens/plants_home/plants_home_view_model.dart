@@ -3,7 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
-import 'package:project_2/app/services/networking/firebase_storage/firebase_storage_service.dart';
+import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
+import 'package:project_2/data/storage/firebase_storage_repository.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/data/plants/plants_data.dart';
@@ -13,17 +14,19 @@ import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 
+enum PhotoSourceType { gallery, camera }
+
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
   final IPlantsRepository _plantsRepository;
   final INavigationUtil _navigationUtil;
   final IUserService _userService;
-  final FirebaseStorageService _firebaseStorageService;
+  final StorageService _storageService;
   final PermissionHandler _permissionHandler;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
-      required FirebaseStorageService firebaseStorageService,
+      required StorageService storageService,
       required IUserService userService,
       required IPlantsRepository plantsRepository,
       required PermissionHandler permissionHandler,
@@ -32,7 +35,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
         _userService = userService,
         _permissionHandler = permissionHandler,
         _plantsRepository = plantsRepository,
-        _firebaseStorageService = firebaseStorageService,
+        _storageService = storageService,
         _loginRepository = loginRepository {
     loadUserData();
   }
@@ -54,19 +57,19 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   set newPlantName(String name) {
     if (name.isEmpty) {
       _newPlantNameError = "Назва є обов'язковою!";
-      notifyListeners();
     } else {
       _newPlantName = name;
     }
+    notifyListeners();
   }
 
   set newPlantQuantity(String quantity) {
     if (quantity.isEmpty) {
       _newPlantQuantityError = "Кількість є обов'язковою!";
-      notifyListeners();
     } else {
       _newPlantQuantity = quantity;
     }
+    notifyListeners();
   }
 
   bool isNewPlantValidated() {
@@ -126,18 +129,21 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
       _plantsRepository.deletePlant(id: id);
 
   Future<void> onAddProfileImage(
-      {required Function onError, String type = 'Galery'}) async {
+      {required Function onError,
+      PhotoSourceType type = PhotoSourceType.gallery}) async {
     bool isGranted;
-    if (type == 'Galery') {
+    if (type == PhotoSourceType.gallery) {
       isGranted = await _permissionHandler.isGalleryPermissionGranted();
     } else {
       isGranted = await _permissionHandler.isCameraPermissionGranted();
     }
     if (isGranted) {
-      loadImage(type: type).then((value) {
+      loadImage(type: PhotoSourceType.gallery).then((value) {
         if (value != null) {
           _photo = File(value.path);
-          addImageToStorage().then((response) {
+          _storageService
+              .addImageToStorage(photo: _photo!, uid: _userService.user!.id)
+              .then((response) {
             if (response.error != null) {
               onError(response.error!);
             } else {
@@ -153,19 +159,13 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
     }
   }
 
-  Future<XFile?> loadImage({String type = 'Galery'}) async {
+  Future<XFile?> loadImage(
+      {PhotoSourceType type = PhotoSourceType.gallery}) async {
     final ImagePicker picker = ImagePicker();
     final pickedFile = await picker.pickImage(
-        source: type == 'Galery' ? ImageSource.gallery : ImageSource.camera);
+        source: type == PhotoSourceType.gallery
+            ? ImageSource.gallery
+            : ImageSource.camera);
     return pickedFile;
-  }
-
-  Future<IBaseResponse> addImageToStorage() async {
-    final fileName = basename(_photo!.path);
-    IBaseResponse response = await _firebaseStorageService.uploadImage(
-        filePath: "$userProfileImagesPath/${_userService.user!.id}",
-        imageName: fileName,
-        image: _photo!);
-    return response;
   }
 }

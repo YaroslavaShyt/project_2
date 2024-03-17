@@ -1,6 +1,6 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
-import 'package:project_2/data/user/user.dart';
+import 'package:project_2/data/user/my_user.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 

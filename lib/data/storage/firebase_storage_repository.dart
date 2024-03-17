@@ -3,10 +3,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:project_2/app/services/networking/base_response.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 
-class FirebaseStorageService {
+class FirebaseStorageRepository {
   final FirebaseStorage _firebaseStorage;
 
-  FirebaseStorageService({required FirebaseStorage firebaseStorage})
+  FirebaseStorageRepository({required FirebaseStorage firebaseStorage})
       : _firebaseStorage = firebaseStorage;
 
   Future<IBaseResponse> uploadImage(
