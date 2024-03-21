@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
+import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/data/storage/firebase_storage_repository.dart';
 import 'package:project_2/app/services/networking/firestore/firestore_service.dart';
 import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
@@ -49,4 +50,9 @@ void initRepos() {
 void initStorageService() {
   getItInst.registerFactory<StorageService>(() => StorageService(
       firebaseStorageRepository: getItInst.get<FirebaseStorageRepository>()));
+}
+
+void initNotificationService() {
+  getItInst.registerFactory<NotificationService>(() => NotificationService(
+      permissionHandler: getItInst.get<PermissionHandler>()));
 }

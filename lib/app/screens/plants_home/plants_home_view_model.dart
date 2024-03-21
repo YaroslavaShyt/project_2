@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
+import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
@@ -19,16 +20,19 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final IUserService _userService;
   final StorageService _storageService;
   final PermissionHandler _permissionHandler;
+  final NotificationService _notificationService;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
       required StorageService storageService,
       required IUserService userService,
+      required NotificationService notificationService,
       required IPlantsRepository plantsRepository,
       required PermissionHandler permissionHandler,
       required ILoginRepository loginRepository})
       : _navigationUtil = navigationUtil,
         _userService = userService,
+        _notificationService = notificationService,
         _permissionHandler = permissionHandler,
         _plantsRepository = plantsRepository,
         _storageService = storageService,
@@ -49,6 +53,10 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantQuantityError => _newPlantQuantityError;
 
   IMyUser? get user => _userService.user;
+
+  void downloadPlants() async {
+    await _notificationService.showLoadingNotification();
+  }
 
   set newPlantName(String name) {
     if (name.isEmpty) {

@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/chached_image.dart';
@@ -11,8 +10,10 @@ import 'package:project_2/app/screens/plants_home/widgets/clear_cache.dart';
 import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/theming/app_colors.dart';
-import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/domain/plants/iplant.dart';
+import 'package:project_2/app/services/get_it/get_it.dart';
+import 'package:project_2/app/services/notification/notification_service.dart';
+import 'package:project_2/app/utils/permissions/permission_handler.dart';
 
 class PlantsHomeScreen extends StatefulWidget with ErrorHandlingMixin {
   final PlantsHomeViewModel plantsHomeViewModel;
@@ -26,17 +27,8 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
   @override
   void initState() {
     super.initState();
-    PermissionHandler().isNotificationPermissionGranted().then((isGranted) {
-      if (isGranted) {
-        FirebaseMessaging.onMessage.listen((RemoteMessage event) =>
-            _showNotification(context, event.notification!.title!,
-                event.notification!.body!));
-
-        FirebaseMessaging.onMessageOpenedApp.listen((message) {
-          _showAddPlantModal(context);
-        });
-      }
-    });
+    getItInst.get<PermissionHandler>().askCorePermissions().then((value) =>
+        getItInst.get<NotificationService>().initializeNotifications());
   }
 
   @override
@@ -63,6 +55,12 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
           ),
         ),
         actions: [
+          IconButton(
+              onPressed: widget.plantsHomeViewModel.downloadPlants,
+              icon: const Icon(
+                Icons.download,
+                color: AppColors.whiteColor,
+              )),
           widget.plantsHomeViewModel.user == null ||
                   widget.plantsHomeViewModel.user!.profilePhoto == null
               ? const Icon(Icons.person)

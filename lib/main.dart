@@ -7,7 +7,6 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
 import 'package:project_2/app/services/auth/auth_service.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
-import 'package:project_2/app/utils/notifications/notification_functions.dart';
 import 'package:project_2/domain/services/iauth_service.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/app/services/user/user_service.dart';
@@ -15,7 +14,6 @@ import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/user/iuser_repository.dart';
 import 'package:project_2/firebase_options.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,19 +21,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseMessaging.instance.setAutoInitEnabled(true);
-
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  print("FCMToken $fcmToken");
-
-  FirebaseMessaging.onBackgroundMessage(onBackgroundMessageArrived);
-
+ 
   initCloudFunctions();
   initNetworkService();
   initRepos();
   initStorageService();
   initPermissionHandler();
+  initNotificationService();
 
+ 
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();
 
@@ -44,7 +38,7 @@ void main() async {
   final IUserService userService = UserService(
       firebaseAuth: FirebaseAuth.instance,
       userRepository: getItInst.get<IUserRepository>());
-
+  
   runApp(MultiProvider(
       providers: [
         Provider.value(value: navigationUtil),
@@ -55,3 +49,5 @@ void main() async {
         router: appRouter,
       )));
 }
+
+
