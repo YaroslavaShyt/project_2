@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
@@ -10,13 +11,15 @@ import 'package:project_2/app/screens/plants_home/widgets/build_drawer_item.dart
 import 'package:project_2/app/screens/plants_home/widgets/clear_cache.dart';
 import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
+import 'package:project_2/app/services/notifications/notifications_service.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
 class PlantsHomeScreen extends StatefulWidget with ErrorHandlingMixin {
   final PlantsHomeViewModel plantsHomeViewModel;
-  const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
+
+  PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
 
   @override
   State<PlantsHomeScreen> createState() => _PlantsHomeScreenState();
@@ -28,10 +31,12 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
     super.initState();
     PermissionHandler().isNotificationPermissionGranted().then((isGranted) {
       if (isGranted) {
-        FirebaseMessaging.onMessage.listen((RemoteMessage event) =>
-            _showNotification(context, event.notification!.title!,
-                event.notification!.body!));
-
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          print(message.data);
+          NotificationService().showNotifications(
+              title: message.notification!.title ?? "no title",
+              body: message.notification?.body ?? "no body");
+        });
         FirebaseMessaging.onMessageOpenedApp.listen((message) {
           _showAddPlantModal(context);
         });

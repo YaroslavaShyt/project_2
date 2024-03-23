@@ -7,6 +7,7 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
 import 'package:project_2/app/services/auth/auth_service.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
+import 'package:project_2/app/services/notifications/notifications_service.dart';
 import 'package:project_2/app/utils/notifications/notification_functions.dart';
 import 'package:project_2/domain/services/iauth_service.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
@@ -23,6 +24,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await NotificationService().init();
   await FirebaseMessaging.instance.setAutoInitEnabled(true);
 
   final fcmToken = await FirebaseMessaging.instance.getToken();
