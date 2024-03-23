@@ -53,6 +53,6 @@ void initStorageService() {
 }
 
 void initNotificationService() {
-  getItInst.registerFactory<NotificationService>(() => NotificationService(
-      permissionHandler: getItInst.get<PermissionHandler>()));
+  getItInst.registerSingleton<NotificationController>(NotificationController(
+      ));
 }

@@ -15,7 +15,7 @@ class PlantsHomeFactory {
   static Widget build(routeArguments) {
     return ChangeNotifierProvider(
       create: (context) => PlantsHomeViewModel(
-          notificationService: getItInst.get<NotificationService>(),
+          notificationService: getItInst.get<NotificationController>(),
           permissionHandler: getItInst.get<PermissionHandler>(),
           storageService: getItInst.get<StorageService>(),
           userService: context.read<IUserService>(),

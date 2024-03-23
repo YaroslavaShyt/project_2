@@ -7,6 +7,7 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
 import 'package:project_2/app/services/auth/auth_service.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
+import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/domain/services/iauth_service.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/app/services/user/user_service.dart';
@@ -21,7 +22,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
- 
+
   initCloudFunctions();
   initNetworkService();
   initRepos();
@@ -29,7 +30,9 @@ void main() async {
   initPermissionHandler();
   initNotificationService();
 
- 
+  await NotificationController.initializeRemoteNotifications(debug: true);
+
+
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();
 
@@ -38,7 +41,7 @@ void main() async {
   final IUserService userService = UserService(
       firebaseAuth: FirebaseAuth.instance,
       userRepository: getItInst.get<IUserRepository>());
-  
+
   runApp(MultiProvider(
       providers: [
         Provider.value(value: navigationUtil),
@@ -49,5 +52,3 @@ void main() async {
         router: appRouter,
       )));
 }
-
-

@@ -20,13 +20,13 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final IUserService _userService;
   final StorageService _storageService;
   final PermissionHandler _permissionHandler;
-  final NotificationService _notificationService;
+  final NotificationController _notificationService;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
       required StorageService storageService,
       required IUserService userService,
-      required NotificationService notificationService,
+      required NotificationController notificationService,
       required IPlantsRepository plantsRepository,
       required PermissionHandler permissionHandler,
       required ILoginRepository loginRepository})
@@ -54,8 +54,8 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
 
   IMyUser? get user => _userService.user;
 
-  void downloadPlants() async {
-    await _notificationService.showLoadingNotification();
+  Future<void> downloadPlants() async {
+    //await NotificationController.showNotification(title: "title", body: "body");
   }
 
   set newPlantName(String name) {

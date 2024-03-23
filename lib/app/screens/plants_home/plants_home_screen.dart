@@ -28,7 +28,8 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
   void initState() {
     super.initState();
     getItInst.get<PermissionHandler>().askCorePermissions().then((value) =>
-        getItInst.get<NotificationService>().initializeNotifications());
+        //getItInst.get<NotificationService>().initializeNotifications()
+        {});
   }
 
   @override
