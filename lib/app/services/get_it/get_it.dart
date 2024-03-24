@@ -18,6 +18,15 @@ import 'package:project_2/domain/user/iuser_repository.dart';
 
 final getItInst = GetIt.I;
 
+void initGetItFunctions() {
+  initCloudFunctions();
+  initNetworkService();
+  initRepos();
+  initStorageService();
+  initPermissionHandler();
+  initNotificationService();
+}
+
 void initCloudFunctions() {
   getItInst.registerFactory<FirebaseFunctionsService>(
       () => FirebaseFunctionsService());
@@ -53,6 +62,5 @@ void initStorageService() {
 }
 
 void initNotificationService() {
-  getItInst.registerSingleton<NotificationController>(NotificationController(
-      ));
+  getItInst.registerSingleton<NotificationService>(NotificationService());
 }

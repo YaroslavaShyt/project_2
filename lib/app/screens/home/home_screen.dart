@@ -6,13 +6,13 @@ import 'package:project_2/app/screens/plants_home/plants_home_factory.dart';
 import 'package:project_2/domain/services/iauth_service.dart';
 
 class HomeScreen extends StatelessWidget {
-  final HomeViewModel homeViewModel;
-  const HomeScreen({super.key, required this.homeViewModel});
+  final HomeViewModel viewModel;
+  const HomeScreen({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<UserState>(
-      stream: homeViewModel.userStateStream,
+      stream: viewModel.userStateStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(

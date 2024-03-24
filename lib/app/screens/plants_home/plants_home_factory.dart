@@ -15,16 +15,17 @@ class PlantsHomeFactory {
   static Widget build(routeArguments) {
     return ChangeNotifierProvider(
       create: (context) => PlantsHomeViewModel(
-          notificationService: getItInst.get<NotificationController>(),
-          permissionHandler: getItInst.get<PermissionHandler>(),
-          storageService: getItInst.get<StorageService>(),
-          userService: context.read<IUserService>(),
-          navigationUtil: context.read<INavigationUtil>(),
-          plantsRepository: getItInst.get<IPlantsRepository>(),
-          loginRepository: getItInst.get<ILoginRepository>()),
+        userService: context.read<IUserService>(),
+        navigationUtil: context.read<INavigationUtil>(),
+        storageService: getItInst.get<StorageService>(),
+        loginRepository: getItInst.get<ILoginRepository>(),
+        plantsRepository: getItInst.get<IPlantsRepository>(),
+        permissionHandler: getItInst.get<PermissionHandler>(),
+        notificationService: getItInst.get<NotificationService>(),
+      ),
       child: Consumer<PlantsHomeViewModel>(builder: (context, model, child) {
         return PlantsHomeScreen(
-          plantsHomeViewModel: model,
+          viewModel: model,
         );
       }),
     );

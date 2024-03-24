@@ -23,15 +23,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  initCloudFunctions();
-  initNetworkService();
-  initRepos();
-  initStorageService();
-  initPermissionHandler();
-  initNotificationService();
+  initGetItFunctions();
 
-  await NotificationController.initializeRemoteNotifications(debug: true);
-
+  await NotificationService.initNotifications();
 
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();

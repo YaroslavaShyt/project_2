@@ -1,23 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
-import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
-import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
-import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/build_drawer_item.dart';
-import 'package:project_2/app/screens/plants_home/widgets/clear_cache.dart';
-import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
+import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
+import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
+import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
+import 'package:project_2/app/screens/plants_home/widgets/clear_cache.dart';
+import 'package:project_2/app/common/widgets/modals/modals_service.dart';
+import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
-import 'package:project_2/app/services/get_it/get_it.dart';
-import 'package:project_2/app/services/notification/notification_service.dart';
-import 'package:project_2/app/utils/permissions/permission_handler.dart';
+import 'package:flutter/material.dart';
 
 class PlantsHomeScreen extends StatefulWidget with ErrorHandlingMixin {
-  final PlantsHomeViewModel plantsHomeViewModel;
-  const PlantsHomeScreen({super.key, required this.plantsHomeViewModel});
+  final PlantsHomeViewModel viewModel;
+  const PlantsHomeScreen({super.key, required this.viewModel});
 
   @override
   State<PlantsHomeScreen> createState() => _PlantsHomeScreenState();
@@ -27,9 +24,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
   @override
   void initState() {
     super.initState();
-    getItInst.get<PermissionHandler>().askCorePermissions().then((value) =>
-        //getItInst.get<NotificationService>().initializeNotifications()
-        {});
+    widget.viewModel.askPermissions();
   }
 
   @override
@@ -57,23 +52,23 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: widget.plantsHomeViewModel.downloadPlants,
+              onPressed: widget.viewModel.downloadPlants,
               icon: const Icon(
                 Icons.download,
                 color: AppColors.whiteColor,
               )),
-          widget.plantsHomeViewModel.user == null ||
-                  widget.plantsHomeViewModel.user!.profilePhoto == null
+          widget.viewModel.user == null ||
+                  widget.viewModel.user!.profilePhoto == null
               ? const Icon(Icons.person)
               : CachedImageWidget(
-                  imageUrl: widget.plantsHomeViewModel.user!.profilePhoto!),
+                  imageUrl: widget.viewModel.user!.profilePhoto!),
           const SizedBox(
             width: 30.0,
           ),
         ],
       ),
       body: StreamBuilder(
-          stream: widget.plantsHomeViewModel.getPlantsStream,
+          stream: widget.viewModel.getPlantsStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Column(
@@ -90,8 +85,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                               plant: snapshot.data!.data[index],
                               onEditButtonPressed: () => _showEditPlantModal(
                                   context, snapshot.data!.data[index]),
-                              onDeleteButtonPressed: () => widget
-                                  .plantsHomeViewModel
+                              onDeleteButtonPressed: () => widget.viewModel
                                   .onDeletePlantButtonPressed(
                                       id: snapshot.data!.data[index].id),
                             ),
@@ -113,18 +107,17 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
             DrawerHeader(
               child: Column(
                 children: [
-                  widget.plantsHomeViewModel.user == null ||
-                          widget.plantsHomeViewModel.user!.profilePhoto == null
+                  widget.viewModel.user == null ||
+                          widget.viewModel.user!.profilePhoto == null
                       ? IconButton(
                           onPressed: () => _showPicker(context),
                           icon: const Icon(Icons.add_a_photo_outlined))
                       : SizedBox(
                           height: 100,
                           child: CachedImageWidget(
-                              imageUrl: widget
-                                  .plantsHomeViewModel.user!.profilePhoto!),
+                              imageUrl: widget.viewModel.user!.profilePhoto!),
                         ),
-                  Text(widget.plantsHomeViewModel.user?.name ?? 'Анонім')
+                  Text(widget.viewModel.user?.name ?? 'Анонім')
                 ],
               ),
             ),
@@ -132,25 +125,12 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                 Icons.add, 'Нова рослина', () => _showAddPlantModal(context)),
             const ClearCacheWidget(),
             buildDrawerItem(Icons.logout_rounded, 'Вихід',
-                widget.plantsHomeViewModel.onLogoutButtonPressed),
+                widget.viewModel.onLogoutButtonPressed),
           ],
         ),
       ),
       backgroundColor: AppColors.darkWoodGeenColor,
     );
-  }
-
-  void _showNotification(BuildContext context, String title, String body) {
-    ModalsService.showPopUpModal(
-        context: context,
-        data: PopUpDialogData(
-            title: title,
-            content: Text(
-              body,
-              style:
-                  const TextStyle(color: AppColors.whiteColor, fontSize: 18.0),
-            ),
-            actions: []));
   }
 
   void _showAddPlantModal(BuildContext context) {
@@ -161,19 +141,19 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
           firstLabel: 'Назва',
           secondLabel: 'Кількість',
           buttonTitle: 'Додати',
-          firstErrorText: widget.plantsHomeViewModel.newPlantNameError,
-          secondErrorText: widget.plantsHomeViewModel.newPlantQuantityError,
+          firstErrorText: widget.viewModel.newPlantNameError,
+          secondErrorText: widget.viewModel.newPlantQuantityError,
           onFirstTextFieldChanged: (value) =>
-              widget.plantsHomeViewModel.newPlantName = value,
+              widget.viewModel.newPlantName = value,
           onSecondTextFieldChanged: (value) =>
-              widget.plantsHomeViewModel.newPlantQuantity = value,
-          onButtonPressed: widget.plantsHomeViewModel.onAddPlantButtonPressed),
+              widget.viewModel.newPlantQuantity = value,
+          onButtonPressed: widget.viewModel.onAddPlantButtonPressed),
     );
   }
 
   void _showEditPlantModal(BuildContext context, IPlant plant) {
-    widget.plantsHomeViewModel.newPlantName = plant.name;
-    widget.plantsHomeViewModel.newPlantQuantity = plant.quantity;
+    widget.viewModel.newPlantName = plant.name;
+    widget.viewModel.newPlantQuantity = plant.quantity;
 
     ModalsService.showBottomModal(
       context: context,
@@ -184,14 +164,13 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
         buttonTitle: 'Зберегти',
         firstFieldValue: plant.name,
         secondFieldValue: plant.quantity,
-        firstErrorText: widget.plantsHomeViewModel.newPlantNameError,
-        secondErrorText: widget.plantsHomeViewModel.newPlantQuantityError,
+        firstErrorText: widget.viewModel.newPlantNameError,
+        secondErrorText: widget.viewModel.newPlantQuantityError,
         onFirstTextFieldChanged: (value) =>
-            widget.plantsHomeViewModel.newPlantName = value,
+            widget.viewModel.newPlantName = value,
         onSecondTextFieldChanged: (value) =>
-            widget.plantsHomeViewModel.newPlantQuantity = value,
-        onButtonPressed: () =>
-            widget.plantsHomeViewModel.onUpdatePlantButtonPressed(
+            widget.viewModel.newPlantQuantity = value,
+        onButtonPressed: () => widget.viewModel.onUpdatePlantButtonPressed(
           id: plant.id,
         ),
       ),
@@ -204,13 +183,11 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
         data: PopUpDialogData(
             title: 'Завантажити фото ',
             content: PickerContent(
-                onCameraTap: () => widget.plantsHomeViewModel.onAddProfileImage(
+                onCameraTap: () => widget.viewModel.onAddProfileImage(
                     onError: (err) => widget.showErrorDialog(context, err),
                     type: PhotoSourceType.camera),
-                onGalleryTap: () => widget.plantsHomeViewModel
-                    .onAddProfileImage(
-                        onError: (err) =>
-                            widget.showErrorDialog(context, err))),
+                onGalleryTap: () => widget.viewModel.onAddProfileImage(
+                    onError: (err) => widget.showErrorDialog(context, err))),
             actions: []));
   }
 }
