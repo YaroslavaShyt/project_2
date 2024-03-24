@@ -5,10 +5,10 @@ import 'package:project_2/app/app.dart';
 import 'package:project_2/app/routing/app_router.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
+import 'package:project_2/app/services/app_state/app_state_service.dart';
 import 'package:project_2/app/services/auth/auth_service.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
-import 'package:project_2/app/services/notifications/notifications_service.dart';
-import 'package:project_2/app/utils/notifications/notification_functions.dart';
+import 'package:project_2/app/services/notifications/notification_service.dart';
 import 'package:project_2/domain/services/iauth_service.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/app/services/user/user_service.dart';
@@ -16,7 +16,6 @@ import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/domain/user/iuser_repository.dart';
 import 'package:project_2/firebase_options.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,19 +24,21 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await NotificationService().init();
-  await FirebaseMessaging.instance.setAutoInitEnabled(true);
-
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  print("FCMToken $fcmToken");
-
-  FirebaseMessaging.onBackgroundMessage(onBackgroundMessageArrived);
-
   initCloudFunctions();
   initNetworkService();
   initRepos();
   initStorageService();
   initPermissionHandler();
+  initNotificationsService();
+  initAppStateService();
+
+  NotificationService().getFirebaseMessagingToken();
+  NotificationService().initFirebaseNotifications();
+  NotificationService().initLocalNotifications();
+
+  // getItInst.get<NotificationService>().getFirebaseMessagingToken();
+  // getItInst.get<NotificationService>().initFirebaseNotifications();
+  // getItInst.get<NotificationService>().initLocalNotifications();
 
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();

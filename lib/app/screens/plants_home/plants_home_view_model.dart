@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
+import 'package:project_2/app/services/notifications/notification_service.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
@@ -19,6 +20,7 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final IUserService _userService;
   final StorageService _storageService;
   final PermissionHandler _permissionHandler;
+  final NotificationService _notificationService;
 
   PlantsHomeViewModel(
       {required INavigationUtil navigationUtil,
@@ -26,10 +28,12 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
       required IUserService userService,
       required IPlantsRepository plantsRepository,
       required PermissionHandler permissionHandler,
+      required NotificationService notificationService,
       required ILoginRepository loginRepository})
       : _navigationUtil = navigationUtil,
         _userService = userService,
         _permissionHandler = permissionHandler,
+        _notificationService = notificationService,
         _plantsRepository = plantsRepository,
         _storageService = storageService,
         _loginRepository = loginRepository {
@@ -49,6 +53,22 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantQuantityError => _newPlantQuantityError;
 
   IMyUser? get user => _userService.user;
+
+  void initNotifications({required Function(String) errorHandler}) {
+    _permissionHandler
+        .isNotificationPermissionGranted();
+      //   .then((isGranted) async {
+      // if (isGranted) {
+      //   String? token = await _notificationService.getFirebaseMessagingToken();
+      //   if (token != null) {
+      //     await _notificationService.initLocalNotifications();
+      //     await _notificationService.initFirebaseNotifications();
+      //   } else {
+      //     errorHandler("Не вдалось отримати токен");
+      //   }
+      // }
+    
+  }
 
   set newPlantName(String name) {
     if (name.isEmpty) {
