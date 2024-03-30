@@ -38,7 +38,7 @@ class MyUser implements IMyUser {
       "id": id,
       "email": email,
       "phoneNumber": phoneNumber,
-      "profilePhoto": profilePhoto
+      "profilePhoto": profilePhoto,
     };
   }
 }

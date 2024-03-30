@@ -10,8 +10,8 @@ import 'package:project_2/app/screens/login/widgets/custom_container.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
-  final LoginViewModel loginViewModel;
-  const LoginScreen({super.key, required this.loginViewModel});
+  final LoginViewModel viewModel;
+  const LoginScreen({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +86,8 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
                     size: 40,
                     color: AppColors.whiteColor,
                   ),
-                  onButtonPressed: () =>
-                      loginViewModel.onLoginGoogleButtonPressed(
-                          onError: (error) => showErrorDialog(context, error)),
+                  onButtonPressed: () => viewModel.onLoginGoogleButtonPressed(
+                      onError: (error) => showErrorDialog(context, error)),
                   title: 'Google'),
             ),
           ],
@@ -104,11 +103,10 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
           title: 'Авторизація за SMS',
           firstLabel: "Номер телефону",
           buttonTitle: "Надіслати код",
-          onFirstTextFieldChanged: (value) =>
-              loginViewModel.phoneNumber = value,
+          onFirstTextFieldChanged: (value) => viewModel.phoneNumber = value,
           onButtonPressed: () => {
-            loginViewModel.onSendOtpButtonPressed(),
-            if (loginViewModel.isFormDataValid)
+            viewModel.onSendOtpButtonPressed(),
+            if (viewModel.isFormDataValid)
               {
                 ModalsService.showPopUpModal(
                     context: context,
@@ -116,12 +114,12 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
                         title: 'Введіть код',
                         content: MainTextField(
                             label: 'Код',
-                            onChanged: (value) => loginViewModel.otp = value,
+                            onChanged: (value) => viewModel.otp = value,
                             obscureText: false),
                         actions: [
                           MainElevatedButton(
                               onButtonPressed: () =>
-                                  loginViewModel.onLoginOtpButtonPressed(
+                                  viewModel.onLoginOtpButtonPressed(
                                       onError: (error) =>
                                           showErrorDialog(context, error)),
                               title: 'Увійти')

@@ -7,10 +7,16 @@
 <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
 
+<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+<uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+
+
+
     <application
         android:label="project_2"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -41,5 +47,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       
     </application>
 </manifest>

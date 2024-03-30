@@ -7,6 +7,7 @@ import 'package:project_2/domain/user/iuser_repository.dart';
 class UserService extends ChangeNotifier implements IUserService {
   final FirebaseAuth _firebaseAuth;
   final IUserRepository _userRepository;
+  
   IMyUser? _user;
 
   UserService(

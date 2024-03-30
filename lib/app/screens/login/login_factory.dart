@@ -11,11 +11,11 @@ class LoginFactory {
   static Widget build() {
     return ChangeNotifierProvider(
       create: (context) => LoginViewModel(
-          navigationUtil: context.read<INavigationUtil>(),
           userService: context.read<IUserService>(),
+          navigationUtil: context.read<INavigationUtil>(),
           loginRepository: getItInst.get<ILoginRepository>()),
       child: Consumer<LoginViewModel>(builder: (context, model, child) {
-        return LoginScreen(loginViewModel: model);
+        return LoginScreen(viewModel: model);
       }),
     );
   }

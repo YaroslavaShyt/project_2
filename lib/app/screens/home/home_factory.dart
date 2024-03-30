@@ -11,7 +11,7 @@ class HomeFactory {
           HomeViewModel(authService: context.read<IAuthService>()),
       child: Consumer<HomeViewModel>(builder: (context, model, child) {
         return HomeScreen(
-          homeViewModel: model,
+          viewModel: model,
         );
       }),
     );

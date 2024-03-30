@@ -32,7 +32,8 @@ class PermissionHandler {
   Future<bool> isNotificationPermissionGranted() async {
     PermissionStatus status = await Permission.notification.status;
     if (!status.isGranted) {
-      status = await Permission.notification.request();
+      status =
+          await Permission.notification.request();
       if (status.isGranted) {
         return true;
       } else {
@@ -41,5 +42,11 @@ class PermissionHandler {
     } else {
       return true;
     }
+  }
+
+  Future<void> askCorePermissions() async{
+    await isNotificationPermissionGranted();
+    await isCameraPermissionGranted();
+    await isGalleryPermissionGranted();
   }
 }

@@ -4,7 +4,6 @@ abstract interface class IMyUser {
   String? phoneNumber;
   String? email;
   String? profilePhoto;
-
   IMyUser(
       {this.name = 'Анонім',
       this.phoneNumber,

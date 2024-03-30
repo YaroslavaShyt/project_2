@@ -15,7 +15,6 @@ class FirebaseStorageRepository {
       final ref = _firebaseStorage.ref(filePath).child(imageName);
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
-      //print(url);
       return BaseResponse(data: {"imageURL": url});
     } catch (err) {
       return BaseResponse(error: err.toString());

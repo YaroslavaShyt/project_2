@@ -5,49 +5,25 @@ import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 
 class LoginViewModel extends BaseChangeNotifier {
-  final ILoginRepository _loginRepository;
   final IUserService _userService;
   final INavigationUtil _navigationUtil;
+  final ILoginRepository _loginRepository;
+
+  String _otp = '';
+  String _phoneNumber = '';
+  String? _phoneNumberError;
   bool isFormDataValid = true;
 
-  String _phoneNumber = '';
-  String _otp = '';
-  String? _phoneNumberError;
-
-  LoginViewModel(
-      {required ILoginRepository loginRepository,
-      required INavigationUtil navigationUtil,
-      required IUserService userService})
-      : _loginRepository = loginRepository,
-        _navigationUtil = navigationUtil,
-        _userService = userService;
-
   String get phoneNumber => _phoneNumber;
-
   String? get phoneNumberError => _phoneNumberError;
 
-  set phoneNumber(String newPhoneNumber) {
-    _phoneNumber = newPhoneNumber;
-    _phoneNumberError = null;
-  }
-
-  set otp(String newOtp) {
-    _otp = newOtp;
-  }
-
-  bool isValidated() {
-    if (_phoneNumber.isEmpty) {
-      _phoneNumberError = "Provide phone number, please!";
-    } else if (_phoneNumber.length < 10) {
-      _phoneNumberError = "Not enough numbers!";
-    }
-
-    if (_phoneNumberError != null) {
-      notifyListeners();
-      return false;
-    }
-    return true;
-  }
+  LoginViewModel({
+    required IUserService userService,
+    required INavigationUtil navigationUtil,
+    required ILoginRepository loginRepository,
+  })  : _userService = userService,
+        _navigationUtil = navigationUtil,
+        _loginRepository = loginRepository;
 
   void onLoginOtpButtonPressed({required Function onError}) async {
     _loginRepository.loginOtp(otp: _otp).then((value) {
@@ -71,5 +47,28 @@ class LoginViewModel extends BaseChangeNotifier {
     _loginRepository.loginGoogle().then((value) {
       _userService.setUser(value);
     }).onError((error, stackTrace) => onError(error.toString()));
+  }
+
+  bool isValidated() {
+    if (_phoneNumber.isEmpty) {
+      _phoneNumberError = "Provide phone number, please!";
+    } else if (_phoneNumber.length < 10) {
+      _phoneNumberError = "Not enough numbers!";
+    }
+
+    if (_phoneNumberError != null) {
+      notifyListeners();
+      return false;
+    }
+    return true;
+  }
+
+  set phoneNumber(String newPhoneNumber) {
+    _phoneNumber = newPhoneNumber;
+    _phoneNumberError = null;
+  }
+
+  set otp(String newOtp) {
+    _otp = newOtp;
   }
 }

@@ -7,3 +7,4 @@ Future<void> onBackgroundMessageArrived(RemoteMessage message) async {
       title: message.notification?.title ?? "no title",
       body: message.notification?.body ?? "no body");
 }
+
