@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:project_2/app/routing/routes.dart';
+import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
@@ -54,6 +56,10 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   String? get newPlantNameError => _newPlantNameError;
   String? get newPlantQuantityError => _newPlantQuantityError;
   Stream<PlantsData> get getPlantsStream => _plantsRepository.plantsState();
+
+  void navigateToPlantDetails(IPlant plant){
+    _navigationUtil.navigateTo(routePlantsDetails, data: plant);
+  }
 
   Future<void> downloadPlants() async {
     await _notificationService.createNewNotification(

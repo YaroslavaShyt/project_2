@@ -79,15 +79,20 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         itemCount: snapshot.data?.data.length ?? 0,
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: PlantListItem(
-                              plant: snapshot.data!.data[index],
-                              onEditButtonPressed: () => _showEditPlantModal(
-                                  context, snapshot.data!.data[index]),
-                              onDeleteButtonPressed: () => widget.viewModel
-                                  .onDeletePlantButtonPressed(
-                                      id: snapshot.data!.data[index].id),
+                          return GestureDetector(
+                            onTap: () => widget.viewModel
+                                .navigateToPlantDetails(
+                                    snapshot.data!.data[index]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: PlantListItem(
+                                plant: snapshot.data!.data[index],
+                                onEditButtonPressed: () => _showEditPlantModal(
+                                    context, snapshot.data!.data[index]),
+                                onDeleteButtonPressed: () => widget.viewModel
+                                    .onDeletePlantButtonPressed(
+                                        id: snapshot.data!.data[index].id),
+                              ),
                             ),
                           );
                         }),
