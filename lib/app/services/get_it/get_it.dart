@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/services/deep_linking/deep_linking_service.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/data/storage/firebase_storage_repository.dart';
@@ -18,13 +20,14 @@ import 'package:project_2/domain/user/iuser_repository.dart';
 
 final getItInst = GetIt.I;
 
-void initGetItFunctions() {
+void initGetItFunctions(INavigationUtil util) {
   initCloudFunctions();
   initNetworkService();
   initRepos();
   initStorageService();
   initPermissionHandler();
   initNotificationService();
+  initDeepLinkingService(util);
 }
 
 void initCloudFunctions() {
@@ -63,4 +66,8 @@ void initStorageService() {
 
 void initNotificationService() {
   getItInst.registerSingleton<NotificationService>(NotificationService());
+}
+
+void initDeepLinkingService(INavigationUtil util){
+  getItInst.registerSingleton<DeepLinkingService>(DeepLinkingService(navigationUtil: util));
 }

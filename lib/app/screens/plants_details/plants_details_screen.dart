@@ -7,9 +7,9 @@ class PlantsDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: Text(viewModel.plant.name),
+        child: Text("opened from link"),
       ),
     );
   }

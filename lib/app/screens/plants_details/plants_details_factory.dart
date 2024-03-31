@@ -10,7 +10,7 @@ class PlantsDetailsFactory {
   static Widget build(RouteSettings routeSettings) {
     return ChangeNotifierProvider(
       create: (context) => PlantsDetailsViewModel(
-        plant: routeSettings.arguments as IPlant,
+     //   plant: routeSettings.arguments as IPlant,
         navigationUtil: context.read<INavigationUtil>()
       ),
       child: Consumer<PlantsDetailsViewModel>(builder: (context, model, child) {
