@@ -24,12 +24,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await NotificationService.initNotifications();
-
   final INavigationUtil navigationUtil = NavigationUtil();
   final AppRouter appRouter = AppRouter();
 
   initGetItFunctions(navigationUtil);
+
+  await NotificationService.initNotifications();
 
   final IAuthService authService =
       AuthService(loginRepository: getItInst.get<ILoginRepository>());

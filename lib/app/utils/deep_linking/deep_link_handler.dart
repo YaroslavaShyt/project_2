@@ -16,23 +16,11 @@ class DeepLinkHandler {
   void getInitialLink() async {
     try {
       initialUri = await getInitialUri();
-
       debugPrint("\n\n ititUrI: $initialUri \n\n");
-
       if (initialUri != null) {
         if (initialUri!.pathSegments.isNotEmpty) {
-          List<String> parsedRoute =
-              Uri.parse(initialUri.toString()).pathSegments;
-          if (parsedRoute.length == 2) {
-            if (parsedRoute[0] == uriPlantsDetailsCategory) {
-              _navigationUtil.navigateTo(routePlantsDetails,
-                  data: parsedRoute[1]);
-            } else {
-              _navigationUtil.navigateTo(routePlantsHome);
-            }
-          } else {
-            _navigationUtil.navigateTo(routePlantsHome);
-          }
+          Map<String, String> data = parseLink(initialUri.toString());
+          _navigationUtil.navigateTo(data["route"]!, data: data["data"]);
         } else {
           debugPrint("uri empty");
         }
@@ -46,25 +34,26 @@ class DeepLinkHandler {
     sub = uriLinkStream.listen((Uri? uri) {
       if (uri!.pathSegments.isNotEmpty) {
         currentUri = uri;
-
-        List<String> parsedRoute =
-            Uri.parse(currentUri.toString()).pathSegments;
-
-        if (parsedRoute.length == 2) {
-          if (parsedRoute[0] == uriPlantsDetailsCategory) {
-            _navigationUtil.navigateTo(routePlantsDetails,
-                data: parsedRoute[1]);
-          } else {
-            _navigationUtil.navigateTo(routePlantsHome);
-          }
-        } else {
-          _navigationUtil.navigateTo(routePlantsHome);
-        }
+        Map<String, String> data = parseLink(currentUri.toString());
+        _navigationUtil.navigateTo(data["route"]!, data: data["data"]);
       } else {
         debugPrint("uri empty");
       }
     }, onError: (err) {
       debugPrint(err.toString());
     });
+  }
+
+  Map<String, String> parseLink(String uri) {
+    List<String> parsedRoute = Uri.parse(uri).pathSegments;
+    if (parsedRoute.length == 2) {
+      if (parsedRoute[0] == uriPlantsDetailsCategory) {
+        return {"route": routePlantsDetails, "data": parsedRoute[1]};
+      } else {
+        return {"route": routeHome, "data": ""};
+      }
+    } else {
+      return {"route": routeHome, "data": ""};
+    }
   }
 }

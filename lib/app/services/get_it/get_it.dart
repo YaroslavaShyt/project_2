@@ -26,8 +26,8 @@ void initGetItFunctions(INavigationUtil util) {
   initRepos();
   initStorageService();
   initPermissionHandler();
-  initNotificationService();
   initDeepLinking(util);
+  initNotificationService(util);
 }
 
 void initCloudFunctions() {
@@ -64,8 +64,10 @@ void initStorageService() {
       firebaseStorageRepository: getItInst.get<FirebaseStorageRepository>()));
 }
 
-void initNotificationService() {
-  getItInst.registerSingleton<NotificationService>(NotificationService());
+void initNotificationService(INavigationUtil navigationUtil) {
+  getItInst.registerSingleton<NotificationService>(NotificationService(
+      navigationUtil: navigationUtil,
+      deepLinkHandler: getItInst.get<DeepLinkHandler>()));
 }
 
 void initDeepLinking(INavigationUtil util) {

@@ -1,12 +1,21 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:flutter/material.dart';
+import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/routing/routes.dart';
+import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 
-class NotificationService{
-  static final NotificationService _instance =
-      NotificationService._internal();
+class NotificationService {
+  INavigationUtil? _navigationUtil;
+  DeepLinkHandler? _deepLinkHandler;
 
-  factory NotificationService() {
+  static final NotificationService _instance = NotificationService._internal();
+
+  factory NotificationService(
+      {required INavigationUtil navigationUtil,
+      required DeepLinkHandler deepLinkHandler}) {
+    _instance._navigationUtil = navigationUtil;
+    _instance._deepLinkHandler = deepLinkHandler;
     return _instance;
   }
 
@@ -39,6 +48,8 @@ class NotificationService{
       ],
       debug: debug,
     );
+    AwesomeNotifications()
+        .setListeners(onActionReceivedMethod: onActionReceivedMethod);
   }
 
   static Future<void> initializeRemoteNotifications(
@@ -50,6 +61,24 @@ class NotificationService{
         onNativeTokenHandle: NotificationService.myNativeTokenHandle,
         onFcmSilentDataHandle: NotificationService.mySilentDataHandle,
         debug: debug);
+  }
+
+  @pragma("vm:entry-point")
+  static Future<void> onActionReceivedMethod(ReceivedAction action) async {
+    debugPrint("body: ${action.body}");
+    if (action.body != null) {
+      try {
+        if (_instance._navigationUtil != null &&
+            _instance._navigationUtil != null) {
+          Map<String, String> data =
+              _instance._deepLinkHandler!.parseLink(action.body!);
+          _instance._navigationUtil!
+              .navigateTo(data["route"]!, data: data["data"]);
+        }
+      } catch (err) {
+        debugPrint(err.toString());
+      }
+    }
   }
 
   @pragma("vm:entry-point")
