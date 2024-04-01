@@ -24,13 +24,6 @@ class PlantListItem extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: AppColors.whiteColor),
         ),
-        Text(
-          plant.quantity,
-          style: const TextStyle(
-              fontSize: 20.0,
-              fontStyle: FontStyle.italic,
-              color: AppColors.whiteColor),
-        ),
         Row(
           children: [
             IconButton(

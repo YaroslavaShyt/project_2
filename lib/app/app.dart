@@ -2,23 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/routing/app_router.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
-import 'package:project_2/app/services/deep_linking/deep_linking_service.dart';
-import 'package:project_2/app/services/get_it/get_it.dart';
+import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
   final AppRouter router;
-  const App({super.key, required this.router});
+  final DeepLinkHandler deepLinkHandler;
+  const App({super.key, required this.router, required this.deepLinkHandler});
 
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
+  
+  @override
+  void initState() {
+    super.initState();
+    widget.deepLinkHandler.getInitialLink();
+  }
 
-@override
+  @override
   void didChangeDependencies() {
-    getItInst.get<DeepLinkingService>().getLinkStream();
+    widget.deepLinkHandler.getLinkStream();
     super.didChangeDependencies();
   }
 
@@ -35,8 +41,3 @@ class _AppState extends State<App> {
     );
   }
 }
-
-
-
-
-

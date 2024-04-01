@@ -10,10 +10,20 @@ class Plant implements IPlant {
   @override
   String quantity;
 
-  Plant({required this.id, required this.name, required this.quantity});
+  @override
+  String image;
+
+  Plant(
+      {required this.id,
+      required this.name,
+      required this.quantity,
+      required this.image});
 
   factory Plant.fromJSON({required Map<String, dynamic> data}) {
     return Plant(
-        id: data["id"], name: data["data"]["name"], quantity: data["data"]["quantity"]);
+        id: data["id"],
+        name: data["data"]["name"],
+        quantity: data["data"]["quantity"],
+        image: data["data"]["image"]);
   }
 }

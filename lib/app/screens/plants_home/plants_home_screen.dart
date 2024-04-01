@@ -80,7 +80,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                         itemCount: snapshot.data?.data.length ?? 0,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () => widget.viewModel.navigateToPlantDetails(snapshot.data!.data[index]),
+                            onTap: () => widget.viewModel.navigateToPlantDetails(snapshot.data!.data[index].id),
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: PlantListItem(
