@@ -1,11 +1,10 @@
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
-import 'package:project_2/app/screens/plants_home/widgets/build_drawer_item.dart';
+import 'package:project_2/app/screens/plants_home/widgets/drawer.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
-import 'package:project_2/app/screens/plants_home/widgets/clear_cache.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/theming/app_colors.dart';
@@ -80,7 +79,9 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                         itemCount: snapshot.data?.data.length ?? 0,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () => widget.viewModel.navigateToPlantDetails(snapshot.data!.data[index].id),
+                            onTap: () => widget.viewModel
+                                .navigateToPlantDetails(
+                                    snapshot.data!.data[index].id),
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: PlantListItem(
@@ -104,34 +105,11 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
               ),
             );
           }),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: Column(
-                children: [
-                  widget.viewModel.user == null ||
-                          widget.viewModel.user!.profilePhoto == null
-                      ? IconButton(
-                          onPressed: () => _showPicker(context),
-                          icon: const Icon(Icons.add_a_photo_outlined))
-                      : SizedBox(
-                          height: 100,
-                          child: CachedImageWidget(
-                              imageUrl: widget.viewModel.user!.profilePhoto!),
-                        ),
-                  Text(widget.viewModel.user?.name ?? 'Анонім')
-                ],
-              ),
-            ),
-            buildDrawerItem(
-                Icons.add, 'Нова рослина', () => _showAddPlantModal(context)),
-            const ClearCacheWidget(),
-            buildDrawerItem(Icons.logout_rounded, 'Вихід',
-                widget.viewModel.onLogoutButtonPressed),
-          ],
-        ),
-      ),
+      drawer: MainDrawer(
+          user: widget.viewModel.user,
+          onLogoutButtonPressed: widget.viewModel.onLogoutButtonPressed,
+          showAddPlantModal: _showAddPlantModal,
+          showPicker: _showPicker),
       backgroundColor: AppColors.darkWoodGeenColor,
     );
   }
