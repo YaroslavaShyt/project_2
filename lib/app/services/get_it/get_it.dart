@@ -3,6 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/services/camera/camera_config.dart';
+import 'package:project_2/app/services/camera/camera_core.dart';
+import 'package:project_2/app/services/camera/camera_service.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
@@ -28,6 +34,7 @@ void initGetItFunctions(INavigationUtil util) {
   initPermissionHandler();
   initDeepLinking(util);
   initNotificationService(util);
+  initCamera();
 }
 
 void initCloudFunctions() {
@@ -73,4 +80,14 @@ void initNotificationService(INavigationUtil navigationUtil) {
 void initDeepLinking(INavigationUtil util) {
   getItInst.registerSingleton<DeepLinkHandler>(
       DeepLinkHandler(navigationUtil: util));
+}
+
+void initCamera() {
+  getItInst.registerSingleton<ICameraCore>(CameraCore());
+  getItInst.registerFactory<ICameraConfig>(() => CameraConfig(
+      cameraResolutionPreset: cameraResolutionPreset,
+      maxRecordingDurationMilliseconds: maxRecordingDuration));
+  getItInst.registerFactory<ICameraService>(() => CameraService(
+      cameraCore: getItInst.get<ICameraCore>(),
+      cameraConfig: getItInst.get<ICameraConfig>()));
 }

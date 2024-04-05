@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:project_2/app/services/camera_service/interfaces/icamera_config.dart';
-import 'package:project_2/app/services/camera_service/interfaces/icamera_core.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 
 enum CameraState { init, ready, recording, recorded, paused, dispose, error }
 
@@ -16,6 +16,7 @@ abstract class ICameraService {
   CameraState get cameraState;
   double get recordedProgress;
   Stream<double> get recordedProgressStream;
+  Stream<CameraState> get cameraStateStream;
 
   Future<void> reset();
   Future<void> create();

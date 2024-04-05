@@ -1,4 +1,5 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
+import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
@@ -8,10 +9,14 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   IPlant? plant;
   final String plantId;
   final IPlantsRepository _plantsRepository;
+  final INavigationUtil _navigationUtil;
 
   PlantsDetailsViewModel(
-      {required this.plantId, required IPlantsRepository plantsRepository})
-      : _plantsRepository = plantsRepository;
+      {required this.plantId,
+      required INavigationUtil navigationUtil,
+      required IPlantsRepository plantsRepository})
+      : _navigationUtil = navigationUtil,
+        _plantsRepository = plantsRepository;
 
   void loadPlantData() {
     _plantsRepository.readPlant(id: plantId).then((data) {
@@ -25,5 +30,9 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   void sharePlant() {
     Share.share('Подивись на цю рослину:\n'
         '$uriPlantsDetails${plant!.id}');
+  }
+
+  void navigateToCameraScreen() {
+    _navigationUtil.navigateTo(routeCamera);
   }
 }

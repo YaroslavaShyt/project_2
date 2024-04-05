@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
-import 'package:project_2/app/services/camera_service/interfaces/icamera_config.dart';
-import 'package:project_2/app/services/camera_service/interfaces/icamera_core.dart';
-import 'package:project_2/app/services/camera_service/interfaces/icamera_service.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 
 const _batchSizeInMilliseconds = 16;
 
@@ -27,6 +27,13 @@ class CameraService extends BaseChangeNotifier
   final StreamController<double> _recordedProgressStreamController =
       StreamController();
 
+  final StreamController<CameraState> _cameraStateStreamController =
+      StreamController();
+
+  @override
+  Stream<CameraState> get cameraStateStream =>
+      _cameraStateStreamController.stream;
+
   XFile? _videoFile;
 
   Timer? _recordingTimer;
@@ -46,13 +53,12 @@ class CameraService extends BaseChangeNotifier
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    //app state changed before we got the chance to initialize
     if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
     }
     if (state == AppLifecycleState.inactive) {
       if (!_isCameraControllerDisposed) {
-        // dispose camera controller
+        dispose();
       }
     } else if (state == AppLifecycleState.resumed) {
       if (!_isCameraControllerDisposed) {
@@ -82,7 +88,7 @@ class CameraService extends BaseChangeNotifier
       _updateCameraState(CameraState.ready);
     } on CameraException catch (exception) {
       _updateCameraState(CameraState.error);
-       debugPrint(exception.toString());
+      debugPrint(exception.toString());
     }
   }
 
@@ -105,7 +111,7 @@ class CameraService extends BaseChangeNotifier
         } on CameraException catch (exception) {
           _dropRecordingTimer();
           _updateCameraState(CameraState.error);
-           debugPrint(exception.toString());
+          debugPrint(exception.toString());
         }
       }
     } else {
@@ -149,6 +155,7 @@ class CameraService extends BaseChangeNotifier
     _recordedProgress = 0;
     _currentCameraId = 0;
     _recordedProgressStreamController.close();
+    _cameraStateStreamController.close();
     _dropRecordingTimer();
   }
 
@@ -163,7 +170,7 @@ class CameraService extends BaseChangeNotifier
             _onRecordTimeChanged);
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);
-         debugPrint(exception.toString());
+        debugPrint(exception.toString());
       }
     }
   }
@@ -198,7 +205,7 @@ class CameraService extends BaseChangeNotifier
         return _videoFile;
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);
-         debugPrint(exception.toString());
+        debugPrint(exception.toString());
         return null;
       }
     } else {
@@ -214,7 +221,7 @@ class CameraService extends BaseChangeNotifier
       return xFile.path;
     } on CameraException catch (exception) {
       _updateCameraState(CameraState.error);
-       debugPrint(exception.toString());
+      debugPrint(exception.toString());
       return null;
     }
   }
@@ -236,8 +243,7 @@ class CameraService extends BaseChangeNotifier
     _recordedProgressStreamController.add(_recordedProgress);
   }
 
-  // mb should be synchronous
-  Future<void> deleteVideoFileIfExist() async {
+  void deleteVideoFileIfExist() async {
     if (_videoFile != null) {
       try {
         File original = File(_videoFile!.path);
@@ -261,5 +267,6 @@ class CameraService extends BaseChangeNotifier
 
   void _updateCameraState(CameraState state) {
     _cameraState = state;
+    _cameraStateStreamController.add(state);
   }
 }

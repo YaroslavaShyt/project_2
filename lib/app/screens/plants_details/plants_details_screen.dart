@@ -43,6 +43,12 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                       icon: const Icon(
                         Icons.share,
                         color: AppColors.whiteColor,
+                      )),
+                  IconButton(
+                      onPressed: widget.viewModel.navigateToCameraScreen,
+                      icon: const Icon(
+                        Icons.edit,
+                        color: AppColors.whiteColor,
                       ))
                 ],
               ),

@@ -25,8 +25,8 @@ class NotificationService {
   static Future<void> initNotifications() async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (isAllowed) {
-      initializeLocalNotifications(debug: true);
-      initializeRemoteNotifications(debug: true);
+      initializeLocalNotifications(debug: false);
+      initializeRemoteNotifications(debug: false);
     }
   }
 

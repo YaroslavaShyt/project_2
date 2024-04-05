@@ -1,5 +1,5 @@
 import 'package:camera/camera.dart';
-import 'package:project_2/app/services/camera_service/interfaces/icamera_config.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
 
 class CameraConfig implements ICameraConfig {
   @override

@@ -6,6 +6,7 @@ import 'package:project_2/app/routing/app_router.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
 import 'package:project_2/app/services/auth/auth_service.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
@@ -30,6 +31,7 @@ void main() async {
   initGetItFunctions(navigationUtil);
 
   await NotificationService.initNotifications();
+  getItInst.get<ICameraCore>().initialize();
 
   final IAuthService authService =
       AuthService(loginRepository: getItInst.get<ILoginRepository>());
