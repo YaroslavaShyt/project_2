@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/screens/camera/camera_screen.dart';
 import 'package:project_2/app/screens/camera/camera_view_model.dart';
+import 'package:project_2/app/services/camera/camera_service.dart';
+import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
 
@@ -11,7 +13,8 @@ class CameraFactory {
   static Widget build() {
     return ChangeNotifierProvider(
       create: (context) => CameraViewModel(
-          cameraService: getItInst.get<ICameraService>(),
+          cameraService: getItInst.get<CameraService>(),
+          cameraCore: getItInst.get<ICameraCore>(),
           navigationUtil: context.read<INavigationUtil>()),
       child: Consumer<CameraViewModel>(builder: (context, model, child) {
         return CameraScreen(

@@ -11,28 +11,6 @@ abstract class ICameraService {
 
   ICameraService({required this.cameraCore, required this.cameraConfig});
 
-  Size get previewSize;
-  Widget get cameraPreview;
-  CameraState get cameraState;
-  double get recordedProgress;
-  Stream<double> get recordedProgressStream;
-  Stream<CameraState> get cameraStateStream;
-
-  Future<void> reset();
-  Future<void> create();
   
-  Future<void> toggleCamera();
-
-  Future<String?> takePicture();
   
-  Future<void> startRecording();
-  Future<void> pauseRecording();
-  Future<void> resumeRecording();
-  Future<XFile?> stopRecording();
-
-  Future<void> remove();
-
-  void setNotifyListener(VoidCallback listener);
-
-  void dispose();
 }

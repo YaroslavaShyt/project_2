@@ -7,6 +7,7 @@ import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_
 import 'package:project_2/app/screens/camera/camera_view_model.dart';
 import 'package:project_2/app/screens/camera/widgets/camera_frame.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
+
 import 'package:project_2/app/theming/app_colors.dart';
 
 class CameraScreen extends StatefulWidget with ErrorHandlingMixin {
