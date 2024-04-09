@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/routing/routes.dart';
+import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
@@ -82,7 +83,9 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
         if (value != null) {
           _photo = File(value.path);
           _storageService
-              .addImageToStorage(photo: _photo!, uid: _userService.user!.id)
+              .addFileToStorage(
+                  file: _photo!,
+                  path: "$userProfileImagesPath/${_userService.user!.id}")
               .then((response) {
             if (response.error != null) {
               onError(response.error!);

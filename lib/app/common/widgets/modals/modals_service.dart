@@ -5,7 +5,7 @@ import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog.
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
-class ModalsService {
+class Modals {
   static Future<void> showBottomModal(
       {required BuildContext context, required ModalBottomDialogData data}) {
     return showModalBottomSheet(

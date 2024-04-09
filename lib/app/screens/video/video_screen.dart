@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/screens/video/video_view_model.dart';
 
-class VideoScreen extends StatefulWidget {
+class VideoScreen extends StatefulWidget with ErrorHandlingMixin {
   final VideoViewModel viewModel;
   const VideoScreen({super.key, required this.viewModel});
 
@@ -33,7 +34,18 @@ class _VideoScreenState extends State<VideoScreen> {
                 onPressed: widget.viewModel.playOrPause,
                 icon: Icon(widget.viewModel.isPlaying
                     ? Icons.pause
-                    : Icons.play_arrow_rounded))
+                    : Icons.play_arrow_rounded)),
+            widget.viewModel.isDataLoaded
+                ? IconButton(
+                    onPressed: () => widget.viewModel.addFileToStorage(
+                        onError: (err) =>
+                            widget.showErrorDialog(context, err.toString())),
+                    icon: const Icon(Icons.upload))
+                : const SizedBox(
+                    height: 30,
+                    width: 20,
+                    child: CircularProgressIndicator(),
+                  )
           ],
         )
       ],

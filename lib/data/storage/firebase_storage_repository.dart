@@ -9,13 +9,13 @@ class FirebaseStorageRepository {
   FirebaseStorageRepository({required FirebaseStorage firebaseStorage})
       : _firebaseStorage = firebaseStorage;
 
-  Future<IBaseResponse> uploadImage(
-      {required String filePath, required String imageName, required File image}) async {
+  Future<IBaseResponse> upload(
+      {required String filePath, required String name, required File file}) async {
     try {
-      final ref = _firebaseStorage.ref(filePath).child(imageName);
-      await ref.putFile(image);
+      final ref = _firebaseStorage.ref(filePath).child(name);
+      await ref.putFile(file);
       final url = await ref.getDownloadURL();
-      return BaseResponse(data: {"imageURL": url});
+      return BaseResponse(data: {"URL": url});
     } catch (err) {
       return BaseResponse(error: err.toString());
     }

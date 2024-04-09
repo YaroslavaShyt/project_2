@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BaseChangeNotifier extends ChangeNotifier {
-  bool _isDataLoaded = false;
+  bool _isDataLoaded = true;
 
   bool get isDataLoaded => _isDataLoaded;
 

@@ -5,7 +5,7 @@ import 'package:project_2/app/theming/app_colors.dart';
 
 mixin ErrorHandlingMixin {
   void showErrorDialog(BuildContext context, String message) => {
-        ModalsService.showPopUpModal(
+        Modals.showPopUpModal(
           context: context,
           data: PopUpDialogData(
             title: 'Помилка',

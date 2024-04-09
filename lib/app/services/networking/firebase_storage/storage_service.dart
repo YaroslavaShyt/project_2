@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:project_2/data/storage/firebase_storage_repository.dart';
-import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 
 class StorageService {
@@ -10,13 +9,11 @@ class StorageService {
   StorageService({required FirebaseStorageRepository firebaseStorageRepository})
       : _firebaseStorageRepository = firebaseStorageRepository;
 
-  Future<IBaseResponse> addImageToStorage(
-      {required File photo, required String uid}) async {
-    final fileName = basename(photo.path);
-    IBaseResponse response = await _firebaseStorageRepository.uploadImage(
-        filePath: "$userProfileImagesPath/$uid",
-        imageName: fileName,
-        image: photo);
+  Future<IBaseResponse> addFileToStorage(
+      {required File file, required String path}) async {
+    final fileName = basename(file.path);
+    IBaseResponse response = await _firebaseStorageRepository.upload(
+        filePath: path, name: fileName, file: file);
     return response;
   }
 }

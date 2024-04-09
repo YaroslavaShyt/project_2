@@ -134,9 +134,7 @@ class CameraService extends BaseChangeNotifier
   Future<void> reset() async {
     await _disposeCameraController();
     _cameraPreview = null;
-
     _currentCameraId = 0;
-
     _cameraStateStreamController.close();
   }
 
@@ -198,6 +196,7 @@ class CameraService extends BaseChangeNotifier
       try {
         _updateCameraState(CameraState.recorded);
         videoFile = await _cameraController?.stopVideoRecording();
+        await reset();
         return videoFile;
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);

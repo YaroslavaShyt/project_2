@@ -110,7 +110,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
   }
 
   void _showAddPlantModal(BuildContext context) {
-    ModalsService.showBottomModal(
+    Modals.showBottomModal(
       context: context,
       data: ModalBottomDialogData(
           title: 'Нова рослина',
@@ -131,7 +131,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
     widget.viewModel.newPlantName = plant.name;
     widget.viewModel.newPlantQuantity = plant.quantity;
 
-    ModalsService.showBottomModal(
+    Modals.showBottomModal(
       context: context,
       data: ModalBottomDialogData(
         title: 'Редагувати',
@@ -154,7 +154,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
   }
 
   void _showPicker(context) {
-    ModalsService.showPopUpModal(
+    Modals.showPopUpModal(
         context: context,
         data: PopUpDialogData(
             title: 'Завантажити фото ',

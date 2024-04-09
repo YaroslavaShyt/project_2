@@ -100,7 +100,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void _showTakenPicture(BuildContext context) {
-    ModalsService.showPopUpModal(
+    Modals.showPopUpModal(
         context: context,
         data: PopUpDialogData(
             title: 'Фото',

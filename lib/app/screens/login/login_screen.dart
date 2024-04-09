@@ -97,7 +97,7 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
   }
 
   void _showLoginModal(BuildContext context) {
-    ModalsService.showBottomModal(
+    Modals.showBottomModal(
         context: context,
         data: ModalBottomDialogData(
           title: 'Авторизація за SMS',
@@ -108,7 +108,7 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
             viewModel.onSendOtpButtonPressed(),
             if (viewModel.isFormDataValid)
               {
-                ModalsService.showPopUpModal(
+                Modals.showPopUpModal(
                     context: context,
                     data: PopUpDialogData(
                         title: 'Введіть код',
