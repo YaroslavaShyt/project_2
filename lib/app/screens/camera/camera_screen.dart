@@ -4,7 +4,6 @@ import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
-import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_view_model.dart';
 import 'package:project_2/app/screens/camera/widgets/camera_frame.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';

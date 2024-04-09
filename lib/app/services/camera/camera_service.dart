@@ -6,6 +6,10 @@ import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 
+// Exception has occurred.
+// FlutterError (A CameraService was used after being disposed.
+// Once you have called dispose() on a CameraService, it can no longer be used.)
+
 class CameraService extends BaseChangeNotifier
     with WidgetsBindingObserver
     implements ICameraService {
@@ -35,7 +39,7 @@ class CameraService extends BaseChangeNotifier
   @override
   Stream<CameraState> get cameraStateStream =>
       _cameraStateStreamController.stream;
-  final StreamController<CameraState> _cameraStateStreamController =
+  StreamController<CameraState> _cameraStateStreamController =
       StreamController();
 
   CameraService({required this.cameraCore, required this.cameraConfig});
@@ -79,6 +83,7 @@ class CameraService extends BaseChangeNotifier
       WidgetsBinding.instance.addObserver(this);
       _isObserverAdded = true;
     }
+    _cameraStateStreamController = StreamController();
 
     _cameraController = CameraController(
         camerasList[_currentCameraId], cameraConfig.cameraResolutionPreset,
@@ -148,7 +153,7 @@ class CameraService extends BaseChangeNotifier
 
   @override
   Future<void> pauseRecording() async {
-    if (_cameraController!.value.isRecordingVideo) {
+    if (cameraState == CameraState.recording) {
       try {
         await _cameraController!.pauseVideoRecording();
         _updateCameraState(CameraState.paused);

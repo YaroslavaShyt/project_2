@@ -25,7 +25,7 @@ abstract class ICameraService {
   Future<String?> takePhoto();
 
   Future<void> startRecording();
-  Future<void> stopRecording();
+  Future<XFile?> stopRecording();
   Future<void> pauseRecording();
   Future<void> resumeRecording();
 

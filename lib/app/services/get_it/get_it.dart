@@ -90,7 +90,7 @@ void initCamera() {
   getItInst.registerFactory<ICameraConfig>(() => CameraConfig(
       cameraResolutionPreset: cameraResolutionPreset,
       maxRecordingDurationMilliseconds: maxRecordingDuration));
-  getItInst.registerFactory<CameraService>(() => CameraService(
+  getItInst.registerSingleton<ICameraService>(CameraService(
       cameraCore: getItInst.get<ICameraCore>(),
       cameraConfig: getItInst.get<ICameraConfig>()));
 }

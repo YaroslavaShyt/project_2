@@ -3,33 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
-import 'package:project_2/app/services/camera/camera_service.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
+import 'package:project_2/app/utils/permissions/permission_handler.dart';
 
 class CameraViewModel extends BaseChangeNotifier {
-  final CameraService _cameraService;
-  final ICameraCore _cameraCore;
+  final ICameraService _cameraService;
   final INavigationUtil _navigationUtil;
+  final PermissionHandler _permissionHandler;
   String? capturedImagePath;
   XFile? capturedVideo;
 
   CameraViewModel(
-      {required CameraService cameraService,
+      {required ICameraService cameraService,
       required ICameraCore cameraCore,
+      required PermissionHandler permissionHandler,
       required INavigationUtil navigationUtil})
       : _cameraService = cameraService,
-        _cameraCore = cameraCore,
-        _navigationUtil = navigationUtil;
+        _navigationUtil = navigationUtil,
+        _permissionHandler = permissionHandler;
 
   Stream<CameraState> get cameraStateStream => _cameraService.cameraStateStream;
 
-  void toggleCamera() {
-    _cameraService.toggleCamera();
+  Future<void> toggleCamera() async {
+    await _cameraService.toggleCamera();
     notifyListeners();
   }
 
-  Future<void> loadCamera() async => await _cameraService.create();
+  Future<void> loadCamera() async {
+    _permissionHandler.isCameraPermissionGranted();
+    await _cameraService.create();
+  }
 
   void disposeCamera() => _cameraService.dispose();
 
@@ -62,7 +66,7 @@ class CameraViewModel extends BaseChangeNotifier {
   Future<void> stopVideo({required Function(String) onFailure}) async {
     capturedVideo = await _cameraService.stopRecording();
     if (capturedVideo != null) {
-      _navigationUtil.navigateToAndReplace(routeVideo, data: capturedVideo);
+      _navigationUtil.navigateTo(routeVideo, data: capturedVideo);
     } else {
       onFailure("Не вдалося зняти відео.");
     }
