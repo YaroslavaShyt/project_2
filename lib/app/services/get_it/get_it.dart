@@ -12,6 +12,8 @@ import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
+import 'package:project_2/app/utils/video_player/ivideo_player.dart';
+import 'package:project_2/app/utils/video_player/video_player_handler.dart';
 import 'package:project_2/data/storage/firebase_storage_repository.dart';
 import 'package:project_2/app/services/networking/firestore/firestore_service.dart';
 import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
@@ -35,6 +37,7 @@ void initGetItFunctions(INavigationUtil util) {
   initDeepLinking(util);
   initNotificationService(util);
   initCamera();
+  initVideoPlayer();
 }
 
 void initCloudFunctions() {
@@ -87,7 +90,11 @@ void initCamera() {
   getItInst.registerFactory<ICameraConfig>(() => CameraConfig(
       cameraResolutionPreset: cameraResolutionPreset,
       maxRecordingDurationMilliseconds: maxRecordingDuration));
-  getItInst.registerSingleton<CameraService>(CameraService(
+  getItInst.registerFactory<CameraService>(() => CameraService(
       cameraCore: getItInst.get<ICameraCore>(),
       cameraConfig: getItInst.get<ICameraConfig>()));
+}
+
+void initVideoPlayer() {
+  getItInst.registerFactory<IVideoPlayer>(() => VideoPlayerHandler());
 }

@@ -4,6 +4,7 @@ import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
+import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_view_model.dart';
 import 'package:project_2/app/screens/camera/widgets/camera_frame.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
@@ -66,21 +67,32 @@ class _CameraScreenState extends State<CameraScreen> {
                     style: TextStyle(color: AppColors.whiteColor),
                   ),
                 );
-              case CameraState.ready:
+              case CameraState.ready ||
+                    CameraState.recording ||
+                    CameraState.recorded ||
+                    CameraState.paused:
                 return CameraFrame(
-                    cameraPreview: widget.viewModel.cameraPreview,
-                    takePicture: () => widget.viewModel.takePicture(
-                        onSuccess: () => _showTakenPicture(context),
-                        onFailure: (message) =>
-                            widget.showErrorDialog(context, message)),
-                    takeVideo: () => widget.viewModel.takeVideo(
-                        onSuccess: () => _showTakenVideo(context),
-                        onFailure: (message) =>
-                            widget.showErrorDialog(context, message)),
-                    toggleCamera: widget.viewModel.toggleCamera);
+                  cameraPreview: widget.viewModel.cameraPreview,
+                  takePicture: () => widget.viewModel.takePicture(
+                      onSuccess: () => _showTakenPicture(context),
+                      onFailure: (message) =>
+                          widget.showErrorDialog(context, message)),
+                  startVideo: () => widget.viewModel.startVideo(),
+                  stopVideo: () => widget.viewModel.stopVideo(
+                      onFailure: (message) =>
+                          widget.showErrorDialog(context, message)),
+                  resumeVideo: widget.viewModel.resumeVideo,
+                  pauseVideo: widget.viewModel.pauseVideo,
+                  cameraState: widget.viewModel.cameraState,
+                  toggleCamera: widget.viewModel.toggleCamera,
+                  changeCaptureType: widget.viewModel.changeCaptureType,
+                  isVideoCameraSelected: widget.viewModel.isVideoCameraSelected,
+                );
               default:
-                return Center(
-                  child: Text(snapshot.data.toString()),
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.lightMentolGreenColor,
+                  ),
                 );
             }
           }),
@@ -101,6 +113,4 @@ class _CameraScreenState extends State<CameraScreen> {
                   onButtonPressed: widget.viewModel.navigateBack, title: 'ОК')
             ]));
   }
-
-  void _showTakenVideo(BuildContext context) {}
 }

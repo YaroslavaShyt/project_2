@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
@@ -7,131 +6,201 @@ import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 
-class CameraService extends BaseChangeNotifier with WidgetsBindingObserver {
-  final ICameraCore _cameraCore;
-  final ICameraConfig _cameraConfig;
-  CameraController? cameraController;
-  CameraDescription? currentCamera;
-  CameraPreview? _cameraPreview;
-  bool _isCameraInitialized = false;
-  bool _isRearCameraSelected = true;
-  bool _isVideoCameraSelected = false;
-  final resolutionPresets = ResolutionPreset.values;
-  ResolutionPreset currentResolutionPreset = ResolutionPreset.high;
-  FlashMode? _currentFlashMode;
+class CameraService extends BaseChangeNotifier
+    with WidgetsBindingObserver
+    implements ICameraService {
+  @override
+  ICameraCore cameraCore;
 
+  @override
+  ICameraConfig cameraConfig;
+
+  XFile? videoFile;
+
+  CameraPreview? _cameraPreview;
+  CameraController? _cameraController;
+
+  int _currentCameraId = 0;
+
+  bool _isObserverAdded = false;
+  bool _isVideoCameraSelected = false;
+  bool _isCameraControllerDisposed = false;
+
+  @override
+  CameraState get cameraState => _cameraState;
   CameraState _cameraState = CameraState.init;
 
-  double _minAvailableZoom = 1.0;
-  double _maxAvailableZoom = 1.0;
-  double _currentZoomLevel = 1.0;
+  FlashMode flashMode = FlashMode.off;
 
-  double _minAvailableExposureOffset = 0.0;
-  double _maxAvailableExposureOffset = 0.0;
-  double _currentExposureOffset = 0.0;
-
-  StreamController<CameraState> _cameraStateStreamController = StreamController();
-
+  @override
   Stream<CameraState> get cameraStateStream =>
-      _cameraStateStreamController!.stream;
-  CameraState get cameraState => _cameraState;
+      _cameraStateStreamController.stream;
+  final StreamController<CameraState> _cameraStateStreamController =
+      StreamController();
 
-  CameraService(
-      {required ICameraCore cameraCore, required ICameraConfig cameraConfig})
-      : _cameraCore = cameraCore,
-        _cameraConfig = cameraConfig;
+  CameraService({required this.cameraCore, required this.cameraConfig});
 
-  void initCamera() async {
-    currentCamera = _cameraCore.camerasList[0];
-  }
-
-  void changeIneractionType() {
-    _isVideoCameraSelected = !_isVideoCameraSelected;
-  }
-
+  @override
   Widget get cameraPreview => _cameraPreview ?? const SizedBox();
 
-  Future<void> onNeWCameraSelected(CameraDescription description) async {
-    final CameraController? previousCameraController = cameraController;
-    final CameraController controller = CameraController(
-        description, currentResolutionPreset,
-        imageFormatGroup: ImageFormatGroup.jpeg);
+  @override
+  Size get previewSize =>
+      _cameraController?.value.previewSize ?? const Size(0, 0);
 
-    await previousCameraController?.dispose();
+  @override
+  List<CameraDescription> get camerasList => cameraCore.camerasList;
+
+  @override
+  bool get isVideoCameraSelected => _isVideoCameraSelected;
+
+  @override
+  void changeCaptureType() => _isVideoCameraSelected = !_isVideoCameraSelected;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      return;
+    }
+    if (state == AppLifecycleState.inactive) {
+      if (!_isCameraControllerDisposed) {
+        dispose();
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      if (!_isCameraControllerDisposed) {
+        await reset();
+      }
+      await create();
+    }
+  }
+
+  @override
+  Future<void> create() async {
+    if (!_isObserverAdded) {
+      WidgetsBinding.instance.addObserver(this);
+      _isObserverAdded = true;
+    }
+
+    _cameraController = CameraController(
+        camerasList[_currentCameraId], cameraConfig.cameraResolutionPreset,
+        imageFormatGroup: ImageFormatGroup.yuv420);
 
     try {
-      await controller.initialize();
-      _isCameraInitialized = controller.value.isInitialized;
-      cameraController = controller;
-      controller.getMaxZoomLevel().then((value) => _maxAvailableZoom = value);
+      await _cameraController!.initialize();
 
-      controller.getMinZoomLevel().then((value) => _minAvailableZoom = value);
-
-      controller
-          .getMinExposureOffset()
-          .then((value) => _minAvailableExposureOffset = value);
-
-      controller
-          .getMaxExposureOffset()
-          .then((value) => _maxAvailableExposureOffset = value);
-
-      _currentFlashMode = controller.value.flashMode;
-      _cameraStateStreamController = StreamController();
-      _cameraPreview = CameraPreview(controller);
+      _cameraPreview = CameraPreview(_cameraController!);
       _updateCameraState(CameraState.ready);
-    } catch (err) {
-      debugPrint(err.toString());
+    } on CameraException catch (exception) {
       _updateCameraState(CameraState.error);
+      debugPrint(exception.toString());
     }
-  }
-
-  Future<String?> takePhoto() async {
-    final CameraController? controller = cameraController;
-    if (controller!.value.isTakingPicture) {
-      return null;
-    }
-    try {
-      XFile file = await controller.takePicture();
-      return file.path;
-    } catch (err) {
-      debugPrint(err.toString());
-      _updateCameraState(CameraState.error);
-      return null;
-    }
-  }
-
-  void toggleCamera() {
-    _isCameraInitialized = false;
-    _updateCameraState(CameraState.init);
-    onNeWCameraSelected(_cameraCore.camerasList[_isRearCameraSelected ? 0 : 1]);
-    _isRearCameraSelected = !_isRearCameraSelected;
   }
 
   @override
   void dispose() {
-    cameraController?.dispose();
-    _cameraStateStreamController?.close();
+    _cameraController?.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    _isObserverAdded = false;
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    final CameraController? controller = cameraController;
-
-    if (controller == null || !controller.value.isInitialized) {
-      return;
+  Future<String?> takePhoto() async {
+    try {
+      _cameraController!.setFlashMode(flashMode);
+      XFile xFile = await _cameraController!.takePicture();
+      return xFile.path;
+    } on CameraException catch (exception) {
+      _updateCameraState(CameraState.error);
+      debugPrint(exception.toString());
+      return null;
     }
+  }
 
-    if (state == AppLifecycleState.inactive) {
-      controller.dispose();
-    } else if (state == AppLifecycleState.resumed) {
-      onNeWCameraSelected(controller.description);
-    }
+  @override
+  Future<void> toggleCamera() async {
+    _currentCameraId = _currentCameraId == 0 ? 1 : 0;
+    await _disposeCameraController();
+    _cameraPreview = null;
+    _updateCameraState(CameraState.init);
+    return await create();
+  }
+
+  @override
+  Future<void> reset() async {
+    await _disposeCameraController();
+    _cameraPreview = null;
+
+    _currentCameraId = 0;
+
+    _cameraStateStreamController.close();
+  }
+
+  Future<void> _disposeCameraController() async {
+    await _cameraController?.dispose();
+    _cameraController = null;
+    _isCameraControllerDisposed = true;
   }
 
   void _updateCameraState(CameraState state) {
     _cameraState = state;
-    _cameraStateStreamController?.add(state);
+    _cameraStateStreamController.add(state);
+  }
+
+  @override
+  Future<void> pauseRecording() async {
+    if (_cameraController!.value.isRecordingVideo) {
+      try {
+        await _cameraController!.pauseVideoRecording();
+        _updateCameraState(CameraState.paused);
+      } on CameraException catch (exception) {
+        _updateCameraState(CameraState.error);
+        debugPrint(exception.toString());
+      }
+    }
+  }
+
+  @override
+  Future<void> resumeRecording() async {
+    if (cameraState == CameraState.paused) {
+      try {
+        await _cameraController!.resumeVideoRecording();
+        _updateCameraState(CameraState.recording);
+      } on CameraException catch (exception) {
+        _updateCameraState(CameraState.error);
+        debugPrint(exception.toString());
+      }
+    }
+  }
+
+  @override
+  Future<void> startRecording() async {
+    if (cameraState == CameraState.ready) {
+      try {
+        if (cameraState == CameraState.ready) {
+          await _cameraController!.startVideoRecording();
+          _updateCameraState(CameraState.recording);
+        }
+      } on CameraException catch (exception) {
+        _updateCameraState(CameraState.error);
+        debugPrint(exception.toString());
+      }
+    }
+  }
+
+  @override
+  Future<XFile?> stopRecording() async {
+    if (cameraState == CameraState.recording) {
+      try {
+        _updateCameraState(CameraState.recorded);
+        videoFile = await _cameraController?.stopVideoRecording();
+        return videoFile;
+      } on CameraException catch (exception) {
+        _updateCameraState(CameraState.error);
+        debugPrint(exception.toString());
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 }

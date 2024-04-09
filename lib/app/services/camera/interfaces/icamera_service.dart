@@ -11,6 +11,23 @@ abstract class ICameraService {
 
   ICameraService({required this.cameraCore, required this.cameraConfig});
 
-  
-  
+  Size get previewSize;
+  Widget get cameraPreview;
+  CameraState get cameraState;
+  bool get isVideoCameraSelected;
+  List<CameraDescription> get camerasList;
+  Stream<CameraState> get cameraStateStream;
+
+  Future<void> reset();
+  Future<void> create();
+  Future<void> toggleCamera();
+  void changeCaptureType();
+  Future<String?> takePhoto();
+
+  Future<void> startRecording();
+  Future<void> stopRecording();
+  Future<void> pauseRecording();
+  Future<void> resumeRecording();
+
+  void dispose();
 }

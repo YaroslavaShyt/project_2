@@ -5,6 +5,7 @@ import 'package:project_2/app/screens/plants_details/plants_details_factory.dart
 import 'package:project_2/app/screens/plants_home/plants_home_factory.dart';
 import 'package:project_2/app/screens/home/home_factory.dart';
 import 'package:project_2/app/screens/login/login_factory.dart';
+import 'package:project_2/app/screens/video/video_factory.dart';
 
 class AppRouter {
   Route? onGenerateRoute(RouteSettings routeSettings) {
@@ -24,6 +25,9 @@ class AppRouter {
       case routeCamera:
         return MaterialPageRoute(
             builder: (_) => _buildCameraSettings(routeSettings));
+      case routeVideo:
+        return MaterialPageRoute(
+            builder: (_) => _buildVideoSettings(routeSettings));
 
       default:
         return MaterialPageRoute(builder: (_) => const Placeholder());
@@ -48,5 +52,9 @@ class AppRouter {
 
   Widget _buildCameraSettings(RouteSettings settings) {
     return CameraFactory.build();
+  }
+
+  Widget _buildVideoSettings(RouteSettings settings) {
+    return VideoFactory.build(settings);
   }
 }
