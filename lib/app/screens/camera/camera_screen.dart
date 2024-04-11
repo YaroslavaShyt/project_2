@@ -80,8 +80,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   stopVideo: () => widget.viewModel.stopVideo(
                       onFailure: (message) =>
                           widget.showErrorDialog(context, message)),
-                  resumeVideo: widget.viewModel.resumeVideo,
-                  pauseVideo: widget.viewModel.pauseVideo,
+                  resumeVideo: () => widget.viewModel.resumeVideo,
+                  pauseVideo: () => widget.viewModel.pauseVideo,
                   cameraState: widget.viewModel.cameraState,
                   toggleCamera: widget.viewModel.toggleCamera,
                   changeCaptureType: widget.viewModel.changeCaptureType,

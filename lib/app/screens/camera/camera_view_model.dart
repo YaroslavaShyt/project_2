@@ -13,6 +13,7 @@ class CameraViewModel extends BaseChangeNotifier {
   final PermissionHandler _permissionHandler;
   String? capturedImagePath;
   XFile? capturedVideo;
+  bool isCameraDisposed = false;
 
   CameraViewModel(
       {required ICameraService cameraService,
@@ -35,7 +36,7 @@ class CameraViewModel extends BaseChangeNotifier {
     await _cameraService.create();
   }
 
-  void disposeCamera() => _cameraService.dispose();
+  Function get disposeCamera => _cameraService.disposeCamera;
 
   Widget get cameraPreview => _cameraService.cameraPreview;
 

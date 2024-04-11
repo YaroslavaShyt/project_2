@@ -101,11 +101,10 @@ class CameraService extends BaseChangeNotifier
   }
 
   @override
-  void dispose() {
-    _cameraController?.dispose();
+  void disposeCamera() {
+    reset();
     WidgetsBinding.instance.removeObserver(this);
     _isObserverAdded = false;
-    super.dispose();
   }
 
   @override
@@ -196,7 +195,6 @@ class CameraService extends BaseChangeNotifier
       try {
         _updateCameraState(CameraState.recorded);
         videoFile = await _cameraController?.stopVideoRecording();
-        await reset();
         return videoFile;
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);

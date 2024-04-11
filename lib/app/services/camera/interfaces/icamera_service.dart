@@ -29,5 +29,5 @@ abstract class ICameraService {
   Future<void> pauseRecording();
   Future<void> resumeRecording();
 
-  void dispose();
+  void disposeCamera();
 }

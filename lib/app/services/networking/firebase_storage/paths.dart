@@ -1,2 +1,2 @@
 const userProfileImagesPath = "Users/";
-const userFilesPath = "Users/Files/";
+const userFilesPath = "Files/";

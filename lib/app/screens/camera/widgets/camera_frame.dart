@@ -4,13 +4,13 @@ import 'package:project_2/app/theming/app_colors.dart';
 
 class CameraFrame extends StatelessWidget {
   final Widget cameraPreview;
-  final Function() toggleCamera;
-  final Function() takePicture;
-  final Function() startVideo;
-  final Function() stopVideo;
-  final Function resumeVideo;
-  final Function pauseVideo;
-  final Function() changeCaptureType;
+  final void Function() toggleCamera;
+  final void Function() takePicture;
+  final void Function() startVideo;
+  final void Function() stopVideo;
+  final void Function() resumeVideo;
+  final void Function() pauseVideo;
+  final void Function() changeCaptureType;
   final CameraState cameraState;
   final bool isVideoCameraSelected;
 
@@ -65,14 +65,14 @@ class CameraFrame extends StatelessWidget {
                     right: 100.0,
                     child: cameraState == CameraState.recording
                         ? IconButton(
-                            onPressed: () => pauseVideo(),
+                            onPressed: pauseVideo,
                             icon: const Icon(
                               Icons.pause,
                               color: AppColors.whiteColor,
                             ))
                         : cameraState == CameraState.paused
                             ? IconButton(
-                                onPressed: () => resumeVideo(),
+                                onPressed: resumeVideo,
                                 icon: const Icon(
                                   Icons.play_arrow_rounded,
                                   color: AppColors.whiteColor,
@@ -84,7 +84,7 @@ class CameraFrame extends StatelessWidget {
                     child: cameraState == CameraState.recording ||
                             cameraState == CameraState.paused
                         ? IconButton(
-                            onPressed: () => stopVideo(),
+                            onPressed: stopVideo,
                             icon: const Icon(
                               Icons.stop,
                               color: AppColors.whiteColor,

@@ -50,7 +50,7 @@ class VideoViewModel extends BaseChangeNotifier {
         .addFileToStorage(
             file: file,
             path:
-                "$userProfileImagesPath/${_userService.user!.id}/$userFilesPath")
+                "$userFilesPath/${_userService.user!.id}/")
         .then((response) {
       if (response.error != null) {
         onError(response.error!);

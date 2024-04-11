@@ -52,7 +52,10 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
         actions: [
           widget.viewModel.user == null ||
                   widget.viewModel.user!.profilePhoto == null
-              ? const Icon(Icons.person)
+              ? const Icon(
+                  Icons.person,
+                  color: AppColors.whiteColor,
+                )
               : PhotoAvatar(
                   imageUrl: widget.viewModel.user!.profilePhoto!,
                 ),
