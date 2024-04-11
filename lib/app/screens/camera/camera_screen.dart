@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
@@ -73,9 +74,8 @@ class _CameraScreenState extends State<CameraScreen> {
                 return CameraFrame(
                   cameraPreview: widget.viewModel.cameraPreview,
                   takePicture: () => widget.viewModel.takePicture(
-                      onSuccess: () => _showTakenPicture(context),
-                      onFailure: (message) =>
-                          widget.showErrorDialog(context, message)),
+                      onPhotoTaken: () => _showTakenPicture(context,
+                          onSubmit: widget.viewModel.onPhotoCameraSuccess)),
                   startVideo: () => widget.viewModel.startVideo(),
                   stopVideo: () => widget.viewModel.stopVideo(
                       onFailure: (message) =>
@@ -86,6 +86,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   toggleCamera: widget.viewModel.toggleCamera,
                   changeCaptureType: widget.viewModel.changeCaptureType,
                   isVideoCameraSelected: widget.viewModel.isVideoCameraSelected,
+                  isVideoCamera: widget.viewModel.isVideoCamera,
                 );
               default:
                 return const Center(
@@ -99,7 +100,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  void _showTakenPicture(BuildContext context) {
+  void _showTakenPicture(BuildContext context, {required Function onSubmit}) {
     Modals.showPopUpModal(
         context: context,
         data: PopUpDialogData(
@@ -109,7 +110,12 @@ class _CameraScreenState extends State<CameraScreen> {
                 child: Image.file(File(widget.viewModel.capturedImagePath!))),
             actions: [
               MainElevatedButton(
-                  onButtonPressed: widget.viewModel.navigateBack, title: 'ОК')
+                  onButtonPressed: widget.viewModel.navigateBack,
+                  title: 'Відміна'),
+              MainElevatedButton(
+                  onButtonPressed: () =>
+                      onSubmit(XFile(widget.viewModel.capturedImagePath!)),
+                  title: 'ОК')
             ]));
   }
 }

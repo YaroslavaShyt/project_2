@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/utils/video_player/ivideo_player.dart';
@@ -30,6 +31,10 @@ class VideoViewModel extends BaseChangeNotifier {
   Future<void> initialize() async {
     _videoPlayer.initialize(videoPath: video.path);
     
+  }
+
+  void navigateBack(){
+    _navigationUtil.navigateToAndReplace(routeCamera);
   }
 
   bool get isInitialized => _videoPlayer.isInitialized;

@@ -6,9 +6,6 @@ import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 
-// Exception has occurred.
-// FlutterError (A CameraService was used after being disposed.
-// Once you have called dispose() on a CameraService, it can no longer be used.)
 
 class CameraService extends BaseChangeNotifier
     with WidgetsBindingObserver
@@ -105,6 +102,12 @@ class CameraService extends BaseChangeNotifier
     reset();
     WidgetsBinding.instance.removeObserver(this);
     _isObserverAdded = false;
+  }
+
+  @override
+  void dispose(){
+    print("DISPOSING!!!!!!");
+    super.dispose();
   }
 
   @override

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
+import 'package:project_2/app/screens/camera/camera_factory.dart';
+import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
@@ -11,18 +13,37 @@ class CameraViewModel extends BaseChangeNotifier {
   final ICameraService _cameraService;
   final INavigationUtil _navigationUtil;
   final PermissionHandler _permissionHandler;
+  late bool isPhotoCamera;
+  late bool isVideoCamera;
+  late Function onPhotoCameraSuccess;
+  late Function onPhotoCameraError;
+  late Function onVideoCameraSuccess;
+  late Function onVideoCameraError;
   String? capturedImagePath;
   XFile? capturedVideo;
-  bool isCameraDisposed = false;
 
   CameraViewModel(
       {required ICameraService cameraService,
+      required Map<CameraConfig, Map<CameraType, dynamic>> cameraConfig,
       required ICameraCore cameraCore,
       required PermissionHandler permissionHandler,
       required INavigationUtil navigationUtil})
       : _cameraService = cameraService,
         _navigationUtil = navigationUtil,
-        _permissionHandler = permissionHandler;
+        _permissionHandler = permissionHandler {
+    isPhotoCamera =
+        cameraConfig[CameraConfig.cameraTypes]?[CameraType.photo] ?? true;
+    isVideoCamera =
+        cameraConfig[CameraConfig.cameraTypes]?[CameraType.video] ?? false;
+    onPhotoCameraSuccess =
+        cameraConfig[CameraConfig.onSuccess]?[CameraType.photo] ?? () {};
+    onPhotoCameraError =
+        cameraConfig[CameraConfig.onError]?[CameraType.photo] ?? () {};
+    onVideoCameraSuccess =
+        cameraConfig[CameraConfig.onSuccess]?[CameraType.video] ?? () {};
+    onVideoCameraError =
+        cameraConfig[CameraConfig.onError]?[CameraType.video] ?? () {};
+  }
 
   Stream<CameraState> get cameraStateStream => _cameraService.cameraStateStream;
 
@@ -50,13 +71,12 @@ class CameraViewModel extends BaseChangeNotifier {
   }
 
   Future<void> takePicture(
-      {required Function() onSuccess,
-      required Function(String) onFailure}) async {
+      {required void Function() onPhotoTaken}) async {
     capturedImagePath = await _cameraService.takePhoto();
     if (capturedImagePath != null) {
-      onSuccess();
+      onPhotoTaken();
     } else {
-      onFailure('Фото було не зроблено.');
+      onPhotoCameraError("Виникла помилка!");
     }
   }
 
@@ -67,7 +87,7 @@ class CameraViewModel extends BaseChangeNotifier {
   Future<void> stopVideo({required Function(String) onFailure}) async {
     capturedVideo = await _cameraService.stopRecording();
     if (capturedVideo != null) {
-      _navigationUtil.navigateTo(routeVideo, data: capturedVideo);
+      _navigationUtil.navigateToAndReplace(routeVideo, data: capturedVideo);
     } else {
       onFailure("Не вдалося зняти відео.");
     }

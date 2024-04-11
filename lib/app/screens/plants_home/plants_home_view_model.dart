@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/routing/routes.dart';
+import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
+import 'package:project_2/data/user/my_user.dart';
+import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
@@ -16,6 +19,8 @@ import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 
 enum PhotoSourceType { gallery, camera }
+
+enum CameraConfig { cameraTypes, onSuccess, onError }
 
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final IUserService _userService;
@@ -69,46 +74,63 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   void askPermissions() =>
       getItInst.get<PermissionHandler>().askCorePermissions();
 
-  Future<void> onAddProfileImage(
-      {required Function onError,
-      PhotoSourceType type = PhotoSourceType.gallery}) async {
+  Future<void> addProfilePhotoFromCamera({required Function onError}) async {
     bool isGranted;
-    if (type == PhotoSourceType.gallery) {
-      isGranted = await _permissionHandler.isGalleryPermissionGranted();
-    } else {
-      isGranted = await _permissionHandler.isCameraPermissionGranted();
-    }
+    isGranted = await _permissionHandler.isCameraPermissionGranted();
+    _navigationUtil.navigateBack();
     if (isGranted) {
-      loadImage(type: PhotoSourceType.gallery).then((value) {
-        if (value != null) {
-          _photo = File(value.path);
-          _storageService
-              .addFileToStorage(
-                  file: _photo!,
-                  path: "$userProfileImagesPath/${_userService.user!.id}")
-              .then((response) {
-            if (response.error != null) {
-              onError(response.error!);
-            } else {
-              _userService.user!.profilePhoto = response.data!['imageURL'];
-              notifyListeners();
-              _navigationUtil.navigateBack();
-            }
-          }).onError((error, stackTrace) => onError(error.toString()));
+      _navigationUtil.navigateTo(routeCamera, data: {
+        CameraConfig.cameraTypes: {
+          CameraType.photo: true,
+          CameraType.video: false
+        },
+        CameraConfig.onSuccess: {
+          CameraType.photo: (XFile image) async {
+            await _addDataToStorage(image: image, onError: onError);
+          },
+          CameraType.video: null
+        },
+        CameraConfig.onError: {
+          CameraType.photo: onError,
+          CameraType.video: () {}
         }
-      }).onError((error, stackTrace) => onError(error.toString()));
+      });
     } else {
-      onError("Не надано доступу!");
+      onError("Не надано доступу до камери!");
     }
   }
 
-  Future<XFile?> loadImage(
-      {PhotoSourceType type = PhotoSourceType.gallery}) async {
+  Future<void> addProfilePhotoFromGalery({required Function onError}) async {
+    bool isGranted;
+    isGranted = await _permissionHandler.isGalleryPermissionGranted();
+    if (isGranted) {
+      XFile? image = await _loadImageFromGalery();
+      if (image != null) {
+        await _addDataToStorage(image: image, onError: onError);
+      }
+    } else {
+      onError("Не надано доступу до галереї!");
+    }
+  }
+
+  Future<void> _addDataToStorage(
+      {required XFile image, required Function onError}) async {
+    _photo = File(image.path);
+    IBaseResponse response = await _storageService.addFileToStorage(
+        file: _photo!, path: "$userProfileImagesPath/${_userService.user!.id}");
+    if (response.error != null) {
+      onError(response.error);
+    } else {
+      _userService.updateProfilePhoto(response.data!['URL']);
+      notifyListeners();
+      _navigationUtil.navigateBack();
+      _navigationUtil.navigateBack();
+    }
+  }
+
+  Future<XFile?> _loadImageFromGalery() async {
     final ImagePicker picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-        source: type == PhotoSourceType.gallery
-            ? ImageSource.gallery
-            : ImageSource.camera);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     return pickedFile;
   }
 

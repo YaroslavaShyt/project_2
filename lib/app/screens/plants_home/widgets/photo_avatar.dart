@@ -11,9 +11,12 @@ class PhotoAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(50.0),
-          child: CachedImageWidget(imageUrl: imageUrl),
+        ClipOval(
+          clipBehavior: Clip.antiAlias,
+          child: SizedBox(
+              height: 100,
+              width: 100,
+              child: CachedImageWidget(imageUrl: imageUrl)),
         ),
         if (onPressed != null) ...[
           Positioned(

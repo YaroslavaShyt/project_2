@@ -16,6 +16,7 @@ class CachedImageWidget extends StatelessWidget {
         color: AppColors.lightMentolGreenColor,
       ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
+      fit: BoxFit.cover,
     );
   }
 }

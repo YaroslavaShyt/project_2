@@ -56,9 +56,12 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                   Icons.person,
                   color: AppColors.whiteColor,
                 )
-              : PhotoAvatar(
-                  imageUrl: widget.viewModel.user!.profilePhoto!,
-                ),
+              : SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: PhotoAvatar(
+                    imageUrl: widget.viewModel.user!.profilePhoto!,
+                  )),
           const SizedBox(
             width: 30.0,
           ),
@@ -162,10 +165,10 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
         data: PopUpDialogData(
             title: 'Завантажити фото ',
             content: PickerContent(
-                onCameraTap: () => widget.viewModel.onAddProfileImage(
-                    onError: (err) => widget.showErrorDialog(context, err),
-                    type: PhotoSourceType.camera),
-                onGalleryTap: () => widget.viewModel.onAddProfileImage(
+                onCameraTap: () => widget.viewModel.addProfilePhotoFromCamera(
+                      onError: (err) => widget.showErrorDialog(context, err),
+                    ),
+                onGalleryTap: () => widget.viewModel.addProfilePhotoFromGalery(
                     onError: (err) => widget.showErrorDialog(context, err))),
             actions: []));
   }

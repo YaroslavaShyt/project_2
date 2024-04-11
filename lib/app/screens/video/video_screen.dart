@@ -20,35 +20,43 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+              onPressed: widget.viewModel.navigateBack,
+              icon: const Icon(Icons.arrow_back)),
+        ),
         body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        widget.viewModel.isInitialized
-            ? SizedBox(
-                height: 800, width: 400, child: widget.viewModel.videoPlayer)
-            : Container(),
-        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-                onPressed: widget.viewModel.playOrPause,
-                icon: Icon(widget.viewModel.isPlaying
-                    ? Icons.pause
-                    : Icons.play_arrow_rounded)),
-            widget.viewModel.isDataLoaded
-                ? IconButton(
-                    onPressed: () => widget.viewModel.addFileToStorage(
-                        onError: (err) =>
-                            widget.showErrorDialog(context, err.toString())),
-                    icon: const Icon(Icons.upload))
-                : const SizedBox(
-                    height: 30,
-                    width: 20,
-                    child: CircularProgressIndicator(),
-                  )
+            widget.viewModel.isInitialized
+                ? SizedBox(
+                    height: 700,
+                    width: 400,
+                    child: widget.viewModel.videoPlayer)
+                : Container(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                    onPressed: widget.viewModel.playOrPause,
+                    icon: Icon(widget.viewModel.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow_rounded)),
+                widget.viewModel.isDataLoaded
+                    ? IconButton(
+                        onPressed: () => widget.viewModel.addFileToStorage(
+                            onError: (err) => widget.showErrorDialog(
+                                context, err.toString())),
+                        icon: const Icon(Icons.upload))
+                    : const SizedBox(
+                        height: 30,
+                        width: 20,
+                        child: CircularProgressIndicator(),
+                      )
+              ],
+            )
           ],
-        )
-      ],
-    ));
+        ));
   }
 }

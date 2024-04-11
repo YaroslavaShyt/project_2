@@ -5,5 +5,6 @@ abstract interface class IUserService extends ChangeNotifier {
   IMyUser? get user;
 
   void setUser(IMyUser user);
+  void updateProfilePhoto(String photo);
   Future<IMyUser?> loadUserData();
 }

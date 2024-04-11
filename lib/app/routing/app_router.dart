@@ -51,7 +51,7 @@ class AppRouter {
   }
 
   Widget _buildCameraSettings(RouteSettings settings) {
-    return CameraFactory.build();
+    return CameraFactory.build(settings);
   }
 
   Widget _buildVideoSettings(RouteSettings settings) {

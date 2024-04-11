@@ -26,6 +26,12 @@ class UserService extends ChangeNotifier implements IUserService {
   }
 
   @override
+  void updateProfilePhoto(String photo){
+    user?.profilePhoto = photo;
+    notifyListeners();
+  }
+
+  @override
   Future<IMyUser?> loadUserData() async {
     if (_firebaseAuth.currentUser?.uid != null) {
       IMyUser? data =
