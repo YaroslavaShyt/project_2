@@ -50,6 +50,7 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> loadPlantData() async {
+    disposeControllers();
     Future.delayed(const Duration(seconds: 3)).then((value) async {
       await _plantsRepository.readPlant(id: plantId).then((data) async {
         if (data is IPlant) {
@@ -79,6 +80,7 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
                     file: image,
                     onError: onError,
                     onSuccess: (String url) {
+                      _navigationUtil.navigateBack();
                       _navigationUtil.navigateBack();
                       loadPlantData();
                     },
