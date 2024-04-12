@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class PickerContent extends StatelessWidget {
-  final Function() onGalleryTap;
-  final Function() onCameraTap;
+  final Function()? onGalleryTap;
+  final Function()? onCameraTap;
   const PickerContent(
       {super.key, required this.onCameraTap, required this.onGalleryTap});
 
@@ -13,22 +13,26 @@ class PickerContent extends StatelessWidget {
       height: 115,
       child: Column(
         children: [
-          ListTile(
-              leading:
-                  const Icon(Icons.photo_library, color: AppColors.whiteColor),
-              title: const Text(
-                'З галереї',
-                style: TextStyle(color: AppColors.whiteColor),
-              ),
-              onTap: onGalleryTap),
-          ListTile(
-              leading:
-                  const Icon(Icons.photo_camera, color: AppColors.whiteColor),
-              title: const Text(
-                'З камери',
-                style: TextStyle(color: AppColors.whiteColor),
-              ),
-              onTap: onCameraTap),
+          if (onGalleryTap != null) ...[
+            ListTile(
+                leading: const Icon(Icons.photo_library,
+                    color: AppColors.whiteColor),
+                title: const Text(
+                  'З галереї',
+                  style: TextStyle(color: AppColors.whiteColor),
+                ),
+                onTap: onGalleryTap),
+          ],
+          if (onCameraTap != null) ...[
+            ListTile(
+                leading:
+                    const Icon(Icons.photo_camera, color: AppColors.whiteColor),
+                title: const Text(
+                  'З камери',
+                  style: TextStyle(color: AppColors.whiteColor),
+                ),
+                onTap: onCameraTap),
+          ]
         ],
       ),
     );

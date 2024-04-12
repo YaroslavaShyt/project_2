@@ -1,6 +1,6 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
+import 'package:project_2/app/screens/camera/camera_view_model.dart';
 import 'package:project_2/app/screens/video/video_screen.dart';
 import 'package:project_2/app/screens/video/video_view_model.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
@@ -11,9 +11,12 @@ import 'package:provider/provider.dart';
 
 class VideoFactory {
   static Widget build(RouteSettings settings) {
+    final Map<Video, dynamic> arguments =
+        settings.arguments as Map<Video, dynamic>;
     return ChangeNotifierProvider(
         create: (context) => VideoViewModel(
-            video: settings.arguments as XFile,
+            video: arguments[Video.data],
+            onVideoSubmit: arguments[Video.onSubmit],
             videoPlayer: getItInst.get<IVideoPlayer>(),
             userService: context.read<IUserService>(),
             navigationUtil: context.read<INavigationUtil>(),

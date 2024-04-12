@@ -44,7 +44,7 @@ class _CameraScreenState extends State<CameraScreen> {
               color: AppColors.whiteColor,
             )),
         title: const Text(
-          'Нове фото',
+          'Створити',
           style: TextStyle(
               color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
@@ -87,6 +87,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   changeCaptureType: widget.viewModel.changeCaptureType,
                   isVideoCameraSelected: widget.viewModel.isVideoCameraSelected,
                   isVideoCamera: widget.viewModel.isVideoCamera,
+                  isPhotoCamera: widget.viewModel.isPhotoCamera,
                 );
               default:
                 return const Center(

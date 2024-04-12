@@ -2,5 +2,16 @@ const plantCollection = "plants";
 const userCollection = "users";
 
 const userDirectory = "Users";
+const plantsDirectory = "Files";
 
-module.exports = { plantCollection, userCollection, userDirectory };
+const fileVideo = "vd";
+const filePhoto = "ph";
+
+module.exports = {
+  plantCollection,
+  userCollection,
+  userDirectory,
+  plantsDirectory,
+  fileVideo,
+  filePhoto,
+};

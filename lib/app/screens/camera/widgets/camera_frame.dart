@@ -14,6 +14,7 @@ class CameraFrame extends StatelessWidget {
   final CameraState cameraState;
   final bool isVideoCameraSelected;
   final bool isVideoCamera;
+  final bool isPhotoCamera;
 
   const CameraFrame(
       {super.key,
@@ -24,6 +25,7 @@ class CameraFrame extends StatelessWidget {
       required this.pauseVideo,
       required this.stopVideo,
       required this.resumeVideo,
+      required this.isPhotoCamera,
       required this.isVideoCamera,
       required this.toggleCamera,
       required this.changeCaptureType,
@@ -118,14 +120,15 @@ class CameraFrame extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton(
+              if(isPhotoCamera)...[
+                IconButton(
                   icon: Icon(
                     Icons.camera,
                     color: isVideoCameraSelected && isVideoCamera
                         ? AppColors.greyColor
                         : AppColors.whiteColor,
                   ),
-                  onPressed: changeCaptureType),
+                  onPressed: changeCaptureType),],
               if (isVideoCamera) ...[
                 IconButton(
                     icon: Icon(

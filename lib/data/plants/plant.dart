@@ -13,10 +13,18 @@ class Plant implements IPlant {
   @override
   String image;
 
+  @override
+  List<dynamic> photos;
+
+  @override
+  List<dynamic> videos;
+
   Plant(
       {required this.id,
       required this.name,
       required this.quantity,
+      required this.photos,
+      required this.videos,
       required this.image});
 
   factory Plant.fromJSON({required Map<String, dynamic> data}) {
@@ -24,6 +32,8 @@ class Plant implements IPlant {
         id: data["id"],
         name: data["data"]["name"],
         quantity: data["data"]["quantity"],
+        photos: data["data"]["photos"],
+        videos: data["data"]["videos"],
         image: data["data"]["image"]);
   }
 }

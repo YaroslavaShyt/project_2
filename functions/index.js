@@ -4,6 +4,9 @@ const {
   plantCollection,
   userCollection,
   userDirectory,
+  plantsDirectory,
+  fileVideo,
+  filePhoto,
 } = require("./collections");
 const functions = require("firebase-functions");
 const { error } = require("firebase-functions/logger");
@@ -59,6 +62,52 @@ exports.updateUserImage = functions.storage
         console.log(`Image URL updated for user ${userId}`);
       } catch (error) {
         console.error(`Error updating image URL for user ${userId}:`, error);
+      }
+    }
+  });
+
+exports.addPlantPhotosOrVideos = functions.storage
+  .object()
+  .onFinalize(async (object) => {
+    const filePath = object.name;
+    const directory = filePath.split("/")[0];
+    const fileType = filePath.split("/")[1];
+    const plantId = filePath.split("/")[2];
+    const fileBucket = object.bucket;
+    const bucket = storage.bucket(fileBucket);
+    console.log(filePath, directory, fileType, plantId);
+    if (directory == plantsDirectory) {
+      try {
+        const file = bucket.file(filePath);
+        const fileUrl = await file.getSignedUrl({
+          action: "read",
+          expires: "03-16-2025",
+        });
+        console.log(fileUrl);
+
+        const userRef = admin
+          .firestore()
+          .collection(plantCollection)
+          .doc(plantId);
+        if (fileType == filePhoto) {
+          await userRef.set(
+            {
+              photos: admin.firestore.FieldValue.arrayUnion(...fileUrl),
+            },
+            { merge: true }
+          );
+          console.log(`file photo URL added for plant ${plantId}`);
+        } else if (fileType == fileVideo) {
+          await userRef.set(
+            {
+              videos: admin.firestore.FieldValue.arrayUnion(...fileUrl),
+            },
+            { merge: true }
+          );
+          console.log(`file video URL added for plant ${plantId}`);
+        }
+      } catch (error) {
+        console.error(`Error updating file URL for plant ${plantId}:`, error);
       }
     }
   });

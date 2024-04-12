@@ -1,10 +1,9 @@
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
-import 'package:project_2/data/user/my_user.dart';
-import 'package:project_2/domain/services/ibase_response.dart';
+import 'package:project_2/app/utils/camera/camera_util.dart';
+import 'package:project_2/app/utils/camera/icamera_util.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
@@ -16,40 +15,33 @@ import 'package:project_2/domain/plants/iplants_repository.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
-import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 
 enum PhotoSourceType { gallery, camera }
 
-enum CameraConfig { cameraTypes, onSuccess, onError }
-
 class PlantsHomeViewModel extends BaseChangeNotifier {
   final IUserService _userService;
-  final StorageService _storageService;
   final INavigationUtil _navigationUtil;
   final ILoginRepository _loginRepository;
   final IPlantsRepository _plantsRepository;
-  final PermissionHandler _permissionHandler;
   final NotificationService _notificationService;
+  final ICameraUtil _cameraUtil;
 
   PlantsHomeViewModel({
+    required ICameraUtil cameraUtil,
     required IUserService userService,
-    required StorageService storageService,
     required INavigationUtil navigationUtil,
     required ILoginRepository loginRepository,
     required IPlantsRepository plantsRepository,
-    required PermissionHandler permissionHandler,
     required NotificationService notificationService,
-  })  : _userService = userService,
+  })  : _cameraUtil = cameraUtil,
+        _userService = userService,
         _navigationUtil = navigationUtil,
-        _storageService = storageService,
         _loginRepository = loginRepository,
         _plantsRepository = plantsRepository,
-        _permissionHandler = permissionHandler,
         _notificationService = notificationService {
     loadUserData();
   }
 
-  File? _photo;
   String _newPlantName = '';
   String _newPlantQuantity = '';
   String? _newPlantNameError;
@@ -75,63 +67,43 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
       getItInst.get<PermissionHandler>().askCorePermissions();
 
   Future<void> addProfilePhotoFromCamera({required Function onError}) async {
-    bool isGranted;
-    isGranted = await _permissionHandler.isCameraPermissionGranted();
-    _navigationUtil.navigateBack();
-    if (isGranted) {
-      _navigationUtil.navigateTo(routeCamera, data: {
-        CameraConfig.cameraTypes: {
-          CameraType.photo: true,
-          CameraType.video: false
-        },
-        CameraConfig.onSuccess: {
+    await _cameraUtil.addFileFromCamera(
+      route: routeCamera,
+      onError: onError,
+      data: {
+        Camera.cameraTypes: {CameraType.photo: true, CameraType.video: false},
+        Camera.onSuccess: {
           CameraType.photo: (XFile image) async {
-            await _addDataToStorage(image: image, onError: onError);
+            await _cameraUtil.addDataToStorage(
+              file: image,
+              path: "$userProfileImagesPath/${_userService.user!.id}",
+              onError: onError,
+              onSuccess: (String url) {
+                _userService.updateProfilePhoto(url);
+                _navigationUtil.navigateBack();
+                _navigationUtil.navigateBack();
+                notifyListeners();
+              },
+            );
           },
           CameraType.video: null
         },
-        CameraConfig.onError: {
-          CameraType.photo: onError,
-          CameraType.video: () {}
-        }
-      });
-    } else {
-      onError("Не надано доступу до камери!");
-    }
+        Camera.onError: {CameraType.photo: onError, CameraType.video: () {}}
+      },
+    );
   }
 
   Future<void> addProfilePhotoFromGalery({required Function onError}) async {
-    bool isGranted;
-    isGranted = await _permissionHandler.isGalleryPermissionGranted();
-    if (isGranted) {
-      XFile? image = await _loadImageFromGalery();
-      if (image != null) {
-        await _addDataToStorage(image: image, onError: onError);
-      }
-    } else {
-      onError("Не надано доступу до галереї!");
-    }
-  }
-
-  Future<void> _addDataToStorage(
-      {required XFile image, required Function onError}) async {
-    _photo = File(image.path);
-    IBaseResponse response = await _storageService.addFileToStorage(
-        file: _photo!, path: "$userProfileImagesPath/${_userService.user!.id}");
-    if (response.error != null) {
-      onError(response.error);
-    } else {
-      _userService.updateProfilePhoto(response.data!['URL']);
-      notifyListeners();
-      _navigationUtil.navigateBack();
-      _navigationUtil.navigateBack();
-    }
-  }
-
-  Future<XFile?> _loadImageFromGalery() async {
-    final ImagePicker picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    return pickedFile;
+    await _cameraUtil.addFileFromGallery(
+      onError: onError,
+      path: "$userProfileImagesPath/${_userService.user!.id}",
+      onSuccess: (String url) {
+        _userService.updateProfilePhoto(url);
+        _navigationUtil.navigateBack();
+        _navigationUtil.navigateBack();
+        notifyListeners();
+      },
+    );
   }
 
   void loadUserData() async {

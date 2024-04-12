@@ -45,9 +45,7 @@ class _VideoScreenState extends State<VideoScreen> {
                         : Icons.play_arrow_rounded)),
                 widget.viewModel.isDataLoaded
                     ? IconButton(
-                        onPressed: () => widget.viewModel.addFileToStorage(
-                            onError: (err) => widget.showErrorDialog(
-                                context, err.toString())),
+                        onPressed: widget.viewModel.onVideoSubmit,
                         icon: const Icon(Icons.upload))
                     : const SizedBox(
                         height: 30,
