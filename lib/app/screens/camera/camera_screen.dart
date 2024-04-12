@@ -19,17 +19,30 @@ class CameraScreen extends StatefulWidget with ErrorHandlingMixin {
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _CameraScreenState extends State<CameraScreen>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     widget.viewModel.loadCamera();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     widget.viewModel.disposeCamera();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.inactive) {
+      print("inactive");
+    } else if (state == AppLifecycleState.resumed) {
+      print("resumed screen");
+      await widget.viewModel.loadCamera();
+    }
   }
 
   @override

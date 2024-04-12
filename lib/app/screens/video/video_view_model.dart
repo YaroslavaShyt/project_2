@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
-import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/utils/video_player/ivideo_player.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
@@ -29,7 +28,7 @@ class VideoViewModel extends BaseChangeNotifier {
   }
 
   void navigateBack() {
-    _navigationUtil.navigateToAndReplace(routeCamera);
+    _navigationUtil.navigateBack();
   }
 
   bool get isInitialized => _videoPlayer.isInitialized;

@@ -11,7 +11,7 @@ import 'package:project_2/app/utils/permissions/permission_handler.dart';
 
 enum Video { data, onSubmit }
 
-class CameraViewModel extends BaseChangeNotifier {
+class CameraViewModel extends BaseChangeNotifier{
   final ICameraService _cameraService;
   final INavigationUtil _navigationUtil;
   final PermissionHandler _permissionHandler;
@@ -56,7 +56,10 @@ class CameraViewModel extends BaseChangeNotifier {
   Future<void> loadCamera() async {
     _permissionHandler.isCameraPermissionGranted();
     await _cameraService.create();
+    notifyListeners();
   }
+
+  
 
   Function get disposeCamera => _cameraService.disposeCamera;
 

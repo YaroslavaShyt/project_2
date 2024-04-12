@@ -6,7 +6,6 @@ import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 
-
 class CameraService extends BaseChangeNotifier
     with WidgetsBindingObserver
     implements ICameraService {
@@ -59,18 +58,22 @@ class CameraService extends BaseChangeNotifier
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+    final CameraController? controller = _cameraController;
+
+    if (controller == null || !controller!.value.isInitialized) {
       return;
     }
     if (state == AppLifecycleState.inactive) {
-      if (!_isCameraControllerDisposed) {
-        dispose();
-      }
-    } else if (state == AppLifecycleState.resumed) {
-      if (!_isCameraControllerDisposed) {
-        await reset();
-      }
-      await create();
+      // print("inactive");
+      // if (!_isCameraControllerDisposed) {
+      await controller.dispose();
+      // }
+      // } else if (state == AppLifecycleState.resumed) {
+      //   print("resumed");
+      //   //  if (!_isCameraControllerDisposed) {
+      //   // await reset();
+      //   //  }
+      //  // await create();
     }
   }
 
@@ -81,15 +84,15 @@ class CameraService extends BaseChangeNotifier
       _isObserverAdded = true;
     }
     _cameraStateStreamController = StreamController();
-
-    _cameraController = CameraController(
+    final CameraController controller = CameraController(
         camerasList[_currentCameraId], cameraConfig.cameraResolutionPreset,
         imageFormatGroup: ImageFormatGroup.yuv420);
-
+    _cameraController = controller;
+    _isCameraControllerDisposed = false;
     try {
-      await _cameraController!.initialize();
+      await controller.initialize();
 
-      _cameraPreview = CameraPreview(_cameraController!);
+      _cameraPreview = CameraPreview(controller);
       _updateCameraState(CameraState.ready);
     } on CameraException catch (exception) {
       _updateCameraState(CameraState.error);
@@ -102,12 +105,6 @@ class CameraService extends BaseChangeNotifier
     reset();
     WidgetsBinding.instance.removeObserver(this);
     _isObserverAdded = false;
-  }
-
-  @override
-  void dispose(){
-    print("DISPOSING!!!!!!");
-    super.dispose();
   }
 
   @override
@@ -144,6 +141,7 @@ class CameraService extends BaseChangeNotifier
     await _cameraController?.dispose();
     _cameraController = null;
     _isCameraControllerDisposed = true;
+    _updateCameraState(CameraState.init);
   }
 
   void _updateCameraState(CameraState state) {
