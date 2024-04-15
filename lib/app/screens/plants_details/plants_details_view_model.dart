@@ -3,8 +3,8 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
-import 'package:project_2/app/utils/camera/camera_util.dart';
-import 'package:project_2/app/utils/camera/icamera_util.dart';
+import 'package:project_2/app/utils/content/icontent_handler.dart';
+import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
@@ -16,18 +16,21 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   final String plantId;
   final IPlantsRepository _plantsRepository;
   final INavigationUtil _navigationUtil;
-  final ICameraUtil _cameraUtil;
+  final IContentHandler _contentHandler;
+  final IRemoteStorageHandler _remoteStorageHandler;
   List<VideoPlayerController>? controllers;
 
   PlantsDetailsViewModel(
       {required this.plantId,
       required INavigationUtil navigationUtil,
-      required ICameraUtil cameraUtil,
+      required IContentHandler contentHandler,
       required IUserService userService,
-      required IPlantsRepository plantsRepository})
+      required IPlantsRepository plantsRepository,
+      required IRemoteStorageHandler remoteStorageHandler})
       : _navigationUtil = navigationUtil,
-        _cameraUtil = cameraUtil,
-        _plantsRepository = plantsRepository;
+        _contentHandler = contentHandler,
+        _plantsRepository = plantsRepository,
+        _remoteStorageHandler = remoteStorageHandler;
 
   Future<void> initControllers() async {
     controllers = plant?.videos
@@ -64,56 +67,60 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
 
   Future<void> addPlantFileFromCamera(
       {required Function onError, required bool isVideo}) async {
-    await _cameraUtil.addFileFromCamera(
-      route: routeCamera,
+    await _contentHandler.addFileFromCamera(
+      onSuccess: () => _navigationUtil.navigateTo(
+        routeCamera,
+        data: {
+          CameraConfigKeys.cameraTypes: {
+            CameraType.photo: !isVideo,
+            CameraType.video: isVideo
+          },
+          CameraConfigKeys.onSuccess: {
+            CameraType.photo: !isVideo
+                ? (XFile image) async {
+                    await _remoteStorageHandler.addDataToStorage(
+                      path: "$userFilesPath/ph/${plant!.id}",
+                      file: image,
+                      onError: onError,
+                      onSuccess: (String url) {
+                        _navigationUtil.navigateBack();
+                        _navigationUtil.navigateBack();
+                        _navigationUtil.navigateBack();
+                        loadPlantData();
+                      },
+                    );
+                  }
+                : null,
+            CameraType.video: isVideo
+                ? (XFile video) async {
+                    await _remoteStorageHandler.addDataToStorage(
+                      path: "$userFilesPath/vd/${plant!.id}",
+                      file: video,
+                      onError: onError,
+                      onSuccess: (String url) {
+                        notifyListeners();
+                        _navigationUtil.navigateBack();
+                        _navigationUtil.navigateBack();
+                        loadPlantData();
+                      },
+                    );
+                  }
+                : null,
+          },
+          CameraConfigKeys.onError: {
+            CameraType.photo: !isVideo ? onError : null,
+            CameraType.video: isVideo ? onError : null
+          }
+        },
+      ),
       onError: onError,
-      data: {
-        Camera.cameraTypes: {
-          CameraType.photo: !isVideo,
-          CameraType.video: isVideo
-        },
-        Camera.onSuccess: {
-          CameraType.photo: !isVideo
-              ? (XFile image) async {
-                  await _cameraUtil.addDataToStorage(
-                    path: "$userFilesPath/ph/${plant!.id}",
-                    file: image,
-                    onError: onError,
-                    onSuccess: (String url) {
-                      _navigationUtil.navigateBack();
-                      _navigationUtil.navigateBack();
-                      loadPlantData();
-                    },
-                  );
-                }
-              : null,
-          CameraType.video: isVideo
-              ? (XFile video) async {
-                  await _cameraUtil.addDataToStorage(
-                    path: "$userFilesPath/vd/${plant!.id}",
-                    file: video,
-                    onError: onError,
-                    onSuccess: (String url) {
-                      notifyListeners();
-                      _navigationUtil.navigateBack();
-                      loadPlantData();
-                    },
-                  );
-                }
-              : null,
-        },
-        Camera.onError: {
-          CameraType.photo: !isVideo ? onError : null,
-          CameraType.video: isVideo ? onError : null
-        }
-      },
     );
   }
 
   Future<void> addPlantFileFromGallery(
       {required Function onError, required bool isVideo}) async {
     _navigationUtil.navigateBack();
-    await _cameraUtil.addFileFromGallery(
+    await _contentHandler.addFileFromGallery(
         path: isVideo
             ? "$userFilesPath/vd/${plant!.id}"
             : "$userFilesPath/ph/${plant!.id}",
@@ -126,9 +133,5 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   void sharePlant() {
     Share.share('Подивись на цю рослину:\n'
         '$uriPlantsDetails${plant!.id}');
-  }
-
-  void navigateToCameraScreen() {
-    _navigationUtil.navigateTo(routeCamera);
   }
 }

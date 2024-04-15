@@ -39,6 +39,14 @@ class VideoViewModel extends BaseChangeNotifier {
 
   double get aspectRatio => _videoPlayer.aspectRatio;
 
+  VideoPlayerController get videoPlayerController =>
+      _videoPlayer.videoPlayerController;
+
+  set isPlaying(bool newIsPlaying) {
+    _videoPlayer.isPlaying = newIsPlaying;
+    notifyListeners();
+  }
+
   Future<void> onVideoSubmit() async {
     setIsDataLoaded(false);
     notifyListeners();

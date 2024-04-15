@@ -14,7 +14,16 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.initialize();
+    widget.viewModel.initialize().then((value) => {
+          widget.viewModel.videoPlayerController.addListener(() {
+            if (!widget.viewModel.videoPlayerController.value.isPlaying &&
+                widget.viewModel.videoPlayerController.value.isInitialized &&
+                widget.viewModel.videoPlayerController.value.duration ==
+                    widget.viewModel.videoPlayerController.value.position) {
+              widget.viewModel.isPlaying = false;
+            }
+          })
+        });
   }
 
   @override
@@ -31,7 +40,7 @@ class _VideoScreenState extends State<VideoScreen> {
           children: [
             widget.viewModel.isInitialized
                 ? SizedBox(
-                    height: 700,
+                    height: MediaQuery.of(context).size.height * 0.6,
                     width: 400,
                     child: widget.viewModel.videoPlayer)
                 : Container(),

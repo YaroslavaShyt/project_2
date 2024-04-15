@@ -2,8 +2,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
-import 'package:project_2/app/utils/camera/camera_util.dart';
-import 'package:project_2/app/utils/camera/icamera_util.dart';
+import 'package:project_2/app/utils/content/icontent_handler.dart';
+import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 import 'package:project_2/data/plants/plants_data.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
@@ -24,21 +24,24 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final ILoginRepository _loginRepository;
   final IPlantsRepository _plantsRepository;
   final NotificationService _notificationService;
-  final ICameraUtil _cameraUtil;
+  final IContentHandler _contentHandler;
+  final IRemoteStorageHandler _remoteStorageHandler;
 
-  PlantsHomeViewModel({
-    required ICameraUtil cameraUtil,
-    required IUserService userService,
-    required INavigationUtil navigationUtil,
-    required ILoginRepository loginRepository,
-    required IPlantsRepository plantsRepository,
-    required NotificationService notificationService,
-  })  : _cameraUtil = cameraUtil,
+  PlantsHomeViewModel(
+      {required IContentHandler contentHandler,
+      required IUserService userService,
+      required INavigationUtil navigationUtil,
+      required ILoginRepository loginRepository,
+      required IPlantsRepository plantsRepository,
+      required NotificationService notificationService,
+      required IRemoteStorageHandler remoteStorageHandler})
+      : _contentHandler = contentHandler,
         _userService = userService,
         _navigationUtil = navigationUtil,
         _loginRepository = loginRepository,
         _plantsRepository = plantsRepository,
-        _notificationService = notificationService {
+        _notificationService = notificationService,
+        _remoteStorageHandler = remoteStorageHandler {
     loadUserData();
   }
 
@@ -67,34 +70,42 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
       getItInst.get<PermissionHandler>().askCorePermissions();
 
   Future<void> addProfilePhotoFromCamera({required Function onError}) async {
-    await _cameraUtil.addFileFromCamera(
-      route: routeCamera,
-      onError: onError,
-      data: {
-        Camera.cameraTypes: {CameraType.photo: true, CameraType.video: false},
-        Camera.onSuccess: {
-          CameraType.photo: (XFile image) async {
-            await _cameraUtil.addDataToStorage(
-              file: image,
-              path: "$userProfileImagesPath/${_userService.user!.id}",
-              onError: onError,
-              onSuccess: (String url) {
-                _userService.updateProfilePhoto(url);
-                _navigationUtil.navigateBack();
-                _navigationUtil.navigateBack();
-                notifyListeners();
-              },
-            );
+    await _contentHandler.addFileFromCamera(
+      onSuccess: () => _navigationUtil.navigateTo(
+        routeCamera,
+        data: {
+          CameraConfigKeys.cameraTypes: {
+            CameraType.photo: true,
+            CameraType.video: false
           },
-          CameraType.video: null
+          CameraConfigKeys.onSuccess: {
+            CameraType.photo: (XFile image) async {
+              await _remoteStorageHandler.addDataToStorage(
+                file: image,
+                path: "$userProfileImagesPath/${_userService.user!.id}",
+                onError: onError,
+                onSuccess: (String url) {
+                  _userService.updateProfilePhoto(url);
+                  _navigationUtil.navigateBack();
+                  _navigationUtil.navigateBack();
+                  notifyListeners();
+                },
+              );
+            },
+            CameraType.video: null
+          },
+          CameraConfigKeys.onError: {
+            CameraType.photo: onError,
+            CameraType.video: () {}
+          }
         },
-        Camera.onError: {CameraType.photo: onError, CameraType.video: () {}}
-      },
+      ),
+      onError: onError,
     );
   }
 
   Future<void> addProfilePhotoFromGalery({required Function onError}) async {
-    await _cameraUtil.addFileFromGallery(
+    await _contentHandler.addFileFromGallery(
       onError: onError,
       path: "$userProfileImagesPath/${_userService.user!.id}",
       onSuccess: (String url) {

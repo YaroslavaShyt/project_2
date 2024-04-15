@@ -21,10 +21,18 @@ class VideoPlayerHandler implements IVideoPlayer {
   VideoPlayer get videoPlayer => VideoPlayer(_videoPlayerController);
 
   @override
+  VideoPlayerController get videoPlayerController => _videoPlayerController;
+
+  @override
   double get aspectRatio => _videoPlayerController.value.aspectRatio;
 
   @override
   bool get isPlaying => _isPlaying;
+
+  @override
+  set isPlaying(bool newIsPlaying){
+    _isPlaying = newIsPlaying;
+  }
 
   @override
   Future<void> playOrPause() async {

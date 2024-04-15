@@ -9,11 +9,13 @@ import 'package:project_2/app/services/camera/camera_service.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
-import 'package:project_2/app/utils/camera/camera_util.dart';
-import 'package:project_2/app/utils/camera/icamera_util.dart';
+import 'package:project_2/app/utils/content/content_handler.dart';
+import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
+import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
+import 'package:project_2/app/utils/storage/remote_storage_handler.dart';
 import 'package:project_2/app/utils/video_player/ivideo_player.dart';
 import 'package:project_2/app/utils/video_player/video_player_handler.dart';
 import 'package:project_2/data/storage/firebase_storage_repository.dart';
@@ -40,6 +42,7 @@ void initGetItFunctions(INavigationUtil util) {
   initNotificationService(util);
   initCamera(util);
   initVideoPlayer();
+  initContentHandler();
 }
 
 void initCloudFunctions() {
@@ -74,6 +77,8 @@ void initRepos() {
 void initStorageService() {
   getItInst.registerFactory<StorageService>(() => StorageService(
       firebaseStorageRepository: getItInst.get<FirebaseStorageRepository>()));
+  getItInst.registerFactory<IRemoteStorageHandler>(() =>
+      RemoteStorageHandler(storageService: getItInst.get<StorageService>()));
 }
 
 void initNotificationService(INavigationUtil navigationUtil) {
@@ -95,13 +100,16 @@ void initCamera(INavigationUtil util) {
   getItInst.registerSingleton<ICameraService>(CameraService(
       cameraCore: getItInst.get<ICameraCore>(),
       cameraConfig: getItInst.get<ICameraConfig>()));
-  getItInst.registerFactory<ICameraUtil>(
-      () => CameraUtil(
-        navigationUtil: util,
-        storageService: getItInst.get<StorageService>(),
-        permissionHandler: getItInst.get<PermissionHandler>()),);
 }
 
 void initVideoPlayer() {
   getItInst.registerFactory<IVideoPlayer>(() => VideoPlayerHandler());
+}
+
+void initContentHandler() {
+  getItInst.registerFactory<IContentHandler>(
+    () => ContentHandler(
+        remoteStorageHandler: getItInst.get<IRemoteStorageHandler>(),
+        permissionHandler: getItInst.get<PermissionHandler>()),
+  );
 }

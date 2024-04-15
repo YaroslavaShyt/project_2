@@ -71,7 +71,7 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                 ],
               ),
               FilesList(
-                  onTap: () => _showPicker(context, isVideo: false),
+                  onTap: () => _showPicker(context, isVideo: false, isGalleryOptionProvided: true),
                   files: widget.viewModel.plant!.photos,
                   isVideo: false),
               const Row(
@@ -88,7 +88,7 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                 ],
               ),
               FilesList(
-                  onTap: () => _showPicker(context, isVideo: true),
+                  onTap: () => _showPicker(context, isVideo: true, isGalleryOptionProvided: false),
                   files: widget.viewModel.plant!.videos,
                   controllers: widget.viewModel.controllers,
                   isVideo: true),
@@ -108,7 +108,8 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
     }
   }
 
-  void _showPicker(context, {required bool isVideo}) {
+  void _showPicker(context,
+      {required bool isGalleryOptionProvided, required bool isVideo}) {
     Modals.showPopUpModal(
         context: context,
         data: PopUpDialogData(
@@ -117,9 +118,9 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                 onCameraTap: () => widget.viewModel.addPlantFileFromCamera(
                     onError: (err) => widget.showErrorDialog(context, err),
                     isVideo: isVideo),
-                onGalleryTap: !isVideo
+                onGalleryTap: isGalleryOptionProvided
                     ? () => widget.viewModel.addPlantFileFromGallery(
-                        isVideo: !isVideo,
+                        isVideo: isVideo,
                         onError: (err) => widget.showErrorDialog(context, err))
                     : null),
             actions: []));

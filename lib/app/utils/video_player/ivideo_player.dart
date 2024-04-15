@@ -8,4 +8,6 @@ abstract interface class IVideoPlayer {
   VideoPlayer get videoPlayer;
   double get aspectRatio;
   bool get isPlaying;
+  set isPlaying(bool newIsPlaying);
+  VideoPlayerController get videoPlayerController;
 }

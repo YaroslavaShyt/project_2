@@ -6,7 +6,7 @@ import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
-import 'package:project_2/app/utils/camera/camera_util.dart';
+import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 
 enum Video { data, onSubmit }
@@ -26,24 +26,24 @@ class CameraViewModel extends BaseChangeNotifier{
 
   CameraViewModel(
       {required ICameraService cameraService,
-      required Map<Camera, Map<CameraType, dynamic>> cameraConfig,
+      required Map<CameraConfigKeys, Map<CameraType, dynamic>> cameraConfig,
       required ICameraCore cameraCore,
       required PermissionHandler permissionHandler,
       required INavigationUtil navigationUtil})
       : _cameraService = cameraService,
         _navigationUtil = navigationUtil,
         _permissionHandler = permissionHandler {
-    isPhotoCamera = cameraConfig[Camera.cameraTypes]?[CameraType.photo] ?? true;
+    isPhotoCamera = cameraConfig[CameraConfigKeys.cameraTypes]?[CameraType.photo] ?? true;
     isVideoCamera =
-        cameraConfig[Camera.cameraTypes]?[CameraType.video] ?? false;
+        cameraConfig[CameraConfigKeys.cameraTypes]?[CameraType.video] ?? false;
     onPhotoCameraSuccess =
-        cameraConfig[Camera.onSuccess]?[CameraType.photo] ?? () {};
+        cameraConfig[CameraConfigKeys.onSuccess]?[CameraType.photo] ?? () {};
     onPhotoCameraError =
-        cameraConfig[Camera.onError]?[CameraType.photo] ?? () {};
+        cameraConfig[CameraConfigKeys.onError]?[CameraType.photo] ?? () {};
     onVideoCameraSuccess =
-        cameraConfig[Camera.onSuccess]?[CameraType.video] ?? () {};
+        cameraConfig[CameraConfigKeys.onSuccess]?[CameraType.video] ?? () {};
     onVideoCameraError =
-        cameraConfig[Camera.onError]?[CameraType.video] ?? () {};
+        cameraConfig[CameraConfigKeys.onError]?[CameraType.video] ?? () {};
   }
 
   Stream<CameraState> get cameraStateStream => _cameraService.cameraStateStream;
