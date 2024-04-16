@@ -14,6 +14,7 @@ import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
+import 'package:project_2/app/utils/isolate/isolate_handler.dart';
 import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
 import 'package:project_2/app/utils/storage/remote_storage_handler.dart';
 import 'package:project_2/app/utils/video_player/ivideo_player.dart';
@@ -36,6 +37,7 @@ void initGetItFunctions(INavigationUtil util) {
   initCloudFunctions();
   initNetworkService();
   initRepos();
+  initIsolateHandler();
   initStorageService();
   initPermissionHandler();
   initDeepLinking(util);
@@ -77,8 +79,11 @@ void initRepos() {
 void initStorageService() {
   getItInst.registerFactory<StorageService>(() => StorageService(
       firebaseStorageRepository: getItInst.get<FirebaseStorageRepository>()));
-  getItInst.registerFactory<IRemoteStorageHandler>(() =>
-      RemoteStorageHandler(storageService: getItInst.get<StorageService>()));
+  getItInst.registerFactory<IRemoteStorageHandler>(
+    () => RemoteStorageHandler(
+        storageService: getItInst.get<StorageService>(),
+        isolateHandler: getItInst.get<IsolateHandler>()),
+  );
 }
 
 void initNotificationService(INavigationUtil navigationUtil) {
@@ -112,4 +117,8 @@ void initContentHandler() {
         remoteStorageHandler: getItInst.get<IRemoteStorageHandler>(),
         permissionHandler: getItInst.get<PermissionHandler>()),
   );
+}
+
+void initIsolateHandler() {
+  getItInst.registerFactory<IsolateHandler>(() => IsolateHandler());
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 class NotificationService {
   INavigationUtil? _navigationUtil;
   DeepLinkHandler? _deepLinkHandler;
+  int currentStep = 0;
+  Timer? udpateNotificationAfter1Second;
 
   static final NotificationService _instance = NotificationService._internal();
 
@@ -107,6 +111,7 @@ class NotificationService {
   Future<void> createNewNotification(
       {required String title,
       required String body,
+      double? progress,
       NotificationLayout layout = NotificationLayout.Default,
       Map<String, String>? payload}) async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
@@ -125,6 +130,7 @@ class NotificationService {
           title: title,
           body: body,
           notificationLayout: layout,
+          progress: progress,
           payload: payload),
     );
   }
@@ -146,5 +152,31 @@ class NotificationService {
       debugPrint('Firebase is not available on this project');
     }
     return '';
+  }
+
+  Future<void> showProgressNotification(
+      {required int id,
+      required currentStep,
+      required maxStep,
+      required fragmentation}) async {
+    udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
+      _updateCurrentProgressBar(
+          id: id,
+          maxStep: maxStep * fragmentation,
+          progress: currentStep);
+    });
+    //  udpateNotificationAfter1Second?.cancel();
+    //  udpateNotificationAfter1Second = null;
+  }
+
+  void _updateCurrentProgressBar(
+      {required int id,
+      required int maxStep,
+      required double progress}) async {
+    await createNewNotification(
+        title: "Loading",
+        body: "body",
+        progress: progress,
+        layout: NotificationLayout.ProgressBar);
   }
 }

@@ -16,4 +16,6 @@ class StorageService {
         filePath: path, name: fileName, file: file);
     return response;
   }
+
+  Stream<double> get snapshotProgressStream => _firebaseStorageRepository.snapshotProgressStream;
 }

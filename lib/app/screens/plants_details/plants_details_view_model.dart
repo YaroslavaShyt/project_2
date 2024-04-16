@@ -1,8 +1,10 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
+import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
 import 'package:project_2/domain/plants/iplant.dart';
@@ -18,7 +20,9 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   final INavigationUtil _navigationUtil;
   final IContentHandler _contentHandler;
   final IRemoteStorageHandler _remoteStorageHandler;
+  final NotificationService _notificationService;
   List<VideoPlayerController>? controllers;
+  double currentStep = 0.0;
 
   PlantsDetailsViewModel(
       {required this.plantId,
@@ -26,10 +30,12 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
       required IContentHandler contentHandler,
       required IUserService userService,
       required IPlantsRepository plantsRepository,
+      required NotificationService notificationService,
       required IRemoteStorageHandler remoteStorageHandler})
       : _navigationUtil = navigationUtil,
         _contentHandler = contentHandler,
         _plantsRepository = plantsRepository,
+        _notificationService = notificationService,
         _remoteStorageHandler = remoteStorageHandler;
 
   Future<void> initControllers() async {
@@ -78,32 +84,44 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
           CameraConfigKeys.onSuccess: {
             CameraType.photo: !isVideo
                 ? (XFile image) async {
-                    await _remoteStorageHandler.addDataToStorage(
-                      path: "$userFilesPath/ph/${plant!.id}",
-                      file: image,
-                      onError: onError,
-                      onSuccess: (String url) {
-                        _navigationUtil.navigateBack();
-                        _navigationUtil.navigateBack();
-                        _navigationUtil.navigateBack();
-                        loadPlantData();
-                      },
-                    );
+                    // await _remoteStorageHandler.addDataToStorage(
+                    //   path: "$userFilesPath/ph/${plant!.id}",
+                    //   file: image,
+                    //   onError: onError,
+                    //   onSuccess: (String url) {
+                    //     _navigationUtil.navigateBack();
+                    //     _navigationUtil.navigateBack();
+                    //     _navigationUtil.navigateBack();
+                    //     loadPlantData();
+                    //   },
+                    // );
                   }
                 : null,
             CameraType.video: isVideo
                 ? (XFile video) async {
-                    await _remoteStorageHandler.addDataToStorage(
+                    var task = _remoteStorageHandler.addDataToStorage(
                       path: "$userFilesPath/vd/${plant!.id}",
                       file: video,
                       onError: onError,
                       onSuccess: (String url) {
-                        notifyListeners();
-                        _navigationUtil.navigateBack();
-                        _navigationUtil.navigateBack();
-                        loadPlantData();
+                        // notifyListeners();
+                        // _navigationUtil.navigateBack();
+                        // _navigationUtil.navigateBack();
+                        // loadPlantData();
                       },
                     );
+
+                    _remoteStorageHandler.snapshotProgressStream
+                        .listen((event) async {
+                      currentStep = event;
+
+                      await _notificationService.showProgressNotification(
+                          id: -1,
+                          currentStep: currentStep,
+                          maxStep: 1,
+                          fragmentation: 4);
+                    });
+                    await task;
                   }
                 : null,
           },

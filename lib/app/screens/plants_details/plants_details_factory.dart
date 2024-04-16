@@ -3,6 +3,7 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/screens/plants_details/plants_details_screen.dart';
 import 'package:project_2/app/screens/plants_details/plants_details_view_model.dart';
 import 'package:project_2/app/services/get_it/get_it.dart';
+import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
@@ -13,7 +14,8 @@ class PlantsDetailsFactory {
   static Widget build(RouteSettings routeSettings) {
     return ChangeNotifierProvider(
       create: (context) => PlantsDetailsViewModel(
-        remoteStorageHandler: getItInst.get<IRemoteStorageHandler>(),
+          notificationService: getItInst.get<NotificationService>(),
+          remoteStorageHandler: getItInst.get<IRemoteStorageHandler>(),
           contentHandler: getItInst.get<IContentHandler>(),
           userService: context.read<IUserService>(),
           plantId: routeSettings.arguments as String,

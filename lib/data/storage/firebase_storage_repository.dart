@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:project_2/app/services/networking/base_response.dart';
@@ -5,12 +6,12 @@ import 'package:project_2/domain/services/ibase_response.dart';
 
 class FirebaseStorageRepository {
   final FirebaseStorage _firebaseStorage;
-  late Stream<TaskSnapshot> _taskSnapshotStream;
-
+  UploadTask? task;
+  StreamController<double> streamController = StreamController();
   FirebaseStorageRepository({required FirebaseStorage firebaseStorage})
       : _firebaseStorage = firebaseStorage;
 
-  Stream<TaskSnapshot> get taskSnapshotStream => _taskSnapshotStream;
+  Stream<double> get snapshotProgressStream => streamController.stream;
 
   Future<IBaseResponse> upload(
       {required String filePath,
@@ -18,11 +19,11 @@ class FirebaseStorageRepository {
       required File file}) async {
     try {
       final ref = _firebaseStorage.ref(filePath).child(name);
-      UploadTask task = ref.putFile(file);
-      task.snapshotEvents.listen((TaskSnapshot snapshot) {
+      task = ref.putFile(file);
+      task?.snapshotEvents.asBroadcastStream().listen((TaskSnapshot snapshot) {
         double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-        int percentage = (progress * 100).round();
-        print(percentage);
+        print("PROGRESS: $progress");
+        streamController.add(progress);
       });
       await task;
       final url = await ref.getDownloadURL();
