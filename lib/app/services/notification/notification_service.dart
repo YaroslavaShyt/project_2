@@ -13,9 +13,7 @@ class NotificationService {
 
   static final NotificationService _instance = NotificationService._internal();
 
-  factory NotificationService(
-      {
-      required DeepLinkHandler deepLinkHandler}) {
+  factory NotificationService({required DeepLinkHandler deepLinkHandler}) {
     _instance._deepLinkHandler = deepLinkHandler;
     return _instance;
   }
@@ -108,6 +106,7 @@ class NotificationService {
 
   Future<void> createNewNotification(
       {required String title,
+      required int id,
       required String body,
       double? progress,
       NotificationLayout layout = NotificationLayout.Default,
@@ -120,16 +119,16 @@ class NotificationService {
     }
 
     if (!isAllowed) return;
-
+    debugPrint("\n\nPROGRESS IN NOTIFICATION: $progress\n\n");
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
-          id: -1,
+          id: id,
           channelKey: 'alerts',
           title: title,
           body: body,
           notificationLayout: layout,
           progress: progress,
-          locked: true,
+          locked: false,
           payload: payload),
     );
   }
@@ -153,86 +152,87 @@ class NotificationService {
     return '';
   }
 
-  // Future<void> showProgressNotification(
-  //     {required int id,
-  //     required currentStep,
-  //     required maxStep,
-  //     required fragmentation}) async {
-  //   udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
-  //     _updateCurrentProgressBar(
-  //         id: id,
-  //         maxStep: maxStep * fragmentation,
-  //         progress: currentStep);
-  //   });
-  //   //  udpateNotificationAfter1Second?.cancel();
-  //   //  udpateNotificationAfter1Second = null;
-  // }
-
-  // void _updateCurrentProgressBar(
-  //     {required int id,
-  //     required int maxStep,
-  //     required double progress}) async {
-  //   await createNewNotification(
-  //       title: "Loading",
-  //       body: "body",
-  //       progress: progress,
-  //       layout: NotificationLayout.ProgressBar);
-  // }
-
-  Future<void> showProgressNotification(int id) async {
-    int maxStep = 10;
-    int fragmentation = 4;
-    for (var simulatedStep = 1;
-        simulatedStep <= maxStep * fragmentation + 1;
-        simulatedStep++) {
-      currentStep = simulatedStep;
-      await Future.delayed(Duration(milliseconds: 1000 ~/ fragmentation));
-      if (udpateNotificationAfter1Second != null) continue;
-      udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
-        _updateCurrentProgressBar(
-            id: id,
-            simulatedStep: currentStep,
-            maxStep: maxStep * fragmentation);
-      });
-      udpateNotificationAfter1Second?.cancel();
-      udpateNotificationAfter1Second = null;
-    }
+  Future<void> deleteNotification({required int id}) async {
+    await AwesomeNotifications().cancel(id);
   }
-}
 
-void _updateCurrentProgressBar({
-  required int id,
-  required int simulatedStep,
-  required int maxStep,
-}) {
-  if (simulatedStep < maxStep) {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: id,
-            channelKey: 'progress_bar',
-            title: 'Download finished',
-            body: 'filename.txt',
-            category: NotificationCategory.Progress,
-            payload: {
-              'file': 'filename.txt',
-              'path': '-rmdir c://ruwindows/system32/huehuehue'
-            },
-            locked: false));
-  } else {
-    double progress = simulatedStep / maxStep * 100;
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: id,
-            channelKey: 'progress_bar',
-            title: 'Downloading fake file in progress ($progress%)',
-            body: 'filename.txt',
-            category: NotificationCategory.Progress,
-            payload: {
-              'file': 'filename.txt',
-              'path': '-rmdir c://ruwindows/system32/huehuehue'
-            },
-            notificationLayout: NotificationLayout.ProgressBar,
-            progress: progress,
-            locked: true));
+  Future<void> showProgressNotification({
+    required int id,
+    required currentStep,
+    required maxStep,
+  }) async {
+    udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
+      _updateCurrentProgressBar(
+          id: id, maxStep: maxStep, progress: currentStep / maxStep);
+    });
+    //  udpateNotificationAfter1Second?.cancel();
+    //  udpateNotificationAfter1Second = null;
   }
+
+  void _updateCurrentProgressBar(
+      {required int id, required int maxStep, required double progress}) async {
+    await createNewNotification(
+        id: id,
+        title: "Loading",
+        body: "body",
+        progress: progress,
+        layout: NotificationLayout.ProgressBar);
+  }
+
+//   Future<void> showProgressNotification(int id) async {
+//     int maxStep = 10;
+//     int fragmentation = 4;
+//     for (var simulatedStep = 1;
+//         simulatedStep <= maxStep * fragmentation + 1;
+//         simulatedStep++) {
+//       currentStep = simulatedStep;
+//       await Future.delayed(Duration(milliseconds: 1000 ~/ fragmentation));
+//       if (udpateNotificationAfter1Second != null) continue;
+//       udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
+//         _updateCurrentProgressBar(
+//             id: id,
+//             simulatedStep: currentStep,
+//             maxStep: maxStep * fragmentation);
+//       });
+//       udpateNotificationAfter1Second?.cancel();
+//       udpateNotificationAfter1Second = null;
+//     }
+//   }
+// }
+
+// void _updateCurrentProgressBar({
+//   required int id,
+//   required int simulatedStep,
+//   required int maxStep,
+// }) {
+//   if (simulatedStep < maxStep) {
+//     AwesomeNotifications().createNotification(
+//         content: NotificationContent(
+//             id: id,
+//             channelKey: 'progress_bar',
+//             title: 'Download finished',
+//             body: 'filename.txt',
+//             category: NotificationCategory.Progress,
+//             payload: {
+//               'file': 'filename.txt',
+//               'path': '-rmdir c://ruwindows/system32/huehuehue'
+//             },
+//             locked: false));
+//   } else {
+//     double progress = simulatedStep / maxStep * 100;
+//     AwesomeNotifications().createNotification(
+//         content: NotificationContent(
+//             id: id,
+//             channelKey: 'progress_bar',
+//             title: 'Downloading fake file in progress ($progress%)',
+//             body: 'filename.txt',
+//             category: NotificationCategory.Progress,
+//             payload: {
+//               'file': 'filename.txt',
+//               'path': '-rmdir c://ruwindows/system32/huehuehue'
+//             },
+//             notificationLayout: NotificationLayout.ProgressBar,
+//             progress: progress,
+//             locked: true));
+//   }
 }

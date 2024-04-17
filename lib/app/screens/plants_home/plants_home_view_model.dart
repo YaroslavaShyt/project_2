@@ -61,10 +61,10 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
     _navigationUtil.navigateTo(routePlantsDetails, data: plantId);
   }
 
-  Future<void> downloadPlants() async {
-    await _notificationService.createNewNotification(
-        title: "Plants App", body: "", layout: NotificationLayout.ProgressBar);
-  }
+  // Future<void> downloadPlants() async {
+  //   await _notificationService.createNewNotification(
+  //       title: "Plants App", body: "", layout: NotificationLayout.ProgressBar);
+  // }
 
   void askPermissions() =>
       getItInst.get<PermissionHandler>().askCorePermissions();

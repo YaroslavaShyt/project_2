@@ -9,7 +9,6 @@ const {
   filePhoto,
 } = require("./collections");
 const functions = require("firebase-functions");
-const { error } = require("firebase-functions/logger");
 const { Storage } = require("@google-cloud/storage");
 var serviceAccount = require("./project2-42954-firebase-adminsdk-ro0oz-ce5467fa44.json");
 

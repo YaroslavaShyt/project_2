@@ -104,14 +104,25 @@ _uploadToStorage(SendPort mainIsolatePort) {
         String filePath = message["filePath"];
         NotificationService notificationService = NotificationService(
             deepLinkHandler: DeepLinkHandler(navigationUtil: NavigationUtil()));
+        await NotificationService.initializeLocalNotifications(debug: true);
         StorageService storageService = StorageService(
             firebaseStorageRepository: FirebaseStorageRepository(
                 firebaseStorage: FirebaseStorage.instance));
-        storageService
-            .addFileToStorage(file: File(filePath), path: path)
-            .then((value) async {
-          notificationService.showProgressNotification(Random().nextInt(100));
-          //await value;
+        final future =
+            storageService.addFileToStorage(file: File(filePath), path: path);
+        //.then((value) async {
+        storageService.snapshotProgressStream.listen((newValue) async {
+          debugPrint("PROGRESS IN LISTENER: $newValue");
+          if (newValue == 1.0) {
+            await notificationService.deleteNotification(id: 1);
+          } else {
+            await notificationService.showProgressNotification(
+                id: 1, currentStep: newValue * 100, maxStep: 1);
+          }
+
+          // });
+
+          await future;
           uploadIsolatePort.close();
           mainIsolatePort.send("SUCCESS");
         });
