@@ -1,58 +1,40 @@
 import 'dart:isolate';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 
-enum IsolateComponent { sendPort, performedAction }
+class IsolateHandler {
+  static Function? compute;
 
-class IsolateHandler {}
-  Future<void> computeIsolate({required Function performedAction}) async {
-    final mainIsolatePort = ReceivePort();
-    Map payload = {};
+  Future<void> computeIsolate(
+      {required Map<String, dynamic> payload,
+      required Function(SendPort sendPort) performAction}) async {
+    final ReceivePort mainIsolatePort = ReceivePort();
+    compute = payload["function"];
+    Map<String, dynamic> data = {
+      "path": payload["path"],
+      "filePath": payload["filePath"]
+    };
     try {
-      final isolate = await FlutterIsolate.spawn(
-          _isolateEntry, mainIsolatePort.sendPort);
-      mainIsolatePort.listen((messageFromMain) {
-        if (messageFromMain is SendPort) {
+      final FlutterIsolate uploadIsolate = await FlutterIsolate.spawn(
+        performAction,
+        mainIsolatePort.sendPort,
+      );
+      mainIsolatePort.listen((message) {
+        if (message is SendPort) {
           debugPrint("COMMUNICATION SETUP SUCCESS");
-          messageFromMain.send(payload);
+          message.send(data);
           debugPrint("SENT INPUT PAYLOAD TO UPLOAD ISOLATE");
         }
-        if (messageFromMain is String) {
-          debugPrint(
-              "GOT THE UPLOAD RESULT FROM UPLOAD ISOLATE:$messageFromMain");
-          isolate.kill();
+        if (message is String) {
+          debugPrint("GOT THE PAYLOAD FROM UPLOAD ISOLATE: $message");
+          uploadIsolate.kill();
           mainIsolatePort.close();
         }
-      }, onDone: () {
-        isolate.kill();
-        mainIsolatePort.close();
-      }, onError: (e) {
-        debugPrint("Error in main Isolate : $e");
-        isolate.kill();
-        mainIsolatePort.close();
       });
     } catch (err) {
-      debugPrint("Error in the main Isolate:$err");
       mainIsolatePort.close();
+    } finally {
+      debugPrint("ISOLATE FINISHED WORK");
     }
   }
-
-  void _isolateEntry(SendPort sendPort) async {
-    // final mainIsolatePort = data[0];
-    // final performedAction = data[1];
-    // final uploadIsolatePort = ReceivePort();
-    // try {
-    //   mainIsolatePort.send(uploadIsolatePort.sendPort);
-    //   uploadIsolatePort.listen((messageFromMain) async {
-    //     if (messageFromMain is Map) {
-    //       final result = await performedAction();
-    //       debugPrint("isolate result: $result");
-    //       mainIsolatePort.send(result);
-    //     }
-    //   });
-    // } catch (err) {
-    //   debugPrint("ERROR IN UPLOAD ISOLATE:$err");
-    //   mainIsolatePort.send('');
-    // }
-  }
-
+}

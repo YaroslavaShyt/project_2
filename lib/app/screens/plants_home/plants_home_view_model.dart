@@ -12,7 +12,6 @@ import 'package:project_2/domain/services/iuser_service.dart';
 import 'package:project_2/domain/login/ilogin_repository.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:project_2/app/utils/permissions/permission_handler.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
 
@@ -23,7 +22,6 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   final INavigationUtil _navigationUtil;
   final ILoginRepository _loginRepository;
   final IPlantsRepository _plantsRepository;
-  final NotificationService _notificationService;
   final IContentHandler _contentHandler;
   final IRemoteStorageHandler _remoteStorageHandler;
 
@@ -40,7 +38,6 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
         _navigationUtil = navigationUtil,
         _loginRepository = loginRepository,
         _plantsRepository = plantsRepository,
-        _notificationService = notificationService,
         _remoteStorageHandler = remoteStorageHandler {
     loadUserData();
   }
@@ -60,11 +57,6 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
   void navigateToPlantDetails(String plantId) {
     _navigationUtil.navigateTo(routePlantsDetails, data: plantId);
   }
-
-  // Future<void> downloadPlants() async {
-  //   await _notificationService.createNewNotification(
-  //       title: "Plants App", body: "", layout: NotificationLayout.ProgressBar);
-  // }
 
   void askPermissions() =>
       getItInst.get<PermissionHandler>().askCorePermissions();

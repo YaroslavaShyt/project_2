@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:project_2/app/routing/navigation_util.dart';
 import 'package:project_2/app/services/networking/base_response.dart';
 import 'package:project_2/app/services/notification/notification_service.dart';
@@ -28,22 +28,15 @@ class FirebaseStorageRepository {
       task = ref.putFile(file);
       task?.snapshotEvents.listen((TaskSnapshot snapshot) async {
         double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-        print("PROGRESS: $progress");
-        // await notificationService.createNewNotification(
-        //     title: "notif", body: progress.toString());
-        // showProgressNotification(
-        //     id: Random().nextInt(100), currentStep: progress, maxStep: 1);
-        print("adding progress...");
         streamController.add(progress);
-        print("added progress");
       }, onError: (err) {
-        print("ERROR: ${err.toString()}");
+        debugPrint("ERROR: ${err.toString()}");
       });
       await task;
       final url = await ref.getDownloadURL();
       return BaseResponse(data: {"URL": url});
     } catch (err) {
-      print(err.toString());
+      debugPrint(err.toString());
       return BaseResponse(error: err.toString());
     }
   }

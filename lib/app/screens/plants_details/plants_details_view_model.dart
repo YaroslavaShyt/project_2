@@ -1,22 +1,10 @@
-import 'dart:math';
-
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
-import 'package:project_2/app/routing/navigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
 import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
-import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
-import 'package:project_2/app/services/notification/notification_service.dart';
 import 'package:project_2/app/utils/content/icontent_handler.dart';
-import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
-import 'package:project_2/app/utils/isolate/isolate_handler.dart';
 import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
-import 'package:project_2/app/utils/storage/remote_storage_handler.dart';
-import 'package:project_2/data/storage/firebase_storage_repository.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
@@ -30,7 +18,6 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   final INavigationUtil _navigationUtil;
   final IContentHandler _contentHandler;
   final IRemoteStorageHandler _remoteStorageHandler;
-  final NotificationService _notificationService;
   List<VideoPlayerController>? controllers;
   double currentStep = 0.0;
 
@@ -40,12 +27,10 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
       required IContentHandler contentHandler,
       required IUserService userService,
       required IPlantsRepository plantsRepository,
-      required NotificationService notificationService,
       required IRemoteStorageHandler remoteStorageHandler})
       : _navigationUtil = navigationUtil,
         _contentHandler = contentHandler,
         _plantsRepository = plantsRepository,
-        _notificationService = notificationService,
         _remoteStorageHandler = remoteStorageHandler;
 
   Future<void> initControllers() async {
@@ -94,36 +79,32 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
           CameraConfigKeys.onSuccess: {
             CameraType.photo: !isVideo
                 ? (XFile image) async {
-                    // await _remoteStorageHandler.addDataToStorage(
-                    //   path: "$userFilesPath/ph/${plant!.id}",
-                    //   file: image,
-                    //   onError: onError,
-                    //   onSuccess: (String url) {
-                    //     _navigationUtil.navigateBack();
-                    //     _navigationUtil.navigateBack();
-                    //     _navigationUtil.navigateBack();
-                    //     loadPlantData();
-                    //   },
-                    // );
+                    await _remoteStorageHandler.addDataToStorage(
+                      path: "$userFilesPath/ph/${plant!.id}",
+                      file: image,
+                      onError: onError,
+                      onSuccess: (String url) {
+                        _navigationUtil.navigateBack();
+                        _navigationUtil.navigateBack();
+                        _navigationUtil.navigateBack();
+                        loadPlantData();
+                      },
+                    );
                   }
                 : null,
             CameraType.video: isVideo
                 ? (XFile video) async {
-                    
-                    var task = _remoteStorageHandler.addDataToStorage(
+                    await _remoteStorageHandler.addDataToStorage(
                       path: "$userFilesPath/vd/${plant!.id}",
                       file: video,
                       onError: onError,
                       onSuccess: (String url) {
-                        // notifyListeners();
-                        // _navigationUtil.navigateBack();
-                        // _navigationUtil.navigateBack();
-                        // loadPlantData();
+                        notifyListeners();
+                        _navigationUtil.navigateBack();
+                        _navigationUtil.navigateBack();
+                        loadPlantData();
                       },
                     );
-
-                  
-                    await task;
                   }
                 : null,
           },
