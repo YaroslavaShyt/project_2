@@ -37,9 +37,9 @@ class MainDrawer extends StatelessWidget {
                       : SizedBox(
                           height: 100,
                           width: 100,
-                          child: PhotoAvatar(
-                              imageUrl: user!.profilePhoto!,
-                              onPressed: showPicker)),
+                          child:Icon(Icons.abc)), //PhotoAvatar(
+                              //imageUrl: user!.profilePhoto!,
+                              //onPressed: showPicker)),
                   Text(
                     user?.name ?? 'Анонім',
                     style: const TextStyle(

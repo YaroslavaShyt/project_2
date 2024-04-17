@@ -38,23 +38,24 @@ class FilesList extends StatelessWidget {
                 itemCount: files.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    margin: const EdgeInsetsDirectional.all(10.0),
-                    height: 90,
-                    width: 50,
-                    color: AppColors.lightMentolGreenColor,
-                    child: isVideo
-                        ? controllers != null
-                            ? controllers![index].value.isInitialized
-                                ? AspectRatio(
-                                    aspectRatio:
-                                        controllers![index].value.aspectRatio,
-                                    child: VideoPlayer(controllers![index]),
-                                  )
-                                : const Center(
-                                    child: CircularProgressIndicator())
-                            : const Center(child: CircularProgressIndicator())
-                        : CachedImageWidget(imageUrl: files[index]),
-                  );
+                      margin: const EdgeInsetsDirectional.all(10.0),
+                      height: 90,
+                      width: 50,
+                      color: AppColors.lightMentolGreenColor,
+                      child: isVideo
+                          ? controllers != null
+                              ? controllers![index].value.isInitialized
+                                  ? AspectRatio(
+                                      aspectRatio:
+                                          controllers![index].value.aspectRatio,
+                                      child: VideoPlayer(controllers![index]),
+                                    )
+                                  : const Center(
+                                      child: CircularProgressIndicator())
+                              : const Center(child: CircularProgressIndicator())
+                          : Image.network(files[
+                              index]) //CachedImageWidget(imageUrl: files[index]),
+                      );
                 }),
           ),
         ],

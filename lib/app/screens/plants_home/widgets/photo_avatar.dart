@@ -16,7 +16,8 @@ class PhotoAvatar extends StatelessWidget {
           child: SizedBox(
               height: 100,
               width: 100,
-              child: CachedImageWidget(imageUrl: imageUrl)),
+              child: Image.network(imageUrl)//CachedImageWidget(imageUrl: imageUrl)
+              ),
         ),
         if (onPressed != null) ...[
           Positioned(

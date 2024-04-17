@@ -7,7 +7,6 @@ import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/utils/deep_linking/deep_link_handler.dart';
 
 class NotificationService {
-  INavigationUtil? _navigationUtil;
   DeepLinkHandler? _deepLinkHandler;
   int currentStep = 0;
   Timer? udpateNotificationAfter1Second;
@@ -15,9 +14,8 @@ class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
 
   factory NotificationService(
-      {required INavigationUtil navigationUtil,
+      {
       required DeepLinkHandler deepLinkHandler}) {
-    _instance._navigationUtil = navigationUtil;
     _instance._deepLinkHandler = deepLinkHandler;
     return _instance;
   }
@@ -69,19 +67,19 @@ class NotificationService {
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(ReceivedAction action) async {
     debugPrint("body: ${action.body}");
-    if (action.body != null) {
-      try {
-        if (_instance._navigationUtil != null &&
-            _instance._navigationUtil != null) {
-          Map<String, String> data =
-              _instance._deepLinkHandler!.parseLink(action.body!);
-          _instance._navigationUtil!
-              .navigateTo(data["route"]!, data: data["data"]);
-        }
-      } catch (err) {
-        debugPrint(err.toString());
-      }
-    }
+    // if (action.body != null) {
+    //   try {
+    //     if (_instance._navigationUtil != null &&
+    //         _instance._navigationUtil != null) {
+    //       Map<String, String> data =
+    //           _instance._deepLinkHandler!.parseLink(action.body!);
+    //       _instance._navigationUtil!
+    //           .navigateTo(data["route"]!, data: data["data"]);
+    //     }
+    //   } catch (err) {
+    //     debugPrint(err.toString());
+    //   }
+    // }
   }
 
   @pragma("vm:entry-point")
@@ -131,6 +129,7 @@ class NotificationService {
           body: body,
           notificationLayout: layout,
           progress: progress,
+          locked: true,
           payload: payload),
     );
   }
@@ -154,29 +153,86 @@ class NotificationService {
     return '';
   }
 
-  Future<void> showProgressNotification(
-      {required int id,
-      required currentStep,
-      required maxStep,
-      required fragmentation}) async {
-    udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
-      _updateCurrentProgressBar(
-          id: id,
-          maxStep: maxStep * fragmentation,
-          progress: currentStep);
-    });
-    //  udpateNotificationAfter1Second?.cancel();
-    //  udpateNotificationAfter1Second = null;
-  }
+  // Future<void> showProgressNotification(
+  //     {required int id,
+  //     required currentStep,
+  //     required maxStep,
+  //     required fragmentation}) async {
+  //   udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
+  //     _updateCurrentProgressBar(
+  //         id: id,
+  //         maxStep: maxStep * fragmentation,
+  //         progress: currentStep);
+  //   });
+  //   //  udpateNotificationAfter1Second?.cancel();
+  //   //  udpateNotificationAfter1Second = null;
+  // }
 
-  void _updateCurrentProgressBar(
-      {required int id,
-      required int maxStep,
-      required double progress}) async {
-    await createNewNotification(
-        title: "Loading",
-        body: "body",
-        progress: progress,
-        layout: NotificationLayout.ProgressBar);
+  // void _updateCurrentProgressBar(
+  //     {required int id,
+  //     required int maxStep,
+  //     required double progress}) async {
+  //   await createNewNotification(
+  //       title: "Loading",
+  //       body: "body",
+  //       progress: progress,
+  //       layout: NotificationLayout.ProgressBar);
+  // }
+
+  Future<void> showProgressNotification(int id) async {
+    int maxStep = 10;
+    int fragmentation = 4;
+    for (var simulatedStep = 1;
+        simulatedStep <= maxStep * fragmentation + 1;
+        simulatedStep++) {
+      currentStep = simulatedStep;
+      await Future.delayed(Duration(milliseconds: 1000 ~/ fragmentation));
+      if (udpateNotificationAfter1Second != null) continue;
+      udpateNotificationAfter1Second = Timer(const Duration(seconds: 1), () {
+        _updateCurrentProgressBar(
+            id: id,
+            simulatedStep: currentStep,
+            maxStep: maxStep * fragmentation);
+      });
+      udpateNotificationAfter1Second?.cancel();
+      udpateNotificationAfter1Second = null;
+    }
+  }
+}
+
+void _updateCurrentProgressBar({
+  required int id,
+  required int simulatedStep,
+  required int maxStep,
+}) {
+  if (simulatedStep < maxStep) {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: id,
+            channelKey: 'progress_bar',
+            title: 'Download finished',
+            body: 'filename.txt',
+            category: NotificationCategory.Progress,
+            payload: {
+              'file': 'filename.txt',
+              'path': '-rmdir c://ruwindows/system32/huehuehue'
+            },
+            locked: false));
+  } else {
+    double progress = simulatedStep / maxStep * 100;
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: id,
+            channelKey: 'progress_bar',
+            title: 'Downloading fake file in progress ($progress%)',
+            body: 'filename.txt',
+            category: NotificationCategory.Progress,
+            payload: {
+              'file': 'filename.txt',
+              'path': '-rmdir c://ruwindows/system32/huehuehue'
+            },
+            notificationLayout: NotificationLayout.ProgressBar,
+            progress: progress,
+            locked: true));
   }
 }

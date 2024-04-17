@@ -26,7 +26,7 @@ exports.saveUserDataOnSignIn = functions.auth.user().onCreate(async (user) => {
       image: user.photoURL || null,
       email: user.email || null,
     };
-
+    console.log("auth function is working");
     return await admin
       .firestore()
       .collection(userCollection)

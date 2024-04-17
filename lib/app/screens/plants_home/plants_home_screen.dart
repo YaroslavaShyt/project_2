@@ -57,11 +57,10 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                   color: AppColors.whiteColor,
                 )
               : SizedBox(
-                  height: 50,
-                  width: 50,
-                  child: PhotoAvatar(
-                    imageUrl: widget.viewModel.user!.profilePhoto!,
-                  )),
+                  height: 50, width: 50, child: Icon(Icons.abc) // PhotoAvatar(
+                  //   imageUrl: widget.viewModel.user!.profilePhoto!,
+                  // )
+                  ),
           const SizedBox(
             width: 30.0,
           ),
