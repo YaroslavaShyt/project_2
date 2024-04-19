@@ -65,6 +65,12 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                   ),
                 ],
               ),
+              ElevatedButton(
+                  onPressed: () => _showPicker(context,
+                      isVideo: true,
+                      isGalleryOptionProvided: false,
+                    ), 
+                    child: const Text("Додати відео")),
               FilesList(
                   onTap: () => _showPicker(context,
                       isVideo: false, isGalleryOptionProvided: true),
