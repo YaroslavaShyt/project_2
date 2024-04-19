@@ -4,6 +4,7 @@ const String routePlantsHome = '/plantsHome';
 const String routePlantsDetails = '/plantsDetails';
 const String routeCamera = '/camera';
 const String routeVideo = "/video";
+const String routeVideoScroll = "/videoScroll";
 
 const String uriPlantsDetailsCategory = "plants";
 const String uriPlantsDetails = "https://plantapp.com/plants/";

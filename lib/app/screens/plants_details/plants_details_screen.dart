@@ -4,6 +4,7 @@ import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/plants_details/plants_details_view_model.dart';
 import 'package:project_2/app/screens/plants_details/widgets/files_list.dart';
+import 'package:project_2/app/screens/plants_details/widgets/video_grid.dart';
 import 'package:project_2/app/screens/plants_home/widgets/picker_content.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
@@ -22,11 +23,7 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
     widget.viewModel.loadPlantData();
   }
 
-  @override
-  void dispose() {
-    widget.viewModel.disposeControllers();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +68,8 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                 ],
               ),
               FilesList(
-                  onTap: () => _showPicker(context, isVideo: false, isGalleryOptionProvided: true),
+                  onTap: () => _showPicker(context,
+                      isVideo: false, isGalleryOptionProvided: true),
                   files: widget.viewModel.plant!.photos,
                   isVideo: false),
               const Row(
@@ -87,11 +85,13 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                   ),
                 ],
               ),
-              FilesList(
-                  onTap: () => _showPicker(context, isVideo: true, isGalleryOptionProvided: false),
-                  files: widget.viewModel.plant!.videos,
-                  controllers: widget.viewModel.controllers,
-                  isVideo: true),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: VideoGrid(
+                  disposeControllers: widget.viewModel.disposeControllers,
+                    videoControllerStream: widget.viewModel.videoGridStream,
+                    onVideoPreviewTap: () {}),
+              )
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
@@ -18,8 +19,9 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   final INavigationUtil _navigationUtil;
   final IContentHandler _contentHandler;
   final IRemoteStorageHandler _remoteStorageHandler;
-  List<VideoPlayerController>? controllers;
   double currentStep = 0.0;
+  final StreamController<VideoPlayerController> _streamController =
+      StreamController.broadcast();
 
   PlantsDetailsViewModel(
       {required this.plantId,
@@ -33,33 +35,31 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
         _plantsRepository = plantsRepository,
         _remoteStorageHandler = remoteStorageHandler;
 
+  Stream<VideoPlayerController> get videoGridStream => _streamController.stream;
+
   Future<void> initControllers() async {
-    controllers = plant?.videos
-        .map((url) => VideoPlayerController.networkUrl(Uri.parse(url)))
-        .toList();
-    if (controllers != null) {
-      for (var controller in controllers!) {
+    if (plant != null) {
+      for (String url in plant!.videos) {
+        VideoPlayerController controller =
+            VideoPlayerController.networkUrl(Uri.parse(url));
         await controller.initialize();
+        _streamController.add(controller);
       }
-      notifyListeners();
     }
   }
 
-  void disposeControllers() {
-    if (controllers != null) {
-      for (var controller in controllers!) {
-        controller.dispose();
-      }
+  void disposeControllers(List<VideoPlayerController> controllers) async {
+    for (var controller in controllers) {
+      await controller.dispose();
     }
   }
 
   Future<void> loadPlantData() async {
-    disposeControllers();
     Future.delayed(const Duration(seconds: 3)).then((value) async {
       await _plantsRepository.readPlant(id: plantId).then((data) async {
         if (data is IPlant) {
           plant = data;
-          await initControllers();
+          initControllers();
           notifyListeners();
         }
       });
