@@ -74,16 +74,15 @@ void uploadToStorage(SendPort mainIsolatePort) async {
 
         final future =
             storageService.addFileToStorage(file: File(filePath), path: path);
-
+        double currentValue = 0.0;
         storageService.snapshotProgressStream.listen((newValue) async {
           debugPrint("PROGRESS IN LISTENER: $newValue");
-          await notificationService.showProgressNotification(
-              id: 1, currentStep: newValue * 100, maxStep: 1);
-          if (newValue == 1.0) {
-            Future.delayed(const Duration(seconds: 2)).then((value) async {
-              await notificationService.deleteNotification(id: 1);
-            });
+          if (currentValue != newValue) {
+            currentValue = newValue;
+            await notificationService.showProgressNotification(
+                id: 1, currentStep: currentValue * 100, maxStep: 1);  
           }
+         
           await future.then((value) {
             uploadIsolatePort.close();
             mainIsolatePort.send("SUCCESS");

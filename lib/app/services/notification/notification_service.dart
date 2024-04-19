@@ -161,7 +161,7 @@ class NotificationService {
     required currentStep,
     required maxStep,
   }) async {
-    udpateNotificationAfter1Second = Timer(const Duration(milliseconds: 5), () {
+    udpateNotificationAfter1Second = Timer(const Duration(milliseconds: 3), () {
       _updateCurrentProgressBar(
           id: id, maxStep: maxStep, progress: currentStep / maxStep);
     });
@@ -175,5 +175,8 @@ class NotificationService {
         body: "body",
         progress: progress,
         layout: NotificationLayout.ProgressBar);
+     if (progress == 100.0) {
+      await deleteNotification(id: 1);
+    }
   }
 }
