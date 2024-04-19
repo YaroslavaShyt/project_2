@@ -23,8 +23,6 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
     widget.viewModel.loadPlantData();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     if (widget.viewModel.plant != null) {
@@ -88,9 +86,10 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: VideoGrid(
-                  disposeControllers: widget.viewModel.disposeControllers,
+                    disposeControllers: widget.viewModel.disposeControllers,
                     videoControllerStream: widget.viewModel.videoGridStream,
-                    onVideoPreviewTap: () {}),
+                    onVideoPreviewTap:
+                        widget.viewModel.naVigateToVideoScrollPage),
               )
             ],
           ),

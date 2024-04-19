@@ -37,6 +37,8 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
 
   Stream<VideoPlayerController> get videoGridStream => _streamController.stream;
 
+  Future naVigateToVideoScrollPage() => _navigationUtil.navigateTo(routeVideoScroll);
+
   Future<void> initControllers() async {
     if (plant != null) {
       for (String url in plant!.videos) {

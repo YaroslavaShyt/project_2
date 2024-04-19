@@ -56,7 +56,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
                   Icons.person,
                   color: AppColors.whiteColor,
                 )
-              : SizedBox(
+              : const SizedBox(
                   height: 50, width: 50, child: Icon(Icons.abc) // PhotoAvatar(
                   //   imageUrl: widget.viewModel.user!.profilePhoto!,
                   // )
