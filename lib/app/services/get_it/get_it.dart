@@ -101,7 +101,7 @@ void initCamera(INavigationUtil util) {
   getItInst.registerSingleton<ICameraCore>(CameraCore());
   getItInst.registerFactory<ICameraConfig>(() => CameraConfig(
       cameraResolutionPreset: cameraResolutionPreset,
-      maxRecordingDurationMilliseconds: maxRecordingDuration));
+      maxRecordingDurationSeconds: maxRecordingDuration));
   getItInst.registerSingleton<ICameraService>(CameraService(
       cameraCore: getItInst.get<ICameraCore>(),
       cameraConfig: getItInst.get<ICameraConfig>()));

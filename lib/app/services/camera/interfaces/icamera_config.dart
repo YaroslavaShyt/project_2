@@ -1,14 +1,14 @@
 import 'package:camera/camera.dart';
 
 const cameraResolutionPreset = ResolutionPreset.high;
-const maxRecordingDuration = 60*1000;
+const maxRecordingDuration = 15;
 
 
 abstract class ICameraConfig {
   final ResolutionPreset cameraResolutionPreset;
-  final int maxRecordingDurationMilliseconds;
+  final int maxRecordingDurationSeconds;
 
   ICameraConfig(
       {required this.cameraResolutionPreset,
-      required this.maxRecordingDurationMilliseconds});
+      required this.maxRecordingDurationSeconds});
 }

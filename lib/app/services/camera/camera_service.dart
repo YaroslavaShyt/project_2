@@ -9,11 +9,8 @@ import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 class CameraService extends BaseChangeNotifier
     with WidgetsBindingObserver
     implements ICameraService {
-  @override
-  ICameraCore cameraCore;
-
-  @override
-  ICameraConfig cameraConfig;
+  ICameraCore _cameraCore;
+  ICameraConfig _cameraConfig;
 
   XFile? videoFile;
 
@@ -38,7 +35,19 @@ class CameraService extends BaseChangeNotifier
   StreamController<CameraState> _cameraStateStreamController =
       StreamController();
 
-  CameraService({required this.cameraCore, required this.cameraConfig});
+  @override
+  Stream<int> get recordedVideoProgressStream =>
+      _recordedVideoProgressStreamController.stream;
+  final StreamController<int> _recordedVideoProgressStreamController =
+      StreamController.broadcast();
+
+  Timer? _timer;
+  int _recordedVideoTimeRemaining = 15;
+
+  CameraService(
+      {required ICameraCore cameraCore, required ICameraConfig cameraConfig})
+      : _cameraConfig = cameraConfig,
+        _cameraCore = cameraCore;
 
   @override
   Widget get cameraPreview => _cameraPreview ?? const SizedBox();
@@ -48,7 +57,7 @@ class CameraService extends BaseChangeNotifier
       _cameraController?.value.previewSize ?? const Size(0, 0);
 
   @override
-  List<CameraDescription> get camerasList => cameraCore.camerasList;
+  List<CameraDescription> get camerasList => _cameraCore.camerasList;
 
   @override
   bool get isVideoCameraSelected => _isVideoCameraSelected;
@@ -85,7 +94,7 @@ class CameraService extends BaseChangeNotifier
     }
     _cameraStateStreamController = StreamController();
     final CameraController controller = CameraController(
-        camerasList[_currentCameraId], cameraConfig.cameraResolutionPreset,
+        camerasList[_currentCameraId], _cameraConfig.cameraResolutionPreset,
         imageFormatGroup: ImageFormatGroup.yuv420);
     _cameraController = controller;
     _isCameraControllerDisposed = false;
@@ -135,6 +144,7 @@ class CameraService extends BaseChangeNotifier
     _cameraPreview = null;
     _currentCameraId = 0;
     _cameraStateStreamController.close();
+    _recordedVideoProgressStreamController.close();
   }
 
   Future<void> _disposeCameraController() async {
@@ -168,6 +178,7 @@ class CameraService extends BaseChangeNotifier
       try {
         await _cameraController!.resumeVideoRecording();
         _updateCameraState(CameraState.recording);
+        initTimer();
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);
         debugPrint(exception.toString());
@@ -182,6 +193,7 @@ class CameraService extends BaseChangeNotifier
         if (cameraState == CameraState.ready) {
           await _cameraController!.startVideoRecording();
           _updateCameraState(CameraState.recording);
+          initTimer();
         }
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);
@@ -195,6 +207,7 @@ class CameraService extends BaseChangeNotifier
     if (cameraState == CameraState.recording) {
       try {
         _updateCameraState(CameraState.recorded);
+        stopTimer(_timer!);
         videoFile = await _cameraController?.stopVideoRecording();
         return videoFile;
       } on CameraException catch (exception) {
@@ -204,6 +217,31 @@ class CameraService extends BaseChangeNotifier
       }
     } else {
       return null;
+    }
+  }
+
+  @override
+  void initTimer() {
+    _timer = Timer.periodic(
+        Duration(milliseconds: _cameraConfig.maxRecordingDurationSeconds),
+        _onTimerChanged);
+  }
+
+  @override
+  void resetTimer() {}
+
+  @override
+  void stopTimer(Timer timer) {
+    timer.cancel();
+  }
+
+  void _onTimerChanged(Timer timer) {
+    if (_recordedVideoTimeRemaining == 0) {
+      stopTimer(timer);
+      stopRecording();
+    } else {
+      _recordedVideoTimeRemaining--;
+      _recordedVideoProgressStreamController.add(_recordedVideoTimeRemaining);
     }
   }
 }

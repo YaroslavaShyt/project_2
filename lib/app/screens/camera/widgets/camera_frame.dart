@@ -15,9 +15,11 @@ class CameraFrame extends StatelessWidget {
   final bool isVideoCameraSelected;
   final bool isVideoCamera;
   final bool isPhotoCamera;
+  final int progress;
 
   const CameraFrame(
       {super.key,
+      required this.progress,
       required this.cameraState,
       required this.cameraPreview,
       required this.takePicture,
@@ -64,6 +66,24 @@ class CameraFrame extends StatelessWidget {
                       ),
                       onPressed: toggleCamera),
                 ),
+                if (isVideoCamera) ...[
+                  Positioned(
+                    top: 30.0,
+                    left: 20.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Text(
+                        progress.toString(),
+                        style: const TextStyle(
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0),
+                      ),
+                    ),
+                  ),
+                ],
                 Positioned(
                     bottom: 40,
                     right: 100.0,
@@ -120,15 +140,16 @@ class CameraFrame extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              if(isPhotoCamera)...[
+              if (isPhotoCamera) ...[
                 IconButton(
-                  icon: Icon(
-                    Icons.camera,
-                    color: isVideoCameraSelected && isVideoCamera
-                        ? AppColors.greyColor
-                        : AppColors.whiteColor,
-                  ),
-                  onPressed: changeCaptureType),],
+                    icon: Icon(
+                      Icons.camera,
+                      color: isVideoCameraSelected && isVideoCamera
+                          ? AppColors.greyColor
+                          : AppColors.whiteColor,
+                    ),
+                    onPressed: changeCaptureType),
+              ],
               if (isVideoCamera) ...[
                 IconButton(
                     icon: Icon(

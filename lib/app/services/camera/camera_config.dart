@@ -6,9 +6,9 @@ class CameraConfig implements ICameraConfig {
   final ResolutionPreset cameraResolutionPreset;
 
   @override
-  final int maxRecordingDurationMilliseconds;
+  final int maxRecordingDurationSeconds;
 
   CameraConfig(
       {required this.cameraResolutionPreset,
-      required this.maxRecordingDurationMilliseconds});
+      required this.maxRecordingDurationSeconds});
 }

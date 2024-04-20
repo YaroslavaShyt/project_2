@@ -20,18 +20,26 @@ class CameraScreen extends StatefulWidget with ErrorHandlingMixin {
 }
 
 class _CameraScreenState extends State<CameraScreen>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, TickerProviderStateMixin {
+  late AnimationController animationController;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     widget.viewModel.loadCamera();
+    animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 15));
+    widget.viewModel.recordedVideoProgressStream.listen((event) {
+      widget.viewModel.updateRemainingProgress(event);
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     widget.viewModel.disposeCamera();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -85,6 +93,7 @@ class _CameraScreenState extends State<CameraScreen>
                     CameraState.recorded ||
                     CameraState.paused:
                 return CameraFrame(
+                  progress: widget.viewModel.progressRemaining,
                   cameraPreview: widget.viewModel.cameraPreview,
                   takePicture: () => widget.viewModel.takePicture(
                       onPhotoTaken: () => _showTakenPicture(context,

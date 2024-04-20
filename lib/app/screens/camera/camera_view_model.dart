@@ -23,6 +23,8 @@ class CameraViewModel extends BaseChangeNotifier{
   late Function onVideoCameraError;
   String? capturedImagePath;
   XFile? capturedVideo;
+  int progressRemaining = 15;
+
 
   CameraViewModel(
       {required ICameraService cameraService,
@@ -47,6 +49,7 @@ class CameraViewModel extends BaseChangeNotifier{
   }
 
   Stream<CameraState> get cameraStateStream => _cameraService.cameraStateStream;
+  Stream<int> get recordedVideoProgressStream => _cameraService.recordedVideoProgressStream;
 
   Future<void> toggleCamera() async {
     await _cameraService.toggleCamera();
@@ -56,6 +59,11 @@ class CameraViewModel extends BaseChangeNotifier{
   Future<void> loadCamera() async {
     _permissionHandler.isCameraPermissionGranted();
     await _cameraService.create();
+    notifyListeners();
+  }
+
+  void updateRemainingProgress(int newProgress){
+    progressRemaining = newProgress;
     notifyListeners();
   }
 
