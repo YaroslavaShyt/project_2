@@ -11,7 +11,7 @@ import 'package:project_2/app/utils/permissions/permission_handler.dart';
 
 enum Video { data, onSubmit }
 
-class CameraViewModel extends BaseChangeNotifier{
+class CameraViewModel extends BaseChangeNotifier {
   final ICameraService _cameraService;
   final INavigationUtil _navigationUtil;
   final PermissionHandler _permissionHandler;
@@ -23,8 +23,7 @@ class CameraViewModel extends BaseChangeNotifier{
   late Function onVideoCameraError;
   String? capturedImagePath;
   XFile? capturedVideo;
-  int progressRemaining = 15;
-
+  int? progressRemaining;
 
   CameraViewModel(
       {required ICameraService cameraService,
@@ -35,7 +34,8 @@ class CameraViewModel extends BaseChangeNotifier{
       : _cameraService = cameraService,
         _navigationUtil = navigationUtil,
         _permissionHandler = permissionHandler {
-    isPhotoCamera = cameraConfig[CameraConfigKeys.cameraTypes]?[CameraType.photo] ?? true;
+    isPhotoCamera =
+        cameraConfig[CameraConfigKeys.cameraTypes]?[CameraType.photo] ?? true;
     isVideoCamera =
         cameraConfig[CameraConfigKeys.cameraTypes]?[CameraType.video] ?? false;
     onPhotoCameraSuccess =
@@ -49,7 +49,8 @@ class CameraViewModel extends BaseChangeNotifier{
   }
 
   Stream<CameraState> get cameraStateStream => _cameraService.cameraStateStream;
-  Stream<int> get recordedVideoProgressStream => _cameraService.recordedVideoProgressStream;
+  Stream<int> get recordedVideoProgressStream =>
+      _cameraService.recordedVideoProgressStream;
 
   Future<void> toggleCamera() async {
     await _cameraService.toggleCamera();
@@ -59,15 +60,18 @@ class CameraViewModel extends BaseChangeNotifier{
   Future<void> loadCamera() async {
     _permissionHandler.isCameraPermissionGranted();
     await _cameraService.create();
+    progressRemaining = _cameraService.recordedVideoTimeRemaining;
     notifyListeners();
   }
 
-  void updateRemainingProgress(int newProgress){
+  Future<void> updateRemainingProgress(
+      {required int newProgress, required Function(String) onFailure}) async {
     progressRemaining = newProgress;
     notifyListeners();
+    if (newProgress == 0) {
+      await stopVideo(onFailure: onFailure);
+    }
   }
-
-  
 
   Function get disposeCamera => _cameraService.disposeCamera;
 
@@ -98,10 +102,23 @@ class CameraViewModel extends BaseChangeNotifier{
   Future<void> stopVideo({required Function(String) onFailure}) async {
     capturedVideo = await _cameraService.stopRecording();
     if (capturedVideo != null) {
-      _navigationUtil.navigateToAndReplace(routeVideo, data: {
-        Video.data: capturedVideo,
-        Video.onSubmit: onVideoCameraSuccess
-      });
+      _navigationUtil.navigateToAndReplace(routeVideo, data: [
+        {
+          CameraConfigKeys.cameraTypes: {
+            CameraType.photo: false,
+            CameraType.video: true
+          },
+          CameraConfigKeys.onSuccess: {
+            CameraType.photo: null,
+            CameraType.video: onVideoCameraSuccess,
+          },
+          CameraConfigKeys.onError: {
+            CameraType.photo: null,
+            CameraType.video: onVideoCameraError
+          }
+        },
+        {Video.data: capturedVideo, Video.onSubmit: onVideoCameraSuccess}
+      ]);
     } else {
       onFailure("Не вдалося зняти відео.");
     }

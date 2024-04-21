@@ -32,7 +32,7 @@ class _VideoScreenState extends State<VideoScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           leading: IconButton(
-              onPressed: widget.viewModel.navigateBack,
+              onPressed: widget.viewModel.navigateBackToCamera,
               icon: const Icon(Icons.arrow_back)),
         ),
         body: Column(

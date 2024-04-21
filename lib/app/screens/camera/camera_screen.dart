@@ -6,7 +6,7 @@ import 'package:project_2/app/common/widgets/main_elevated_button.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/camera/camera_view_model.dart';
-import 'package:project_2/app/screens/camera/widgets/camera_frame.dart';
+import 'package:project_2/app/screens/camera/widgets/camera_stack.dart';
 import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 
 import 'package:project_2/app/theming/app_colors.dart';
@@ -20,18 +20,16 @@ class CameraScreen extends StatefulWidget with ErrorHandlingMixin {
 }
 
 class _CameraScreenState extends State<CameraScreen>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
-  late AnimationController animationController;
-
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     widget.viewModel.loadCamera();
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 15));
-    widget.viewModel.recordedVideoProgressStream.listen((event) {
-      widget.viewModel.updateRemainingProgress(event);
+    widget.viewModel.recordedVideoProgressStream.listen((event) async {
+      await widget.viewModel.updateRemainingProgress(
+          newProgress: event,
+          onFailure: (message) => widget.showErrorDialog(context, message));
     });
   }
 
@@ -39,16 +37,15 @@ class _CameraScreenState extends State<CameraScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     widget.viewModel.disposeCamera();
-    animationController.dispose();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.inactive) {
-      print("inactive");
+      debugPrint("inactive");
     } else if (state == AppLifecycleState.resumed) {
-      print("resumed screen");
+      debugPrint("resumed screen");
       await widget.viewModel.loadCamera();
     }
   }
@@ -92,7 +89,7 @@ class _CameraScreenState extends State<CameraScreen>
                     CameraState.recording ||
                     CameraState.recorded ||
                     CameraState.paused:
-                return CameraFrame(
+                return CameraStack(
                   progress: widget.viewModel.progressRemaining,
                   cameraPreview: widget.viewModel.cameraPreview,
                   takePicture: () => widget.viewModel.takePicture(

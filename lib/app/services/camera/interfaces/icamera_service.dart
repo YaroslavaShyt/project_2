@@ -1,9 +1,6 @@
 import 'dart:async';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:project_2/app/services/camera/interfaces/icamera_config.dart';
-import 'package:project_2/app/services/camera/interfaces/icamera_core.dart';
 
 enum CameraState { init, ready, recording, recorded, paused, dispose, error }
 
@@ -12,6 +9,7 @@ abstract class ICameraService {
   Widget get cameraPreview;
   CameraState get cameraState;
   bool get isVideoCameraSelected;
+  int get recordedVideoTimeRemaining;
   List<CameraDescription> get camerasList;
   Stream<CameraState> get cameraStateStream;
   Stream<int> get recordedVideoProgressStream;
@@ -29,6 +27,7 @@ abstract class ICameraService {
 
   void initTimer();
   void stopTimer(Timer timer);
+  void pauseTimer(Timer timer);
   void resetTimer();
 
   void disposeCamera();

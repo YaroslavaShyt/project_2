@@ -38,11 +38,13 @@ class CameraService extends BaseChangeNotifier
   @override
   Stream<int> get recordedVideoProgressStream =>
       _recordedVideoProgressStreamController.stream;
-  final StreamController<int> _recordedVideoProgressStreamController =
+  StreamController<int> _recordedVideoProgressStreamController =
       StreamController.broadcast();
 
   Timer? _timer;
   int _recordedVideoTimeRemaining = 15;
+  @override
+  int get recordedVideoTimeRemaining => _recordedVideoTimeRemaining;
 
   CameraService(
       {required ICameraCore cameraCore, required ICameraConfig cameraConfig})
@@ -69,7 +71,7 @@ class CameraService extends BaseChangeNotifier
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     final CameraController? controller = _cameraController;
 
-    if (controller == null || !controller!.value.isInitialized) {
+    if (controller == null || !controller.value.isInitialized) {
       return;
     }
     if (state == AppLifecycleState.inactive) {
@@ -92,7 +94,10 @@ class CameraService extends BaseChangeNotifier
       WidgetsBinding.instance.addObserver(this);
       _isObserverAdded = true;
     }
+
     _cameraStateStreamController = StreamController();
+    _recordedVideoProgressStreamController = StreamController.broadcast();
+
     final CameraController controller = CameraController(
         camerasList[_currentCameraId], _cameraConfig.cameraResolutionPreset,
         imageFormatGroup: ImageFormatGroup.yuv420);
@@ -141,10 +146,16 @@ class CameraService extends BaseChangeNotifier
   @override
   Future<void> reset() async {
     await _disposeCameraController();
+
+    if (_timer != null) {
+      resetTimer();
+      stopTimer(_timer!);
+      _recordedVideoProgressStreamController.close();
+    }
+
     _cameraPreview = null;
     _currentCameraId = 0;
     _cameraStateStreamController.close();
-    _recordedVideoProgressStreamController.close();
   }
 
   Future<void> _disposeCameraController() async {
@@ -164,6 +175,7 @@ class CameraService extends BaseChangeNotifier
     if (cameraState == CameraState.recording) {
       try {
         await _cameraController!.pauseVideoRecording();
+        pauseTimer(_timer!);
         _updateCameraState(CameraState.paused);
       } on CameraException catch (exception) {
         _updateCameraState(CameraState.error);
@@ -204,7 +216,8 @@ class CameraService extends BaseChangeNotifier
 
   @override
   Future<XFile?> stopRecording() async {
-    if (cameraState == CameraState.recording) {
+    if (cameraState == CameraState.recording ||
+        cameraState == CameraState.paused) {
       try {
         _updateCameraState(CameraState.recorded);
         stopTimer(_timer!);
@@ -222,16 +235,22 @@ class CameraService extends BaseChangeNotifier
 
   @override
   void initTimer() {
-    _timer = Timer.periodic(
-        Duration(milliseconds: _cameraConfig.maxRecordingDurationSeconds),
-        _onTimerChanged);
+    _timer = Timer.periodic(const Duration(seconds: 1), _onTimerChanged);
   }
 
   @override
-  void resetTimer() {}
+  void resetTimer() {
+    _recordedVideoTimeRemaining = 15;
+  }
 
   @override
   void stopTimer(Timer timer) {
+    timer.cancel();
+    resetTimer();
+  }
+
+  @override
+  void pauseTimer(Timer timer) {
     timer.cancel();
   }
 
