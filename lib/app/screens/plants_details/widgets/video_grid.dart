@@ -4,11 +4,15 @@ import 'package:video_player/video_player.dart';
 
 class VideoGrid extends StatefulWidget {
   final Stream<VideoPlayerController> videoControllerStream;
-  final Function() onVideoPreviewTap;
+  final Function({required int index}) onVideoPreviewTap;
+  final List<VideoPlayerController> controllers;
+  final Function(VideoPlayerController) addControllers;
   final Function(List<VideoPlayerController>) disposeControllers;
   const VideoGrid(
       {super.key,
       required this.videoControllerStream,
+      required this.controllers,
+      required this.addControllers,
       required this.disposeControllers,
       required this.onVideoPreviewTap});
 
@@ -18,34 +22,32 @@ class VideoGrid extends StatefulWidget {
 
 class _VideoGridState extends State<VideoGrid> {
   late Stream<VideoPlayerController> stream;
-  List<VideoPlayerController> controllers = [];
-
+  
   @override
   void initState() {
     super.initState();
     stream = widget.videoControllerStream;
     stream.listen((event) {
-      setState(() {
-        controllers.add(event);
-      });
+        widget.addControllers(event);
     });
   }
 
     @override
   void dispose() {
-    widget.disposeControllers(controllers);
+    widget.disposeControllers(widget.controllers);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-        itemCount: controllers.length,
+        itemCount: widget.controllers.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4, mainAxisSpacing: 20.0),
         itemBuilder: (context, index) {
           return VideoPreview(
-            controller: controllers[index],
+            index: index,
+            controller: widget.controllers[index],
             onVideoPreviewTap: widget.onVideoPreviewTap,
           );
         });

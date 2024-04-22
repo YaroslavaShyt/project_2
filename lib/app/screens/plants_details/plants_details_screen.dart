@@ -66,11 +66,12 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                 ],
               ),
               ElevatedButton(
-                  onPressed: () => _showPicker(context,
-                      isVideo: true,
-                      isGalleryOptionProvided: false,
-                    ), 
-                    child: const Text("Додати відео")),
+                  onPressed: () => _showPicker(
+                        context,
+                        isVideo: true,
+                        isGalleryOptionProvided: false,
+                      ),
+                  child: const Text("Додати відео")),
               FilesList(
                   onTap: () => _showPicker(context,
                       isVideo: false, isGalleryOptionProvided: true),
@@ -92,10 +93,12 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: VideoGrid(
+                    controllers: widget.viewModel.controllers,
+                    addControllers: widget.viewModel.addControllers,
                     disposeControllers: widget.viewModel.disposeControllers,
                     videoControllerStream: widget.viewModel.videoGridStream,
                     onVideoPreviewTap:
-                        widget.viewModel.naVigateToVideoScrollPage),
+                        widget.viewModel.navigateToVideoScrollPage),
               )
             ],
           ),

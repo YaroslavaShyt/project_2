@@ -20,6 +20,7 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   final IContentHandler _contentHandler;
   final IRemoteStorageHandler _remoteStorageHandler;
   double currentStep = 0.0;
+  final List<VideoPlayerController> _controllers = [];
   final StreamController<VideoPlayerController> _streamController =
       StreamController.broadcast();
 
@@ -37,7 +38,15 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
 
   Stream<VideoPlayerController> get videoGridStream => _streamController.stream;
 
-  Future naVigateToVideoScrollPage() => _navigationUtil.navigateTo(routeVideoScroll);
+  Future navigateToVideoScrollPage({required int index}) =>
+      _navigationUtil.navigateTo(routeVideoScroll, data: controllers.sublist(index));
+
+  void addControllers(VideoPlayerController controller) {
+    _controllers.add(controller);
+    notifyListeners();
+  }
+
+  List<VideoPlayerController> get controllers => _controllers;
 
   Future<void> initControllers() async {
     if (plant != null) {

@@ -63,6 +63,6 @@ class AppRouter {
   }
 
   Widget _buildVideoScrollSettings(RouteSettings settings) {
-    return VideoScrollFactory.build();
+    return VideoScrollFactory.build(settings);
   }
 }
