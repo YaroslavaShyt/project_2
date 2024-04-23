@@ -9,8 +9,8 @@ import 'package:project_2/app/services/camera/interfaces/icamera_service.dart';
 class CameraService extends BaseChangeNotifier
     with WidgetsBindingObserver
     implements ICameraService {
-  ICameraCore _cameraCore;
-  ICameraConfig _cameraConfig;
+  final ICameraCore _cameraCore;
+  final ICameraConfig _cameraConfig;
 
   XFile? videoFile;
 
@@ -42,14 +42,16 @@ class CameraService extends BaseChangeNotifier
       StreamController.broadcast();
 
   Timer? _timer;
-  int _recordedVideoTimeRemaining = 15;
+  int? _recordedVideoTimeRemaining;
   @override
-  int get recordedVideoTimeRemaining => _recordedVideoTimeRemaining;
+  int get recordedVideoTimeRemaining => _recordedVideoTimeRemaining!;
 
   CameraService(
       {required ICameraCore cameraCore, required ICameraConfig cameraConfig})
       : _cameraConfig = cameraConfig,
-        _cameraCore = cameraCore;
+        _cameraCore = cameraCore {
+    _recordedVideoTimeRemaining = cameraConfig.maxRecordingDurationSeconds;
+  }
 
   @override
   Widget get cameraPreview => _cameraPreview ?? const SizedBox();
@@ -75,16 +77,7 @@ class CameraService extends BaseChangeNotifier
       return;
     }
     if (state == AppLifecycleState.inactive) {
-      // print("inactive");
-      // if (!_isCameraControllerDisposed) {
       await controller.dispose();
-      // }
-      // } else if (state == AppLifecycleState.resumed) {
-      //   print("resumed");
-      //   //  if (!_isCameraControllerDisposed) {
-      //   // await reset();
-      //   //  }
-      //  // await create();
     }
   }
 
@@ -159,10 +152,12 @@ class CameraService extends BaseChangeNotifier
   }
 
   Future<void> _disposeCameraController() async {
-    await _cameraController?.dispose();
-    _cameraController = null;
-    _isCameraControllerDisposed = true;
-    _updateCameraState(CameraState.init);
+    if (!_isCameraControllerDisposed) {
+      await _cameraController?.dispose();
+      _cameraController = null;
+      _isCameraControllerDisposed = true;
+      _updateCameraState(CameraState.init);
+    }
   }
 
   void _updateCameraState(CameraState state) {
@@ -240,7 +235,7 @@ class CameraService extends BaseChangeNotifier
 
   @override
   void resetTimer() {
-    _recordedVideoTimeRemaining = 15;
+    _recordedVideoTimeRemaining = _cameraConfig.maxRecordingDurationSeconds;
   }
 
   @override
@@ -259,8 +254,8 @@ class CameraService extends BaseChangeNotifier
       stopTimer(timer);
       stopRecording();
     } else {
-      _recordedVideoTimeRemaining--;
-      _recordedVideoProgressStreamController.add(_recordedVideoTimeRemaining);
+      _recordedVideoTimeRemaining = _recordedVideoTimeRemaining! - 1;
+      _recordedVideoProgressStreamController.add(_recordedVideoTimeRemaining!);
     }
   }
 }

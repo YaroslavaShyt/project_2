@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/screens/video/video_view_model.dart';
+import 'package:project_2/app/theming/app_colors.dart';
 
 class VideoScreen extends StatefulWidget with ErrorHandlingMixin {
   final VideoViewModel viewModel;
@@ -41,9 +42,12 @@ class _VideoScreenState extends State<VideoScreen> {
             widget.viewModel.isInitialized
                 ? SizedBox(
                     height: MediaQuery.of(context).size.height * 0.6,
-                    width: 400,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     child: widget.viewModel.videoPlayer)
-                : Container(),
+                : const Center(
+                    child: CircularProgressIndicator(
+                        color: AppColors.darkWoodGeenColor),
+                  ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

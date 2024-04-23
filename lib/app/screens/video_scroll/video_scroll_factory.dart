@@ -8,8 +8,8 @@ class VideoScrollFactory {
   static Widget build(RouteSettings routeSettings) {
     return ChangeNotifierProvider(
         create: (context) => VideoScrollViewModel(
-          controllers: routeSettings.arguments as List<VideoPlayerController>
-        ),
+            controllers:
+                routeSettings.arguments as List<VideoPlayerController>),
         child: Consumer<VideoScrollViewModel>(builder: (context, model, child) {
           return VideoScrollScreen(
             viewModel: model,

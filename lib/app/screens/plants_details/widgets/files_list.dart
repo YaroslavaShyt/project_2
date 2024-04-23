@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_2/app/common/widgets/chached_image.dart';
+// import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:video_player/video_player.dart';
 

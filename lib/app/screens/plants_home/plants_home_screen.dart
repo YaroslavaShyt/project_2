@@ -1,7 +1,7 @@
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/plants_home/widgets/drawer.dart';
-import 'package:project_2/app/screens/plants_home/widgets/photo_avatar.dart';
+//import 'package:project_2/app/screens/plants_home/widgets/photo_avatar.dart';
 import 'package:project_2/app/screens/plants_home/widgets/plant_list_item.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/screens/plants_home/plants_home_view_model.dart';
