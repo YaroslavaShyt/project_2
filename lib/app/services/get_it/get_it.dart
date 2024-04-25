@@ -122,3 +122,5 @@ void initContentHandler() {
 void initIsolateHandler() {
   getItInst.registerFactory<IsolateHandler>(() => IsolateHandler());
 }
+
+

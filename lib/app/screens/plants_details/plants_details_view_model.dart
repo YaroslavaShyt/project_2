@@ -6,6 +6,7 @@ import 'package:project_2/app/screens/camera/camera_factory.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
 import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
+import 'package:project_2/app/utils/video_cache/video_cache_util.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/plants/iplants_repository.dart';
 import 'package:project_2/domain/services/iuser_service.dart';
@@ -39,7 +40,8 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
   Stream<VideoPlayerController> get videoGridStream => _streamController.stream;
 
   Future navigateToVideoScrollPage({required int index}) =>
-      _navigationUtil.navigateTo(routeVideoScroll, data: controllers.sublist(index));
+      _navigationUtil.navigateTo(routeVideoScroll,
+          data: [controllers.sublist(index), plant!.videos.sublist(index)]);
 
   void addControllers(VideoPlayerController controller) {
     _controllers.add(controller);
@@ -72,6 +74,8 @@ class PlantsDetailsViewModel extends BaseChangeNotifier {
           plant = data;
           initControllers();
           notifyListeners();
+          VideoCacheUtil util = VideoCacheUtil(videoUrls: plant!.videos);
+          util.cacheVideos();
         }
       });
     });

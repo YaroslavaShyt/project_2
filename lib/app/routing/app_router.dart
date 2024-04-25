@@ -7,6 +7,7 @@ import 'package:project_2/app/screens/home/home_factory.dart';
 import 'package:project_2/app/screens/login/login_factory.dart';
 import 'package:project_2/app/screens/video/video_factory.dart';
 import 'package:project_2/app/screens/video_scroll/video_scroll_factory.dart';
+import 'package:video_player/video_player.dart';
 
 class AppRouter {
   Route? onGenerateRoute(RouteSettings routeSettings) {
@@ -63,6 +64,9 @@ class AppRouter {
   }
 
   Widget _buildVideoScrollSettings(RouteSettings settings) {
-    return VideoScrollFactory.build(settings);
+    final List<dynamic> arguments = settings.arguments as List<dynamic>;
+    return VideoScrollFactory.build(
+        controllers: arguments[0] as List<VideoPlayerController>,
+        videoUrls: arguments[1]);
   }
 }

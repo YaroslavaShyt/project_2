@@ -5,11 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoScrollFactory {
-  static Widget build(RouteSettings routeSettings) {
+  static Widget build(
+      {required List<VideoPlayerController> controllers,
+      required List<dynamic> videoUrls}) {
     return ChangeNotifierProvider(
-        create: (context) => VideoScrollViewModel(
-            controllers:
-                routeSettings.arguments as List<VideoPlayerController>),
+        create: (context) =>
+            VideoScrollViewModel(controllers: controllers, videoUrl: videoUrls),
         child: Consumer<VideoScrollViewModel>(builder: (context, model, child) {
           return VideoScrollScreen(
             viewModel: model,
