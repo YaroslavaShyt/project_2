@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_2/app/common/caching/caching_manager.dart';
 import 'package:project_2/app/screens/plants_home/widgets/build_drawer_item.dart';
 import 'package:project_2/app/screens/plants_home/widgets/no_photo_avatar.dart';
-// import 'package:project_2/app/screens/plants_home/widgets/photo_avatar.dart';
+import 'package:project_2/app/screens/plants_home/widgets/photo_avatar.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/user/imy_user.dart';
 
@@ -34,12 +34,12 @@ class MainDrawer extends StatelessWidget {
                 children: [
                   user == null || user!.profilePhoto == null
                       ? NoPhotoAvatar(onPressed: showPicker)
-                      : const SizedBox(
+                      : SizedBox(
                           height: 100,
                           width: 100,
-                          child:Icon(Icons.abc)), //PhotoAvatar(
-                              //imageUrl: user!.profilePhoto!,
-                              //onPressed: showPicker)),
+                          child: PhotoAvatar(
+                              imageUrl: user!.profilePhoto!,
+                              onPressed: showPicker)),
                   Text(
                     user?.name ?? 'Анонім',
                     style: const TextStyle(

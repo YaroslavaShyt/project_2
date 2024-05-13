@@ -88,7 +88,6 @@ void initStorageService() {
 
 void initNotificationService(INavigationUtil navigationUtil) {
   getItInst.registerSingleton<NotificationService>(NotificationService(
-     // navigationUtil: navigationUtil,
       deepLinkHandler: getItInst.get<DeepLinkHandler>()));
 }
 

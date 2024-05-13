@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_2/app/common/widgets/chached_image.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 import 'package:project_2/domain/plants/iplant.dart';
 
@@ -17,6 +18,16 @@ class PlantListItem extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        SizedBox(
+          height: 50,
+          width: 50,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: CachedImageWidget(
+              imageUrl: plant.image,
+            ),
+          ),
+        ),
         Text(
           plant.name,
           style: const TextStyle(
