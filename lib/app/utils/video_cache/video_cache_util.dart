@@ -13,18 +13,15 @@ final CacheManager kCacheManager = CacheManager(
 );
 
 class VideoCacheUtil {
-  final List<dynamic> videoUrls;
-  VideoCacheUtil({required this.videoUrls});
+  final String videoUrl;
+  VideoCacheUtil({required this.videoUrl});
 
-  
-  Future<void> cacheVideos() async {
-    for (var url in videoUrls) {
-      FileInfo? fileInfo = await kCacheManager.getFileFromCache(url);
-      if(fileInfo == null){
-        debugPrint("-------chaching");
-        await kCacheManager.downloadFile(url);
-        debugPrint("-------chached");
-      }
+  Future<void> cacheVideo() async {
+    FileInfo? fileInfo = await kCacheManager.getFileFromCache(videoUrl);
+    if (fileInfo == null) {
+      debugPrint("-------chaching");
+      await kCacheManager.downloadFile(videoUrl);
+      debugPrint("-------chached");
     }
   }
 }

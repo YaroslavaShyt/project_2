@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/routing/routes.dart';
-import 'package:project_2/app/screens/camera/camera_factory.dart';
+import 'package:project_2/app/services/camera/camera_config_data.dart';
 import 'package:project_2/app/services/networking/firebase_storage/paths.dart';
 import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/storage/iremote_storage_handler.dart';
@@ -17,7 +19,7 @@ import 'package:project_2/app/services/notification/notification_service.dart';
 
 enum PhotoSourceType { gallery, camera }
 
-class PlantsHomeViewModel extends BaseChangeNotifier {
+class PlantsHomeViewModel extends BaseChangeNotifier with ErrorHandlingMixin {
   final IUserService _userService;
   final INavigationUtil _navigationUtil;
   final ILoginRepository _loginRepository;
@@ -58,6 +60,8 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
     _navigationUtil.navigateTo(routePlantsDetails, data: plantId);
   }
 
+  void onError(BuildContext context) => (err) => showErrorDialog(context, err);
+
   void askPermissions() =>
       getItInst.get<PermissionHandler>().askCorePermissions();
 
@@ -65,34 +69,27 @@ class PlantsHomeViewModel extends BaseChangeNotifier {
     await _contentHandler.addFileFromCamera(
       onSuccess: () => _navigationUtil.navigateTo(
         routeCamera,
-        data: {
-          CameraConfigKeys.cameraTypes: {
-            CameraType.photo: true,
-            CameraType.video: false
-          },
-          CameraConfigKeys.onSuccess: {
-            CameraType.photo: (XFile image) async {
-              await _remoteStorageHandler.addDataToStorage(
-                file: image,
-                path: "$userProfileImagesPath/${_userService.user!.id}",
-                onError: onError,
-                onSuccess: (String url) {
-                  _userService.updateProfilePhoto(url);
-                  _navigationUtil.navigateBack();
-                  _navigationUtil.navigateBack();
-                  notifyListeners();
-                },
-              );
-            },
-            CameraType.video: null
-          },
-          CameraConfigKeys.onError: {
-            CameraType.photo: onError,
-            CameraType.video: () {}
-          }
-        },
+        data: CameraConfigData(
+            isPhotoCamera: true,
+            isVideoCamera: false,
+            onPhotoCameraSuccess: _onPhotoCameraSuccess,
+            onPhotoCameraError: onError),
       ),
       onError: onError,
+    );
+  }
+
+  Future<void> _onPhotoCameraSuccess(XFile image) async {
+    await _remoteStorageHandler.addDataToStorage(
+      file: image,
+      path: "$userProfileImagesPath/${_userService.user!.id}",
+      onError: onError,
+      onSuccess: (String url) {
+        _userService.updateProfilePhoto(url);
+        _navigationUtil.navigateBack();
+        _navigationUtil.navigateBack();
+        notifyListeners();
+      },
     );
   }
 

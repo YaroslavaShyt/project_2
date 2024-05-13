@@ -1,60 +1,37 @@
-import 'package:camera/camera.dart';
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:project_2/app/routing/inavigation_util.dart';
 import 'package:project_2/app/routing/routes.dart';
-import 'package:project_2/app/screens/camera/camera_factory.dart';
+import 'package:project_2/app/services/camera/camera_config_data.dart';
+import 'package:project_2/app/services/camera/video_config_data.dart';
 import 'package:project_2/app/services/networking/firebase_storage/storage_service.dart';
-import 'package:project_2/app/utils/content/icontent_handler.dart';
 import 'package:project_2/app/utils/video_player/ivideo_player.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoViewModel extends BaseChangeNotifier {
-  final XFile video;
   final IVideoPlayer _videoPlayer;
   final INavigationUtil _navigationUtil;
-  final Function _onVideoSubmit;
-  late Function onVideoCameraSuccess;
-  late Function onVideoCameraError;
+  final CameraConfigData _cameraConfigData;
+  final VideoConfigData _videoConfigData;
 
   VideoViewModel(
-      {required this.video,
+      {required CameraConfigData cameraConfigData,
+      required VideoConfigData videoConfigData,
       required IVideoPlayer videoPlayer,
-      required Function onVideoSubmit,
-      required Map<CameraConfigKeys, Map<CameraType, dynamic>> cameraConfig,
       required INavigationUtil navigationUtil,
       required StorageService storageService})
       : _videoPlayer = videoPlayer,
-        _onVideoSubmit = onVideoSubmit,
-        _navigationUtil = navigationUtil {
-    onVideoCameraSuccess =
-        cameraConfig[CameraConfigKeys.onSuccess]?[CameraType.video] ?? () {};
-    onVideoCameraError =
-        cameraConfig[CameraConfigKeys.onError]?[CameraType.video] ?? () {};
-  }
+        _navigationUtil = navigationUtil,
+        _cameraConfigData = cameraConfigData,
+        _videoConfigData = videoConfigData;
 
   Future<void> initialize() async {
-    _videoPlayer.initialize(videoPath: video.path);
+    _videoPlayer.initialize(videoPath: _videoConfigData.video.path);
   }
 
   void navigateBackToCamera() {
-    _navigationUtil.navigateTo(
+    _navigationUtil.navigateToAndReplace(
       routeCamera,
-      data: {
-        CameraConfigKeys.cameraTypes: {
-          CameraType.photo: false,
-          CameraType.video: true
-        },
-        CameraConfigKeys.onSuccess: {
-          CameraType.photo: null,
-          CameraType.video: (XFile video) async {
-            onVideoCameraSuccess(video);
-          }
-        },
-        CameraConfigKeys.onError: {
-          CameraType.photo: null,
-          CameraType.video: onVideoCameraError
-        }
-      },
+      data: _cameraConfigData
     );
   }
 
@@ -77,7 +54,7 @@ class VideoViewModel extends BaseChangeNotifier {
   Future<void> onVideoSubmit() async {
     setIsDataLoaded(false);
     notifyListeners();
-    await _onVideoSubmit(video);
+    await _videoConfigData.onVideoSubmit(_videoConfigData.video, _cameraConfigData.onVideoCameraSuccess);
     setIsDataLoaded(true);
     notifyListeners();
   }

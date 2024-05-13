@@ -1,22 +1,24 @@
 import 'package:project_2/app/common/base_change_notifier.dart';
 import 'package:video_player/video_player.dart';
 
+enum SwipeAxisDirection { vertical, horizontal }
 
-enum SwipeAxisDirection {vertical, horizontal}
-
-class VideoScrollViewModel extends BaseChangeNotifier {
+class CarouselScrollViewModel extends BaseChangeNotifier {
   int _verticalIndex = 0;
   int _horizontalIndex = 0;
   int _index = 0;
   int _previousIndex = 0;
   final List<VideoPlayerController> controllers;
   final List<dynamic> videoUrl;
-  VideoScrollViewModel({required this.controllers, required this.videoUrl});
+  final bool isVideo;
+  CarouselScrollViewModel(
+      {required this.controllers,
+      required this.videoUrl,
+      required this.isVideo});
 
   int get verticalIndex => _verticalIndex;
   int get horizontalIndex => _horizontalIndex;
   int get index => _index;
-
 
   void changeVerticalIndex(int newIndex) {
     _verticalIndex = newIndex;
@@ -38,9 +40,9 @@ class VideoScrollViewModel extends BaseChangeNotifier {
 
   void handleIndex(int index, SwipeAxisDirection direction) {
     bool isDecrement;
-    if(direction == SwipeAxisDirection.vertical){
+    if (direction == SwipeAxisDirection.vertical) {
       isDecrement = isUpSwipe(index);
-    }else{
+    } else {
       isDecrement = isLeftSwipe(index);
     }
     if (isDecrement) {

@@ -8,13 +8,13 @@ import 'package:project_2/app/theming/app_colors.dart';
 
 class CameraStack extends StatefulWidget {
   final Widget cameraPreview;
-  final void Function() toggleCamera;
-  final void Function() takePicture;
-  final void Function() startVideo;
-  final void Function() stopVideo;
-  final void Function() resumeVideo;
-  final void Function() pauseVideo;
-  final void Function() changeCaptureType;
+  final Function toggleCamera;
+  final Function takePicture;
+  final Function startVideo;
+  final Function stopVideo;
+  final Function resumeVideo;
+  final Function pauseVideo;
+  final Function changeCaptureType;
   final CameraState cameraState;
   final bool isVideoCameraSelected;
   final bool isVideoCamera;
@@ -79,7 +79,7 @@ class _CameraStackState extends State<CameraStack>
                         Icons.switch_camera,
                         color: AppColors.whiteColor,
                       ),
-                      onPressed: widget.toggleCamera),
+                      onPressed: () => widget.toggleCamera()),
                 ),
                 if (widget.isVideoCamera && widget.progress != null) ...[
                   Positioned(

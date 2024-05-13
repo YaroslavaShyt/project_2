@@ -5,6 +5,7 @@ import 'package:project_2/app/services/networking/base_response.dart';
 import 'package:project_2/app/services/networking/functions/firebase_functions_service.dart';
 import 'package:project_2/app/services/networking/functions/functions.dart';
 import 'package:project_2/app/services/networking/firestore/collections.dart';
+import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 import 'package:project_2/domain/services/inetwork_service.dart';
 import 'package:project_2/data/plants/plant.dart';
@@ -24,6 +25,9 @@ class PlantsRepository implements IPlantsRepository {
   final StreamController<PlantsData> _streamController =
       StreamController.broadcast();
 
+  final StreamController<IPlant> _plantStreamController =
+      StreamController.broadcast();
+
   @override
   Stream<PlantsData> plantsState() {
     FirebaseFirestore.instance
@@ -38,6 +42,18 @@ class PlantsRepository implements IPlantsRepository {
     });
 
     return _streamController.stream;
+  }
+
+  @override
+  Stream<IPlant> plantStream({required String id}) {
+    FirebaseFirestore.instance
+        .collection(plantsCollection)
+        .doc(id)
+        .snapshots()
+        .listen((DocumentSnapshot snapshot) {
+          _plantStreamController.add(Plant.fromJSON(data: {"id": snapshot.id, "data": snapshot.data()}));
+        });
+    return _plantStreamController.stream;
   }
 
   @override
@@ -73,7 +89,8 @@ class PlantsRepository implements IPlantsRepository {
     HttpsCallableResult data = await _firebaseFunctionsService.call(
         functionName: toLowerCaseFunction, arguments: plantsCollection);
     return BaseResponse(
-        success: data.data["success"], error: data.data["success"] ? null : data.data["message"]);
+        success: data.data["success"],
+        error: data.data["success"] ? null : data.data["message"]);
   }
 
   @override
@@ -81,6 +98,7 @@ class PlantsRepository implements IPlantsRepository {
     HttpsCallableResult data = await _firebaseFunctionsService.call(
         functionName: toUpperCaseFunction, arguments: plantsCollection);
     return BaseResponse(
-        success: data.data["success"], error: data.data["success"] ? null : data.data["message"]);
+        success: data.data["success"],
+        error: data.data["success"] ? null : data.data["message"]);
   }
 }

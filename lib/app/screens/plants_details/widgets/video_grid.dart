@@ -22,17 +22,19 @@ class VideoGrid extends StatefulWidget {
 
 class _VideoGridState extends State<VideoGrid> {
   late Stream<VideoPlayerController> stream;
-  
+
   @override
   void initState() {
     super.initState();
     stream = widget.videoControllerStream;
     stream.listen((event) {
+      if (mounted) {
         widget.addControllers(event);
+      }
     });
   }
 
-    @override
+  @override
   void dispose() {
     widget.disposeControllers(widget.controllers);
     super.dispose();
@@ -43,12 +45,15 @@ class _VideoGridState extends State<VideoGrid> {
     return GridView.builder(
         itemCount: widget.controllers.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4, mainAxisSpacing: 20.0),
+            crossAxisCount: 4, mainAxisSpacing: 20.0, crossAxisSpacing: 10),
         itemBuilder: (context, index) {
-          return VideoPreview(
-            index: index,
-            controller: widget.controllers[index],
-            onVideoPreviewTap: widget.onVideoPreviewTap,
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: VideoPreview(
+              index: index,
+              controller: widget.controllers[index],
+              onVideoPreviewTap: widget.onVideoPreviewTap,
+            ),
           );
         });
   }

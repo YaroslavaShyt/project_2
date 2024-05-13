@@ -94,7 +94,8 @@ class _CameraScreenState extends State<CameraScreen>
                   cameraPreview: widget.viewModel.cameraPreview,
                   takePicture: () => widget.viewModel.takePicture(
                       onPhotoTaken: () => _showTakenPicture(context,
-                          onSubmit: widget.viewModel.onPhotoCameraSuccess)),
+                          onSubmit: widget.viewModel.cameraConfigData
+                              .onPhotoCameraSuccess!)),
                   startVideo: () => widget.viewModel.startVideo(),
                   stopVideo: () => widget.viewModel.stopVideo(
                       onFailure: (message) =>
@@ -105,8 +106,10 @@ class _CameraScreenState extends State<CameraScreen>
                   toggleCamera: widget.viewModel.toggleCamera,
                   changeCaptureType: widget.viewModel.changeCaptureType,
                   isVideoCameraSelected: widget.viewModel.isVideoCameraSelected,
-                  isVideoCamera: widget.viewModel.isVideoCamera,
-                  isPhotoCamera: widget.viewModel.isPhotoCamera,
+                  isVideoCamera:
+                      widget.viewModel.cameraConfigData.isVideoCamera,
+                  isPhotoCamera:
+                      widget.viewModel.cameraConfigData.isPhotoCamera,
                 );
               default:
                 return const Center(
@@ -133,8 +136,9 @@ class _CameraScreenState extends State<CameraScreen>
                   onButtonPressed: widget.viewModel.navigateBack,
                   title: 'Відміна'),
               MainElevatedButton(
-                  onButtonPressed: () =>
-                      onSubmit(XFile(widget.viewModel.capturedImagePath!)),
+                  onButtonPressed: () => onSubmit(
+                      XFile(widget.viewModel.capturedImagePath!),
+                      widget.viewModel.cameraConfigData.onPhotoCameraError),
                   title: 'ОК')
             ]));
   }

@@ -1,7 +1,7 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:project_2/app/screens/video_scroll/video_scroll_view_model.dart';
-import 'package:project_2/app/screens/video_scroll/widgets/inner_swipe.dart';
+import 'package:project_2/app/screens/carousel_scroll/carousel_scroll_view_model.dart';
+import 'package:project_2/app/screens/carousel_scroll/widgets/inner_swipe.dart';
 
 
 class OuterSwipe extends StatefulWidget {
@@ -10,12 +10,14 @@ class OuterSwipe extends StatefulWidget {
   final Function(int) changeVerticalIndex;
   final Function(int) changeHorizontalIndex;
   final List<dynamic> data;
+  final bool isVideo;
   const OuterSwipe(
       {super.key,
       required this.index,
       required this.handleIndex,
       required this.changeVerticalIndex,
       required this.data,
+      required this.isVideo,
       required this.changeHorizontalIndex});
 
   @override
@@ -40,6 +42,7 @@ class _OuterSwipeState extends State<OuterSwipe> {
             key: ValueKey(widget.index),
             changeVerticalIndex: widget.changeVerticalIndex,
             data: widget.data,
+            isVideo: widget.isVideo,
             handleIndex: widget.handleIndex,
             index: widget.index,
             changeHorizontalIndex: widget.changeHorizontalIndex,

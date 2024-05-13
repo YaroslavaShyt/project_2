@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:project_2/app/utils/video_player/ivideo_player.dart';
 import 'package:video_player/video_player.dart';
 
+
+
+
 class VideoPlayerHandler implements IVideoPlayer {
   late VideoPlayerController _videoPlayerController;
   bool _isPlaying = false;

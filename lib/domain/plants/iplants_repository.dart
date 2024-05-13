@@ -1,4 +1,5 @@
 import 'package:project_2/data/plants/plants_data.dart';
+import 'package:project_2/domain/plants/iplant.dart';
 import 'package:project_2/domain/services/ibase_response.dart';
 
 abstract interface class IPlantsRepository {
@@ -10,4 +11,5 @@ abstract interface class IPlantsRepository {
   Future<IBaseResponse> toUpperCaseData();
   Future<IBaseResponse> toLowerCaseData();
   Stream<PlantsData> plantsState();
+  Stream<IPlant> plantStream({required String id});
 }

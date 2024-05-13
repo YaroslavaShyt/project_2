@@ -6,7 +6,8 @@ import 'package:project_2/app/screens/plants_home/plants_home_factory.dart';
 import 'package:project_2/app/screens/home/home_factory.dart';
 import 'package:project_2/app/screens/login/login_factory.dart';
 import 'package:project_2/app/screens/video/video_factory.dart';
-import 'package:project_2/app/screens/video_scroll/video_scroll_factory.dart';
+import 'package:project_2/app/screens/carousel_scroll/carousel_scroll_factory.dart';
+import 'package:project_2/app/services/camera/camera_config_data.dart';
 import 'package:video_player/video_player.dart';
 
 class AppRouter {
@@ -56,17 +57,21 @@ class AppRouter {
   }
 
   Widget _buildCameraSettings(RouteSettings settings) {
-    return CameraFactory.build(settings);
+    CameraConfigData data = settings.arguments as CameraConfigData;
+    return CameraFactory.build(cameraConfigData: data);
   }
 
   Widget _buildVideoSettings(RouteSettings settings) {
-    return VideoFactory.build(settings);
+    final List<dynamic> arguments = settings.arguments as List<dynamic>;
+    return VideoFactory.build(
+        cameraConfigData: arguments[0], videoConfigData: arguments[1]);
   }
 
   Widget _buildVideoScrollSettings(RouteSettings settings) {
     final List<dynamic> arguments = settings.arguments as List<dynamic>;
-    return VideoScrollFactory.build(
+    return CarouselScrollFactory.build(
         controllers: arguments[0] as List<VideoPlayerController>,
-        videoUrls: arguments[1]);
+        videoUrls: arguments[1],
+        isVideo: arguments[2]);
   }
 }

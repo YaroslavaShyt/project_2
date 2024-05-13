@@ -1,6 +1,13 @@
 const { onCall } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
-const { plantCollection, userCollection } = require("./collections");
+const {
+  plantCollection,
+  userCollection,
+  userDirectory,
+  plantsDirectory,
+  fileVideo,
+  filePhoto,
+} = require("./collections");
 const functions = require("firebase-functions");
 const { error } = require("firebase-functions/logger");
 const { Storage } = require("@google-cloud/storage");
