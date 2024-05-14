@@ -1,0 +1,38 @@
+{
+  "authentication_type_title": "Autenticar con",
+  "authentication_sms_title": "Autenticación SMS",
+  "phone_number": "Número de teléfono",
+  "send_code": "Enviar código",
+  "enter_code": "Ingresar código",
+  "enter": "Enviar",
+  "code": "Código",
+
+  "anonimus": "Anónimo",
+  "new_plant": "Nueva planta",
+  "title": "Título",
+  "quantity": "Cantidad",
+  "add": "Agregar",
+
+  "edit": "Editar",
+  "new_quantity": "Nueva cantidad",
+  "new_name": "Nuevo nombre",
+  "save": "Guardar",
+
+  "clear_cache": "Limpiar caché",
+  "quit": "Salir",
+  "language": "Idioma",
+
+  "load_photo": "Cargar foto",
+  "from_gallery": "Desde galería",
+  "from_camera": "Desde cámara",
+
+  "look_at_this_plant": "Mira esta planta",
+  "all_users_photos": "Fotos de todos los usuarios",
+  "all_users_videos": "Videos de todos los usuarios",
+  "load": "Cargar",
+  "photo": "Foto",
+  "cancel": "Cancelar",
+  "ok": "Aceptar",
+  "create": "Crear",
+  "back": "Volver"
+}

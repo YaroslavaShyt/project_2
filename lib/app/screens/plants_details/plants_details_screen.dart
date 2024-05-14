@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/chached_image.dart';
@@ -70,7 +71,7 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                         CategoryRow(
                             onPressed: () => _showPicker(context,
                                 isVideo: false, isGalleryOptionProvided: true),
-                            title: "Усі фото користувачів"),
+                            title: "all_users_photos".tr().toString()),
                         FilesList(
                             onTap: ({required int index}) => widget.viewModel
                                 .navigateToCarouselScrollPage(
@@ -85,7 +86,7 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
                                   isVideo: true,
                                   isGalleryOptionProvided: false,
                                 ),
-                            title: "Усі відео користувачів"),
+                            title: "all_users_videos".tr().toString()),
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 10.0),
                           height: MediaQuery.of(context).size.height * 0.3,
@@ -125,7 +126,7 @@ class _PlantsDetailsScreenState extends State<PlantsDetailsScreen> {
     Modals.showPopUpModal(
       context: context,
       data: PopUpDialogData(
-          title: 'Завантажити',
+          title: 'load'.tr().toString(),
           content: PickerContent(
               onCameraTap: () => widget.viewModel.addPlantFileFromCamera(
                     context,

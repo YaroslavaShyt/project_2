@@ -1,0 +1,38 @@
+{
+  "authentication_type_title": "Авторизуватись через",
+  "authentication_sms_title": "Авторизація за SMS",
+  "phone_number": "Номер телефону",
+  "send_code": "Надіслати код",
+  "enter_code": "Введіть код",
+  "enter": "Увійти",
+  "code": "Код",
+
+  "anonimus": "Анонім",
+  "new_plant": "Нова рослина",
+  "title": "Назва",
+  "quantity": "Кількість",
+  "add": "Додати",
+
+  "edit": "Редагувати",
+  "new_quantity": "Нова кількість",
+  "new_name": "Нова назва",
+  "save": "Зберегти",
+
+  "clear_cache": "Очистии кеш",
+  "quit": "Вийти",
+  "language": "Мова",
+
+  "load_photo": "Завантажити фото",
+  "from_gallery": "З галереї",
+  "from_camera": "З камери",
+
+  "look_at_this_plant": "Подивись на цю рослину",
+  "all_users_photos": "Усі фото користувачів",
+  "all_users_videos": "Усі відео користувачів",
+  "load": "Завантажити",
+  "photo": "Фото",
+  "cancel": "Відміна",
+  "ok": "ОК",
+  "create": "Створити",
+  "back": "Назад"
+}

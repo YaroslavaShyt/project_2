@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/common/widgets/main_elevated_button.dart';
@@ -127,19 +128,19 @@ class _CameraScreenState extends State<CameraScreen>
     Modals.showPopUpModal(
         context: context,
         data: PopUpDialogData(
-            title: 'Фото',
+            title: "photo".tr().toString(),
             content: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Image.file(File(widget.viewModel.capturedImagePath!))),
             actions: [
               MainElevatedButton(
                   onButtonPressed: widget.viewModel.navigateBack,
-                  title: 'Відміна'),
+                  title: "cancel".tr().toString()),
               MainElevatedButton(
                   onButtonPressed: () => onSubmit(
                       XFile(widget.viewModel.capturedImagePath!),
-                      widget.viewModel.cameraConfigData.onPhotoCameraError),
-                  title: 'ОК')
+                      ),
+                  title: "ok".tr().toString())
             ]));
   }
 }

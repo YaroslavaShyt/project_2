@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
+import 'package:project_2/app/common/widgets/input_formatters.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/modals_service.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
@@ -37,9 +39,9 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
             Positioned(
               top: MediaQuery.of(context).size.height * 0.25,
               left: MediaQuery.of(context).size.width * 0.1,
-              child: const Text(
-                'Авторизуватись через',
-                style: TextStyle(
+              child: Text(
+                "authentication_type_title".tr().toString(),
+                style: const TextStyle(
                     color: AppColors.lightMentolGreenColor,
                     fontSize: 20,
                     fontWeight: FontWeight.normal),
@@ -100,9 +102,10 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
     Modals.showBottomModal(
         context: context,
         data: ModalBottomDialogData(
-          title: 'Авторизація за SMS',
-          firstLabel: "Номер телефону",
-          buttonTitle: "Надіслати код",
+          title: "authentication_sms_title".tr().toString(),
+          firstLabel: "phone_number".tr().toString(),
+          buttonTitle: "send_code".tr().toString(),
+          formatter: InputFormatters.phoneNumber,
           onFirstTextFieldChanged: (value) => viewModel.phoneNumber = value,
           onButtonPressed: () => {
             viewModel.onSendOtpButtonPressed(),
@@ -111,9 +114,9 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
                 Modals.showPopUpModal(
                     context: context,
                     data: PopUpDialogData(
-                        title: 'Введіть код',
+                        title: "enter_code".tr().toString(),
                         content: MainTextField(
-                            label: 'Код',
+                            label: "code".tr().toString(),
                             onChanged: (value) => viewModel.otp = value,
                             obscureText: false),
                         actions: [
@@ -122,7 +125,7 @@ class LoginScreen extends StatelessWidget with ErrorHandlingMixin {
                                   viewModel.onLoginOtpButtonPressed(
                                       onError: (error) =>
                                           showErrorDialog(context, error)),
-                              title: 'Увійти')
+                              title: "enter".tr().toString())
                         ]))
               }
           },

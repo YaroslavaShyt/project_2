@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
@@ -64,6 +65,19 @@ class PlantsHomeViewModel extends BaseChangeNotifier with ErrorHandlingMixin {
 
   void askPermissions() =>
       getItInst.get<PermissionHandler>().askCorePermissions();
+
+  void changeLocale(BuildContext context) {
+    Locale? locale = EasyLocalization.of(context)?.locale;
+    Locale nextLocale;
+    if (locale == const Locale('uk', 'UA')) {
+      nextLocale = const Locale('en', 'US');
+    } else if (locale == const Locale('en', 'US')) {
+      nextLocale = const Locale('es', 'ES');
+    } else {
+      nextLocale = const Locale('uk', 'UA');
+    }
+    EasyLocalization.of(context)?.setLocale(nextLocale);
+  }
 
   Future<void> addProfilePhotoFromCamera({required Function onError}) async {
     await _contentHandler.addFileFromCamera(

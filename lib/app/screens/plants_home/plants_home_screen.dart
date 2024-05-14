@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:project_2/app/common/widgets/modals/modal_bottom_sheet/modal_bottom_dialog_data.dart';
 import 'package:project_2/app/common/widgets/modals/pop_up_dialog/pop_up_dialog_data.dart';
 import 'package:project_2/app/screens/plants_home/widgets/drawer.dart';
@@ -109,6 +110,8 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
           }),
       drawer: MainDrawer(
           user: widget.viewModel.user,
+          onChangeLanguageButtonPressed: () =>
+              widget.viewModel.changeLocale(context),
           onLogoutButtonPressed: widget.viewModel.onLogoutButtonPressed,
           showAddPlantModal: _showAddPlantModal,
           showPicker: _showPicker),
@@ -120,10 +123,10 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
     Modals.showBottomModal(
       context: context,
       data: ModalBottomDialogData(
-          title: 'Нова рослина',
-          firstLabel: 'Назва',
-          secondLabel: 'Кількість',
-          buttonTitle: 'Додати',
+          title: 'new_plant'.tr().toString(),
+          firstLabel: 'title'.tr().toString(),
+          secondLabel: 'quantity'.tr().toString(),
+          buttonTitle: 'add'.tr().toString(),
           firstErrorText: widget.viewModel.newPlantNameError,
           secondErrorText: widget.viewModel.newPlantQuantityError,
           onFirstTextFieldChanged: (value) =>
@@ -141,10 +144,10 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
     Modals.showBottomModal(
       context: context,
       data: ModalBottomDialogData(
-        title: 'Редагувати',
-        firstLabel: 'Нова назва',
-        secondLabel: 'Нова кількість',
-        buttonTitle: 'Зберегти',
+        title: "edit".tr().toString(),
+        firstLabel: "new_title".tr().toString(),
+        secondLabel: 'new_quantity'.tr().toString(),
+        buttonTitle: 'save'.tr().toString(),
         firstFieldValue: plant.name,
         secondFieldValue: plant.quantity,
         firstErrorText: widget.viewModel.newPlantNameError,
@@ -164,7 +167,7 @@ class _PlantsHomeScreenState extends State<PlantsHomeScreen> {
     Modals.showPopUpModal(
         context: context,
         data: PopUpDialogData(
-            title: 'Завантажити фото ',
+            title: 'load_photo'.tr().toString(),
             content: PickerContent(
                 onCameraTap: () => widget.viewModel.addProfilePhotoFromCamera(
                       onError: (err) => widget.showErrorDialog(context, err),

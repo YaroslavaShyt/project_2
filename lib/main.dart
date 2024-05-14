@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -45,8 +47,19 @@ void main() async {
         ChangeNotifierProvider.value(value: userService),
         ChangeNotifierProvider.value(value: authService)
       ],
-      child: App(
-        deepLinkHandler: getItInst.get<DeepLinkHandler>(),
-        router: appRouter,
+      child: EasyLocalization(
+        supportedLocales: const [
+          Locale('en', 'US'),
+          Locale('uk', 'UA'),
+          Locale('es', 'ES')
+        ],
+        startLocale: const Locale('uk', 'UA'),
+        saveLocale: true,
+        fallbackLocale: const Locale("uk", "UA"),
+        path: 'assets/translations',
+        child: App(
+          deepLinkHandler: getItInst.get<DeepLinkHandler>(),
+          router: appRouter,
+        ),
       )));
 }

@@ -32,6 +32,7 @@ class ModalBottomDialog extends StatelessWidget {
               MainTextField(
                   value: data.firstFieldValue,
                   label: data.firstLabel,
+                  formatter: data.formatter,
                   errorText: data.firstErrorText,
                   onChanged: data.onFirstTextFieldChanged,
                   obscureText: false),

@@ -127,7 +127,7 @@ class NotificationService {
           title: title,
           body: body,
           notificationLayout: layout,
-          progress: progress,
+          progress: progress?.toInt(),
           locked: false,
           payload: payload),
     );
@@ -175,7 +175,7 @@ class NotificationService {
         body: "body",
         progress: progress,
         layout: NotificationLayout.ProgressBar);
-     if (progress == 100.0) {
+    if (progress == 100.0) {
       await deleteNotification(id: 1);
     }
   }

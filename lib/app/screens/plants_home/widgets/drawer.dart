@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/caching/caching_manager.dart';
 import 'package:project_2/app/screens/plants_home/widgets/build_drawer_item.dart';
@@ -11,9 +12,11 @@ class MainDrawer extends StatelessWidget {
   final Function showPicker;
   final Function showAddPlantModal;
   final Function() onLogoutButtonPressed;
+  final Function() onChangeLanguageButtonPressed;
   const MainDrawer(
       {super.key,
       this.user,
+      required this.onChangeLanguageButtonPressed,
       required this.onLogoutButtonPressed,
       required this.showAddPlantModal,
       required this.showPicker});
@@ -51,11 +54,14 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
           ),
-          buildDrawerItem(
-              Icons.add, 'Нова рослина', () => showAddPlantModal(context)),
-          buildDrawerItem(Icons.cleaning_services, "Очистити кеш",
-              CachingManager.clearCache),
-          buildDrawerItem(Icons.logout_rounded, 'Вихід', onLogoutButtonPressed),
+          buildDrawerItem(Icons.add, 'new_plant'.tr().toString(),
+              () => showAddPlantModal(context)),
+          buildDrawerItem(Icons.cleaning_services,
+              "clear_cache".tr().toString(), CachingManager.clearCache),
+          buildDrawerItem(Icons.logout_rounded, 'quit'.tr().toString(),
+              onLogoutButtonPressed),
+          buildDrawerItem(Icons.language, "language".tr().toString(),
+              onChangeLanguageButtonPressed)
         ],
       ),
     );

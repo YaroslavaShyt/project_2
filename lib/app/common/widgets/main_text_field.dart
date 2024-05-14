@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:project_2/app/theming/app_colors.dart';
 
 class MainTextField extends StatefulWidget {
@@ -7,12 +8,14 @@ class MainTextField extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final bool obscureText;
   final String? errorText;
+  final MaskTextInputFormatter? formatter;
   const MainTextField(
       {super.key,
       required this.label,
       required this.onChanged,
       required this.obscureText,
       this.value,
+      this.formatter,
       this.errorText});
 
   @override
@@ -38,6 +41,7 @@ class _MainTextFieldState extends State<MainTextField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      inputFormatters: widget.formatter != null ? [widget.formatter!] : [],
       style: const TextStyle(color: AppColors.lightMentolGreenColor),
       onChanged: widget.onChanged,
       decoration: InputDecoration(

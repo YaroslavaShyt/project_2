@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:project_2/app/common/error_handling/error_handling_mixin.dart';
 import 'package:project_2/app/screens/video/video_view_model.dart';
@@ -33,9 +34,9 @@ class _VideoScreenState extends State<VideoScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
-          "Назад",
-          style: TextStyle(
+        title: Text(
+          "back".tr().toString(),
+          style: const TextStyle(
               color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.darkWoodGeenColor,

@@ -1,0 +1,38 @@
+{
+  "authentication_type_title": "Authenticate with",
+  "authentication_sms_title": "SMS-authentication",
+  "phone_number": "Phone number",
+  "send_code": "Send code",
+  "enter_code": "Enter code",
+  "enter": "Submit",
+  "code": "Code",
+
+  "anonimus": "Anonymus",
+  "new_plant": "New plant",
+  "title": "Назва",
+  "quantity": "Кількість",
+  "add": "Додати",
+
+  "edit": "Edit",
+  "new_quantity": "New quantity",
+  "new_name": "New name",
+  "save": "Save",
+
+  "clear_cache": "Clear cache",
+  "quit": "Exit",
+  "language": "Language",
+
+  "load_photo": "Load photo",
+  "from_gallery": "From gallery",
+  "from_camera": "From camera",
+
+  "look_at_this_plant": "Look at this plant",
+  "all_users_photos": "All users photos",
+  "all_users_videos": "All users videos",
+  "load": "Load",
+  "photo": "Photo",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "create": "Create",
+  "back": "Back"
+}
